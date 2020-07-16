@@ -92,6 +92,7 @@ Apăsăm acum pe butonul cu o rotiță și un buton verde de play sau tasta `F9`
 Acesta a fost primul pas din laboratorul 1. Felicitări! ✔
 
 ## Câteva programe simple
+[Înapoi la cuprins](#cuprins)
 ### [Cel mai simplu program](#cel-mai-simplu-program-1)
 ### [Afișare](#afișare-1)
 ### [Variabile](#variabile-1)
@@ -214,22 +215,32 @@ R: Pentru programe simple, e suficient `main`. Totuși, este bine să vă obișn
 R: Pentru că nu tratează corect cazurile speciale de overflow/underflow. Este un detaliu de care e bine să ținem cont, chiar dacă în majoritatea cazurilor nu vom verifica explicit acest lucru, deoarece ar fi ineficient.
 
 ### Afișare
+[Înapoi la programe](#câteva-programe-simple-1)
 
 Citirea mai târziu, întrucât nu am discutat despre variabile.
 
 ### Variabile
+[Înapoi la programe](#câteva-programe-simple-1)
+
 
 ### Citire
+[Înapoi la programe](#câteva-programe-simple-1)
+
 
 ### Instrucțiuni decizionale
+[Înapoi la programe](#câteva-programe-simple-1)
 
 Sau un mod pompos de a spune `dacă/altfel` (`if/else`).
 
 
 ## Exerciții
+[Înapoi la cuprins](#cuprins)
+
 
 
 ## Întrebări, erori, diverse
+[Înapoi la cuprins](#cuprins)
+
 * 🚧
 
 ## Resurse recomandate
