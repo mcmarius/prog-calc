@@ -3,10 +3,10 @@
 ### ⚠ **Puneți cât mai multe întrebări! Nu există întrebări greșite.**
 
 # Cuprins
-* ## [Pregătirea mediului de lucru](#pregătirea-mediului-de-lucru)
-* ## [Câteva programe simple](#câteva-programe-simple)
-* ## [Exerciții](#exerciții)
-* ## [Întrebări, erori și orice nu a fost acoperit deja](#întrebări-erori-diverse)
+## [Pregătirea mediului de lucru](#pregătirea-mediului-de-lucru)
+## [Câteva programe simple](#câteva-programe-simple)
+## [Exerciții](#exerciții)
+## [Întrebări, erori și orice nu a fost acoperit deja](#întrebări-erori-diverse)
 
 ---
 
