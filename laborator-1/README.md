@@ -81,7 +81,7 @@ Revenind la ce făceam înainte, creăm un nou proiect, dublu click pe `Console 
 
 După ce terminați de creat proiectul, ar trebui să obțineți ceva asemănător cu ce vedeți mai jos.
 
-Apăsăm acum pe butonul cu o rotiță și un buton verde de play sau tasta `F9` (sau `Meniu`->`Build`->`Build and run`) (⚙ compilează programul - adică transformă codul sursă de mai sus în cod mașină (0 și 1), ▶ execută programul compilat):
+Apăsăm acum pe butonul cu o rotiță și un buton verde de play sau tasta `F9` (sau `Meniu`->`Build`->`Build and run`) (⚙ compilează programul - adică transformă codul sursă de mai jos în cod mașină (0 și 1), ▶ execută programul compilat):
 
 ![](img/done-1-2.png)
 
@@ -164,9 +164,9 @@ Din punctul de vedere al persoanei care scrie/citește codul sursă, tipurile de
 - enumerări, declarate cu `enum`: de exemplu `enum Culoare {ROSU, GALBEN, VERDE};`
 - tipul `void` (nimic (sau orice), vedem mai încolo)
 - derivate:
-  - tablouri (vectori) - pentru colecții de obiecte de același tip: `int loto[] = {1, 2, 3};`
+  - tablouri (vectori) - pentru colecții de elemente de același tip: `int loto[] = {1, 2, 3};`
   - pointeri - rețin adrese de memorie: `int*`
-  - structuri - pentru obiecte de tipuri diferite (nu obligatoriu): `struct persoana { int anul_nasterii; float inaltime; };`
+  - structuri - pentru grupări de elemente de tipuri (eventual) diferite: `struct persoana { int anul_nasterii; float inaltime; };`
   - uniuni - momentan doar să știți că există
 
 Am dat doar câteva exemple ca să vă faceți o idee, lista de mai sus nu este exhaustivă. Putem face și alte clasificări după alte criterii.
@@ -217,7 +217,12 @@ R: Pentru că nu tratează corect cazurile speciale de overflow/underflow. Este 
 ### Afișare
 [Înapoi la programe](#câteva-programe-simple-1)
 
-Citirea mai târziu, întrucât nu am discutat despre variabile.
+Operațiile de intrare/ieșire (input/output) sunt posibile prin intermediul bibliotecii standard `<stdio.h>`: std = standard, io = input/output, h = header.
+
+În `<stdio.h>` avem mai multe funcții predefinite.
+
+Citirea o facem mai târziu, întrucât nu am discutat despre variabile.
+
 
 ### Variabile
 [Înapoi la programe](#câteva-programe-simple-1)
