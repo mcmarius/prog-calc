@@ -194,7 +194,7 @@ Putem deduce că structura generală a unei funcții este asemănătoare cu
     <instructiune-1>
     ...
     <instructiune-n>
-    return <expresie de tip tip-retur>; /* sau return; daca tip-retur este void*/
+    return <expresie de tip tip-retur>; /* sau return; daca tip-retur este void */
 }
 ```
 
@@ -214,22 +214,72 @@ R: Pentru programe simple, e suficient `main`. Totuși, este bine să vă obișn
 
 R: Pentru că nu tratează corect cazurile speciale de overflow/underflow. Este un detaliu de care e bine să ținem cont, chiar dacă în majoritatea cazurilor nu vom verifica explicit acest lucru, deoarece ar fi ineficient.
 
+Î: Ce înseamnă acel `/* bla bla */`?
+```c
+/* Acesta este un comentariu de tip bloc si se poate intinde pe mai multe randuri
+
+Comentariile sunt ignorate de compilator, dar ne ajuta sa intelegem ce face codul
+si sa ii ajutam si pe altii sa inteleaga ce am vrut noi sa obtinem cu acest cod*/
+// Incepand cu C99, exista si comentarii la nivel de rand
+```
+Comentariile bloc încep cu `/*` și se încheie cu `*/`, iar cele la nivel de linie încep cu `//` și "expiră" la sfârșitul rândului.
+
 ### Afișare
 [Înapoi la programe](#câteva-programe-simple-1)
 
-Operațiile de intrare/ieșire (input/output) sunt posibile prin intermediul bibliotecii standard `<stdio.h>`: std = standard, io = input/output, h = header.
+Operațiile de intrare/ieșire (input/output) sunt posibile prin intermediul bibliotecii standard `<stdio.h>`. De la ce vine stdio?
+  - std = standard
+  - io = input/output
+  - h = header
 
-În `<stdio.h>` avem mai multe funcții predefinite.
+În `<stdio.h>` avem mai multe funcții predefinite pentru citire și afișare. Momentan, ne limităm la citirea de la tastatură și afișarea pe ecran. Funcțiile care ne interesează acum sunt:
+  - [`printf(const char *format, ...)`](https://en.cppreference.com/w/c/io/fprintf)
+    - cu parametrul `format` spunem în ce mod vrem să facem afișarea
+    - cu parametrii `...` spunem ce vrem să afișăm; aceste "..." semnifică zero sau mai multe argumente
+  - [`scanf(const char *format, ...)`](https://en.cppreference.com/w/c/io/fscanf), asemănător cu `printf`
+    - cu `format` spunem ce fel de date citim
+    - cu `...` spunem "locul" unde vrem să primim ceea ce citim
 
-Citirea o facem mai târziu, întrucât nu am discutat despre variabile.
+Citirea o detaliem un pic mai târziu, întrucât nu am discutat despre variabile.
 
+În parametrul `format`, fiecare `%` este tratat în mod special. Acest `%` indică faptul că începe un **specificator de conversie**. Fiecărui specificator îi corespunde un *argument* în acei `...`. Excepție face `%%`, care va afișa `%`.
+
+Câțiva specificatori de conversie mai comuni (am inclus și caracterul de început `%`):
+- `%d`: număr întreg cu semn reprezentat în baza 10 (**d**ecimal integer)
+- `%u`: număr întreg fără semn reprezentat în baza 10 (**u**nsigned integer)
+- `%x`: număr întreg fără semn reprezentat în baza 16 (**h**exadecimal representation)
+- `%o`: număr întreg fără semn reprezentat în baza 8 (**o**ctal representation)
+- `%f`: număr real reprezentat în virgulă mobilă (**f**loating point)
+- `%c`: **c**aracter
+- `%s`: șir de caractere (**s**tring)
+
+Utilizarea `#` între caracterul `%` și caracterul de conversie îi spune funcției `printf` că dorim "afișarea alternativă". Aceasta are efect numai pentru unii specificatori de conversie, acolo unde are sens. Verificați ce afișează programul de mai jos dacă scoateți acest `#`.
+
+Caracterul `\n` este și el tratat special și înseamnă "rând nou" (altfel, afișarea s-ar face în continuare).
+```c
+#include <stdio.h>  /* pentru functia printf */
+
+int main()
+{
+    printf("Aceasta este prima afisare\n");
+    printf("Niste numere intregi: %d, %d si %d\n", 1, 2, 3);
+    /* afiseaza "Niste numere intregi: 1, 2 si 3" */
+    printf("Numarul 20 in baza 10: %u, in baza 16: %#x si in baza 8: %#o \n", 20, 20, 20);
+    /* afiseaza "Numarul 20 in baza 10: 20, in baza 16: 0x14 si in baza 8: 024" */
+    printf("Afisarea unui numar cu 3 spatii pentru aliniere la dreapta: %3d\n", );
+    /* afiseaza "Afisarea unui numar cu 3 spatii pentru aliniere:  14" */
+    return 0;
+}
+```
 
 ### Variabile
 [Înapoi la programe](#câteva-programe-simple-1)
 
+Programul de mai sus nu a folosit deloc variabile.
 
 ### Citire
 [Înapoi la programe](#câteva-programe-simple-1)
+
 
 
 ### Instrucțiuni decizionale
