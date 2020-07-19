@@ -348,7 +348,7 @@ int main()
 #### Alte observații
 - constantele se inițializează la declarare
 - veți obține alte valori ale adreselor decât cele din comentarii, dar la primele 3 afișări veți avea o aceeași adresă
-- `(void*)` este necesar dacă vrem să respectăm standardul C; mai multe detalii [aici](https://stackoverflow.com/a/15292265) și [aici](https://stackoverflow.com/a/2369593)
+- `(void*)` este necesar dacă vrem să respectăm standardul C; mai multe detalii [aici](https://stackoverflow.com/questions/9053658), [aici](https://stackoverflow.com/a/15292265) și [aici](https://stackoverflow.com/a/2369593)
 - `const tip_de_date` este echivalent cu `tip_de_date const`: important este să folosiți aceeași notație peste tot din simplul motiv că e mai ușor de înțeles codul; mai sus am folosit notații diferite *doar cu scop ilustrativ!* Detalii în [documentație](https://en.cppreference.com/w/c/language/declarations)
 - în limbajul C, de obicei spațiile nu sunt foarte importante: `int* adr` este echivalent cu `int *adr` sau `int*adr`
 - exemplul este destul de stufos, puteți reveni ulterior, nu vă faceți griji dacă nu ați înțeles tot
