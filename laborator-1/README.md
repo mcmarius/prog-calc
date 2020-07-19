@@ -95,7 +95,7 @@ Acesta a fost primul pas din laboratorul 1. Felicitări! ✔
 [Înapoi la cuprins](#cuprins)
 ### [Cel mai simplu program](#cel-mai-simplu-program-1)
 ### [Afișare](#afișare-1)
-### [Variabile](#variabile-1)
+### [Variabile și constante](#variabile-și-constante-1)
 ### [Citire](#citire-1)
 ### [Instrucțiuni decizionale](#instrucțiuni-decizionale-1)
 
@@ -266,16 +266,93 @@ int main()
     /* afiseaza "Niste numere intregi: 1, 2 si 3" */
     printf("Numarul 20 in baza 10: %u, in baza 16: %#x si in baza 8: %#o \n", 20, 20, 20);
     /* afiseaza "Numarul 20 in baza 10: 20, in baza 16: 0x14 si in baza 8: 024" */
-    printf("Afisarea unui numar cu 3 spatii pentru aliniere la dreapta: %3d\n", );
+    printf("Afisarea unui numar cu 3 spatii pentru aliniere la dreapta: %3d\n", 14);
     /* afiseaza "Afisarea unui numar cu 3 spatii pentru aliniere:  14" */
     return 0;
 }
 ```
 
-### Variabile
+### Variabile și constante
 [Înapoi la programe](#câteva-programe-simple-1)
 
-Programul de mai sus nu a folosit deloc variabile.
+Programele de mai sus nu au folosit deloc variabile:
+- `"Hello world!\n"` este un șir de caractere constant (altfel spus, un literal de tip șir de caractere)
+- `"Niste numere intregi: %d, %d si %d\n"` este un alt șir de caractere constant, nu e relevant în acest context faptul că are în componență specificatori de conversie
+- `0`, `1`, `2`, `3` sunt literali de tip întreg cu semn
+
+Constantele sunt... constante, imutabile, nu își pot schimba valoarea. Cele de mai sus se numesc literali; sunt tot un fel de constante, dar nu au nume.
+
+Constantele se declară astfel: `const tip_de_date nume_constanta = expresie;`. Exemple:
+- `const int x = 3;`
+- `const int y = x*x - 6;`
+
+Pentru a scrie programe mai complicate, avem nevoie inevitabil de variabile; nu putem face foarte multe lucruri doar cu constante și literali.
+
+Variabilele sunt caracterizate de 4 informații:
+- tipul de date
+- numele (cunoscut și ca [identificator](https://en.cppreference.com/w/c/language/identifier))
+- valoarea reținută, **dacă variabila este inițializată; atenție! folosirea valorii unei variabile neinițializate înseamnă bug-uri**
+- adresa de memorie
+
+Variabilele se declară folosind sintaxa `tip_de_date nume_variabila;`. Desigur, dacă avem nevoie, putem inițializa variabilele atunci când le declarăm: `tip_de_date nume = expresie;`.
+
+De exemplu, `int nr;` declară o variabilă întreg cu numele `nr`, iar `int* adr` declară o variabilă de tip `int*` cu numele `adr`.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int nr;
+    int* adr;
+    nr = 15;
+    printf("Variabila `nr` are valoarea %d si adresa %p.\n", nr, (void*)&nr);
+    /* afiseaza "Variabila `nr` are valoarea 15 si adresa 0x7ffde5e842ec." */
+
+    nr = 25;  // putem schimba valoarea retinuta de o variabila
+    adr = &nr;
+    printf("Variabila `nr` are valoarea %d si adresa %p.\n", nr, (void*)adr);
+    /* afiseaza "Variabila `nr` are valoarea 25 si adresa 0x7ffde5e842ec." */
+
+    *adr = 35;  // asta se numeste dereferentiere si este operatia "inversa" celei de la linia 12: `adr = &nr;`
+    printf("Variabila `nr` are valoarea %d si adresa %p.\n", nr, (void*)&nr);
+    /* afiseaza "Variabila `nr` are valoarea 35 si adresa 0x7ffde5e842ec." */
+
+    printf("Variabila `adr` are valoarea %p, adresa %p, iar prin dereferentiere obtinem %d.\n", (void*)adr, (void*)&adr, *adr);
+    /* afiseaza "Variabila `adr` are valoarea 0x7ffde5e842ec, adresa 0x7ffde5e842f8, iar prin dereferentiere obtinem 35." */
+
+    const int x = 3;
+    // nu putem schimba valoarea retinuta de o constanta
+    // x = 4;     // error: assignment of read-only variable 'x'
+
+    // nu putem prelua adresa unei constante folosind o variabilă! tipul de date `const int` este diferit de tipul de date `int`
+    // `adr` are tipul de date `int*`, deci retine adrese catre variabile de tip `int`, nu `const int`
+    // pentru a retine adresa lui `x`, avem nevoie de un obiect de tip `const int*`
+    // adr = &x;  // error: assignment discards 'const' qualifier from pointer target type
+
+    nr = x;
+    printf("Variabila `nr` are valoarea %d si adresa %p.\n", nr, (void*)&nr);
+    /* afiseaza "Variabila `nr` are valoarea 3 si adresa 0x7ffde5e842ec." */
+
+    printf("Variabila `x` are valoarea %d si adresa %p.\n", x, (void*)&x);
+    /* afiseaza "Variabila `x` are valoarea 3 si adresa 0x7ffde5e842f4." */
+
+    int const y = nr + 13, *adr_y;
+    adr_y = &y;  // este ok, adr_y are tipul `const int*`
+    printf("Variabila `y` are valoarea %d si adresa %p.\n", y, (void*)adr_y);
+    /* afiseaza "Variabila `y` are valoarea 16 si adresa 0x7ffde5e842f0." */
+    return 0;
+}
+```
+
+#### Alte observații
+- constantele se inițializează la declarare
+- veți obține alte valori ale adreselor decât cele din comentarii, dar la primele 3 afișări veți avea o aceeași adresă
+- `(void*)` este necesar dacă vrem să respectăm standardul C; mai multe detalii [aici](https://stackoverflow.com/a/15292265) și [aici](https://stackoverflow.com/a/2369593)
+- `const tip_de_date` este echivalent cu `tip_de_date const`: important este să folosiți aceeași notație peste tot din simplul motiv că e mai ușor de înțeles codul; mai sus am folosit notații diferite *doar cu scop ilustrativ!* Detalii în [documentație](https://en.cppreference.com/w/c/language/declarations)
+- în limbajul C, de obicei spațiile nu sunt foarte importante: `int* adr` este echivalent cu `int *adr` sau `int*adr`
+- exemplul este destul de stufos, puteți reveni ulterior, nu vă faceți griji dacă nu ați înțeles tot
+- puneți întrebări
 
 ### Citire
 [Înapoi la programe](#câteva-programe-simple-1)
