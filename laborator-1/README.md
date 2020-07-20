@@ -393,6 +393,38 @@ Observații:
 
 Sau un mod pompos de a spune `dacă/altfel` (`if/else`).
 
+Rulând programul de mai sus într-un mod în care eșuează citirea, putem obține rezultate de felul următor:
+```
+Am citit -1 variabile: acestea sunt: 32767, 0, � si 0.000000
+Am citit -1 variabile: acestea sunt: 32764, 0, ( si 0.000000
+Am citit -1 variabile: acestea sunt: 32765, 0, 
+ si 0.000000
+Am citit -1 variabile: acestea sunt: 32766, 0, > si 0.000000
+Am citit -1 variabile: acestea sunt: 32765, 0, n si 0.000000
+Am citit -1 variabile: acestea sunt: 0, 0,  si 0.000000
+```
+
+**Atenție!** În situația de mai sus, am afișat valorile unor variabile *neinițializate*, ceea ce constituie un program incorect.
+
+Nu dorim să se întâmple acest lucru. De aceea (dar și din alte motive), avem nevoie în plus de instrucțiuni decizionale.
+
+Un prim exemplu ar fi să modificăm programul de mai sus astfel încât să nu afișăm acele variabile dacă citirea nu a reușit:
+```c
+#include <stdio.h>
+
+int main()
+{
+    int a, b, citite;
+    char c;
+    float f;
+    citite = scanf("%d %d %c %f", &a, &b, &c, &f);
+    if(citite != 4)
+        printf("Eroare la citire!");
+    else
+        printf("Am citit %d variabile: acestea sunt: %d, %d, %c si %f", citite, a, b, c, f);
+    return 0;
+}
+```
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
