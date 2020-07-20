@@ -357,7 +357,36 @@ int main()
 ### Citire
 [Înapoi la programe](#câteva-programe-simple-1)
 
+Următorul pas este să efectuăm citirea datelor în variabile într-un mod interactiv.
 
+După cum am menționat și la pasul de [afișare](#afișare-1), vom folosi funcția `scanf`, disponibilă în header-ul `<stdio.h>`.
+
+Funcția `scanf` este asemănătoare cu `printf` de mai devreme:
+- primul argument reprezintă un șir de caractere ce poate conține specificatori de conversie
+  - există câteva diferențe, însă cea mai importantă este aceea că `%s` este complet **nesigur** dacă nu specificăm un număr maxim de caractere pe care vrem să le citim: dacă vrem să citim un șir de cel mult 15 caractere, vom folosi specificatorul de conversie `%15s`
+- restul argumentelor trebuie să corespundă *adreselor* variabilelor în care vrem să reținem ce citim
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int a, b, citite;
+    char c;
+    float f;
+    citite = scanf("%d %d %c %f", &a, &b, &c, &f);
+    printf("Am citit %d variabile: acestea sunt: %d, %d, %c si %f", citite, a, b, c, f);
+    return 0;
+}
+```
+
+Observații:
+- în aplicații mai importante, trebuie să verificăm **întotdeauna** dacă o operație a reușit sau nu
+  - în acest caz, am verificat rezultatul întors de funcția `scanf`, prin care aflăm numărul de variabile pentru care s-a făcut atribuirea cu succes
+    - câteva erori posibile: nu avem de unde să citim sau a intervenit o eroare în procesul de citire (de exemplu la conversii)
+  - de asemenea, funcția `printf` întoarce numărul de caractere afișate
+    - câteva erori posibile: nu avem unde să afișăm sau erori de conversie
+- funcția `scanf` "consumă" toate [spațiile albe](https://en.cppreference.com/w/c/io/fscanf) (excepția care vă interesează este `%c`); detalii în [documentație](https://en.cppreference.com/w/c/io/fscanf)
 
 ### Instrucțiuni decizionale
 [Înapoi la programe](#câteva-programe-simple-1)
