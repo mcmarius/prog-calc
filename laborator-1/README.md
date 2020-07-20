@@ -375,7 +375,7 @@ int main()
     char c;
     float f;
     citite = scanf("%d %d %c %f", &a, &b, &c, &f);
-    printf("Am citit %d variabile: acestea sunt: %d, %d, %c si %f", citite, a, b, c, f);
+    printf("Am citit %d variabile: acestea sunt: %d, %d, %c si %f.\n", citite, a, b, c, f);
     return 0;
 }
 ```
@@ -395,13 +395,13 @@ Sau un mod pompos de a spune `dacă/altfel` (`if/else`).
 
 Rulând programul de mai sus într-un mod în care eșuează citirea, putem obține rezultate de felul următor:
 ```
-Am citit -1 variabile: acestea sunt: 32767, 0, � si 0.000000
-Am citit -1 variabile: acestea sunt: 32764, 0, ( si 0.000000
+Am citit -1 variabile: acestea sunt: 32767, 0, � si 0.000000.
+Am citit -1 variabile: acestea sunt: 32764, 0, ( si 0.000000.
 Am citit -1 variabile: acestea sunt: 32765, 0, 
- si 0.000000
-Am citit -1 variabile: acestea sunt: 32766, 0, > si 0.000000
-Am citit -1 variabile: acestea sunt: 32765, 0, n si 0.000000
-Am citit -1 variabile: acestea sunt: 0, 0,  si 0.000000
+ si 0.000000.
+Am citit -1 variabile: acestea sunt: 32766, 0, > si 0.000000.
+Am citit -1 variabile: acestea sunt: 32765, 0, n si 0.000000.
+Am citit -1 variabile: acestea sunt: 0, 0,  si 0.000000.
 ```
 
 **Atenție!** În situația de mai sus, am afișat valorile unor variabile *neinițializate*, ceea ce constituie un program incorect.
@@ -419,9 +419,9 @@ int main()
     float f;
     citite = scanf("%d %d %c %f", &a, &b, &c, &f);
     if(citite != 4)
-        printf("Eroare la citire!");
+        printf("Eroare la citire!\n");
     else
-        printf("Am citit %d variabile: acestea sunt: %d, %d, %c si %f", citite, a, b, c, f);
+        printf("Am citit %d variabile: acestea sunt: %d, %d, %c si %f.\n", citite, a, b, c, f);
     return 0;
 }
 ```
