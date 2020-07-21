@@ -1,6 +1,7 @@
 # Laboratorul 1
 
 ### ⚠ **Puneți cât mai multe întrebări! Nu există întrebări greșite.**
+#### Semnalați orice fel de greșeli găsiți!
 
 # Cuprins
 ## [Pregătirea mediului de lucru](#pregătirea-mediului-de-lucru-1)
@@ -426,10 +427,80 @@ int main()
 }
 ```
 
+Următorul exemplu prezintă și cazul în care avem mai mult de două ramuri:
+```c
+#include <stdio.h>
+
+int hungry(int hour) {
+    if((hour >  7 && hour < 10) ||  // breakfast
+       (hour > 12 && hour < 15) ||  // lunch
+       (hour > 18 && hour < 23))    // dinner
+    {
+        return 1;
+    }
+    return 0;
+}
+
+void eat() { printf("Eating!\n"); }
+void drink() { printf("Drinking!\n"); }
+
+int tired() {
+    int amount;
+    printf("How tired are you? (0 - not at all, 10 - zombie)\n");
+    scanf("%d", &amount);
+    return amount > 3;
+}
+
+void rest() { printf("Zzz...\n"); }
+
+void have_fun();  // linia 25
+
+int main()
+{
+    int h;
+    printf("What time is it? (0-23)\n");
+    scanf("%d", &h);
+    if(hungry(h)) {
+        eat();
+        drink();
+    }
+    else if(tired())
+        rest();
+    else
+        have_fun();
+    return 0;
+}
+
+void have_fun() { /* implementation-defined */ }
+```
+
+Observații:
+- parantezele nu sunt necesare, întrucât operatorul `&&` este mai prioritar decât operatorul `||`; totuși, nu e nevoie să rețineți precedența dacă folosiți paranteze pentru a arăta în ce ordine vreți să aibă loc evaluările operanzilor; detalii despre operatori [aici](https://en.cppreference.com/w/c/language/operator_precedence)
+- la linia 25 am *declarat* funcția `have_fun`, însă nu am furnizat o definiție/implementare/corp; am furnizat definiția pe ultimul rând: chiar dacă în programul de mai sus funcția nu face nimic, aceea este o definiție validă
+- putem simplifica funcția `hungry` astfel:
+```c
+int hungry() {
+    // breakfast, lunch or dinner
+    return (hour >  7 && hour < 10) || (hour > 12 && hour < 15) || (hour > 18 && hour < 23);
+}
+```
+
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
 
+Veți găsi toate rezolvările în folder-ul `solved`. Totuși, este bine să încercați să rezolvați exercițiile pe cont propriu.
 
+Exerciții bazate pe acest laborator:
+- modificări la programul al doilea de la `if/else`:
+  - la funcția `hungry`, ar trebui ca ora să fie incrementată cu 1
+  - citiți în `main` un șir de caractere pe ramura cu `hungry`, iar apoi afișați acest șir cu `%s` în funcția `eat` sau în funcția `drink`
+  - adăugați orice condiții care considerați că lipsesc
+
+Exercițiile din PDF:
+1. Se dă ecuația de gradul al II-lea: `a*x^2 + b*x + c = 0`. Să se calculeze rădăcinile ecuației folosind ori de câte ori se poate operatorii de atribuire combinați.
+2. Se citesc trei numere întregi de la tastatură. Să se afișeze maximul dintre cele  3 numere folosind operatorul decizional.
+3. Se citește un număr întreg n de la tastatură. Să se calculeze `n*8`, `n/4`  și  `n*10` folosind operatorii logici de deplasare la nivel de bit.
+4. Se citește un număr întreg de la tastatură. Să se determine dacă acesta este par sau impar folosind doar operatorii logici la nivel de biți.
 
 ## Întrebări, erori, diverse
 [Înapoi la cuprins](#cuprins)
@@ -438,3 +509,9 @@ int main()
 
 ## Resurse recomandate
 - [cppreference.com](https://en.cppreference.com/w/c)
+- [StackOverflow](https://stackoverflow.com/questions/tagged/c?tab=Votes)
+- [C FAQ](http://c-faq.com/questions.html)
+
+### Resurse de evitat
+- cărțile lui Herbert Schildt
+
