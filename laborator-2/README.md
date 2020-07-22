@@ -61,7 +61,7 @@ Mie îmi apare de două ori `-Wall` pentru că este setat și la nivel de proiec
 ### [Sau, în unele situații, `switch`](#switch)
 ### [Instrucțiuni repetitive: `for`](#for)
 ### [Instrucțiuni repetitive: `while`](#while)
-### [Instrucțiuni repetitive: `do`...`while`](#do-while)
+### [Instrucțiuni repetitive: `do`...`while`](#dowhile)
 ### [Operații pe biți](#operații-pe-biți-1)
 
 ### Din nou `if`
