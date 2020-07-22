@@ -69,27 +69,27 @@ Mie îmi apare de două ori `-Wall` pentru că este setat și la nivel de proiec
 
 
 ### `switch`
-[Înapoi la programe](#programe-discutate)
+[Înapoi la programe](#programe-discutate-1)
 
 
 
 ### `for`
-[Înapoi la programe](#programe-discutate)
+[Înapoi la programe](#programe-discutate-1)
 
 
 
 ### `while`
-[Înapoi la programe](#programe-discutate)
+[Înapoi la programe](#programe-discutate-1)
 
 
 
 ### `do`...`while`
-[Înapoi la programe](#programe-discutate)
+[Înapoi la programe](#programe-discutate-1)
 
 
 
 ### Operații pe biți
-[Înapoi la programe](#programe-discutate)
+[Înapoi la programe](#programe-discutate-1)
 
 
 
