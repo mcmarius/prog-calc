@@ -166,7 +166,7 @@ Din punctul de vedere al persoanei care scrie/citește codul sursă, tipurile de
 - tipul `void` (nimic (sau orice), vedem mai încolo)
 - derivate:
   - tablouri (vectori) - pentru colecții de elemente de același tip: `int loto[] = {1, 2, 3};`
-  - pointeri - rețin adrese de memorie: `int*`
+  - pointeri - rețin adrese de memorie: de exemplu, o variabilă de tip `int*` reține adresa unei variabile de tip `int`
   - structuri - pentru grupări de elemente de tipuri (eventual) diferite: `struct persoana { int anul_nasterii; float inaltime; };`
   - uniuni - momentan doar să știți că există
 
@@ -248,7 +248,7 @@ Citirea o detaliem un pic mai târziu, întrucât nu am discutat despre variabil
 Câțiva specificatori de conversie mai comuni (am inclus și caracterul de început `%`):
 - `%d`: număr întreg cu semn reprezentat în baza 10 (**d**ecimal integer)
 - `%u`: număr întreg fără semn reprezentat în baza 10 (**u**nsigned integer)
-- `%x`: număr întreg fără semn reprezentat în baza 16 (**h**exadecimal representation)
+- `%x`: număr întreg fără semn reprezentat în baza 16 (he**x**adecimal representation)
 - `%o`: număr întreg fără semn reprezentat în baza 8 (**o**ctal representation)
 - `%f`: număr real reprezentat în virgulă mobilă (**f**loating point)
 - `%c`: **c**aracter
