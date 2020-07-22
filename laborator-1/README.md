@@ -492,7 +492,7 @@ Veți găsi toate rezolvările în folder-ul `solved`. Totuși, este bine să î
 
 Exerciții bazate pe acest laborator:
 - modificări la programul al doilea de la `if/else`:
-  - la funcția `hungry`, ar trebui ca ora să fie incrementată cu 1
+  - în funcția `hungry`, ar trebui ca ora să fie incrementată cu 1, iar modificarea să fie vizibilă și în funcția `main`
   - citiți în `main` un șir de caractere pe ramura cu `hungry`, iar apoi afișați acest șir cu `%s` în funcția `eat` sau în funcția `drink`
   - adăugați orice condiții care considerați că lipsesc
 
