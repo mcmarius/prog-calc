@@ -65,11 +65,34 @@ Mie îmi apare de două ori `-Wall` pentru că este setat și la nivel de proiec
 ### [Operații pe biți](#operații-pe-biți-1)
 
 ### Din nou `if`
+
+
+
 ### `switch`
+[Înapoi la programe](#programe-discutate)
+
+
+
 ### `for`
+[Înapoi la programe](#programe-discutate)
+
+
+
 ### `while`
+[Înapoi la programe](#programe-discutate)
+
+
+
 ### `do`...`while`
+[Înapoi la programe](#programe-discutate)
+
+
+
 ### Operații pe biți
+[Înapoi la programe](#programe-discutate)
+
+
+
 
 
 ## Exerciții
