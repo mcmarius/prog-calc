@@ -513,5 +513,5 @@ Exercițiile din PDF:
 - [C FAQ](http://c-faq.com/questions.html)
 
 ### Resurse de evitat
-- cărțile lui Herbert Schildt
+- cărțile lui Herbert Schildt (de ce? [pentru că](https://www.seebs.net/c/c_tcn4e.html) și [pentru că](http://www.lysator.liu.se/c/schildt.html) și... [pentru că](https://web.archive.org/web/20000816131043/http://www.qnx.com/~glen/deadbeef/2764.html))
 
