@@ -57,6 +57,19 @@ Mie îmi apare de două ori `-Wall` pentru că este setat și la nivel de proiec
 ## Programe discutate
 [Înapoi la cuprins](#cuprins)
 
+### [Instrucțiuni decizionale (iar)][#din-nou-if]
+### [Sau, în unele situații, `switch`](#switch)
+### [Instrucțiuni repetitive: `for`](#for)
+### [Instrucțiuni repetitive: `while`](#while)
+### [Instrucțiuni repetitive: `do`...`while`](#do-while)
+### [Operații pe biți](#operații-pe-biți-1)
+
+### Din nou `if`
+### `switch`
+### `for`
+### `while`
+### `do`...`while`
+### Operații pe biți
 
 
 ## Exerciții
