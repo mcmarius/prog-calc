@@ -150,14 +150,14 @@ De exemplu, expresia `1 + 2 * 5` este echivalentă cu `1 + (2 * 5)` (adică 11) 
 
 Urmând aceeași analogie, operatorii matematici (`*`, `+`, `-` etc.) au prioritate mai mare decât operatorii de comparare (`>=`, `==` etc.), iar aceștia au la rândul lor prioritate mai mare decât operatorii logici (`&&`, `||`):
 ```c
-float epsilon = 1e-5;
+double epsilon = 1e-5;
 if(temperatura - 100 < epsilon || 100 - temperatura < epsilon)
     puts("Fierbe apa!");
 ```
 
 Sau folosim funcția [`fabs`](https://en.cppreference.com/w/c/numeric/math/fabs) din biblioteca [`<math.h>`](https://en.cppreference.com/w/c/numeric/math):
 ```c
-float epsilon = 1e-5;
+double epsilon = 1e-5;
 if(fabs(temperatura - 100) < epsilon)
     puts("Fierbe apa!");
 ```
