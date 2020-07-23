@@ -104,7 +104,7 @@ Am folosit funcția `puts` în loc de `printf` deoarece nu dorim să formatăm n
 Dacă declarăm `temperatura` de un tip de date real, programul se complică. Haideți să vedem de ce.
 
 #### `float`, `double` sau `long double`?
-Răspunsul corect este "depinde". Dacă avem nevoie de calcule cât mai precise, folosim `double` sau `long double` (sau alte biblioteci specializate, de exemplu [asta](https://github.com/creachadair/imath)). `long double` oferă o precizie cel puțin la fel de bună ca `double`. Dacă implementarea permite, este mai precis decât `double`. "Dacă implementarea permite" este un mod formal de a spune "dacă avem instalat ceva corespunzător".
+Răspunsul corect este "depinde". Dacă avem nevoie de calcule cât mai precise, folosim `double` sau `long double` (sau alte biblioteci specializate, de exemplu [asta](https://github.com/creachadair/imath)). `long double` oferă o precizie cel puțin la fel de bună ca `double`. Dacă anumite condiții sunt îndeplinite, `long double` este mai precis decât `double`. Printre condițiile respective se numără un hardware adecvat, un compilator care să știe să genereze cod mașină/de asamblare special pentru acel hardware și instalarea de biblioteci corespunzătoare.
 
 Exemple: calcule științifice, financiare.
 
