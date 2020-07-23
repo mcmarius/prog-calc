@@ -167,7 +167,109 @@ Soluția prezentată mai sus este acceptabilă pentru ce veți face în facultat
 ### `switch`
 [Înapoi la programe](#programe-discutate-1)
 
+Instrucțiunea `switch` este asemănătoare cu instrucțiunea `if` și este utilă atunci când vrem să testăm egalitatea unei variabile cu mai multe valori posibile.
 
+Instrucțiunea `break` iese din `switch`. În caz contrar, execuția continuă pe următoarea ramură *fără verificarea condiției*. Nu trebuie să mă credeți pe cuvânt. Încercați să vedeți ce se întâmplă.
+
+Puteți să mă corectați, nu m-am mai uitat pe hartă pentru a face următorul exemplu corect din punct de vedere "cartografic":
+```c
+#include <stdio.h>
+
+int main()
+{
+    int km;
+    puts("Ce kilometru arata borna?");
+    scanf("%d", &km);
+    switch(km)
+    {
+        case 80:
+            puts("Ne apropiem de Ploiesti!");
+            break;
+        case 120:
+            puts("Ne apropiem de Comarnic!");
+            break;
+        case 150:
+            puts("Ne apropiem de Sinaia!");
+            break;
+        case 170:
+            puts("Ne apropiem de Predeal!");
+            break;
+        default:
+            puts("Nu am idee unde sunt!");
+            break;
+    }
+    return 0;
+}
+```
+
+Această instrucțiune este utilizată de obicei cu tipuri de date enumerabile ([`enum`](https://en.cppreference.com/w/c/language/enum)). Acestea reprezintă numere cu "etichete" și ne ajută să avem un cod mai ușor de înțeles și de modificat pe viitor. Am putea la fel de bine să folosim valori întregi direct în condiții, ca în programul de mai sus, însă devine dificil de urmărit dacă avem multe cazuri.
+
+Să vedem și al doilea exemplu:
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+enum Moneda { RON, EUR, USD, BGN, HUF, XBT };
+
+const char* afis_moneda(enum Moneda);  // linia 6
+
+int main()
+{
+    int mon;
+    enum Moneda moneda;
+    double suma;
+    bool schimb = true;
+    printf("Introduceti suma: ");
+    scanf("%lf", &suma);
+    puts("In ce moneda vreti sa schimbati?");
+    puts("0 - RON, 1 - EUR, 2 - USD, 3 - BGN");
+    scanf("%d", &mon);
+    moneda = mon;   // linia 19
+    switch(moneda)
+    {
+        case EUR:
+            suma /= 4.83;
+            break;
+        case USD:
+            suma /= 4.16;
+            break;
+        case BGN:
+            suma /= 2.47;
+            break;
+        case RON:
+        default:
+            schimb = false;
+            puts("Nu am efectuat schimbul!");
+            break;
+    }
+    if(schimb)
+        printf("Suma dupa schimb: %.3f %s", suma, afis_moneda(moneda));
+    return 0;
+}
+
+const char* afis_moneda(enum Moneda m)
+{
+    switch(m)
+    {
+        case RON: return "Romanian New Leu (RON)";
+        case EUR: return "Euro (€)";
+        case USD: return "US Dollar ($)";
+        case BGN: return "Bulgarian Lev (BGN)";
+        case HUF: return "Hungarian Forint (HUF)";
+        case XBT: return "Bitcoin (XBT)";
+        default: return "";
+    }
+}
+```
+
+Observații:
+- spre deosebire de `if`, aici sunt întotdeauna necesare acoladele; excepția ar fi un `switch` cu un singur `case`, dar e greșit (neavând `default`) și nu prea are sens
+- dacă nu acoperim toate cazurile și nu avem o ramură implicită (cu `default`), ar trebui să primim un warning de la compilator, deoarece aceasta poate semnifica o greșeală de programare
+- am declarat un nou tip de date enumerabil; întrucât este un tip de date definit de noi, atunci când declarăm variabile de acest tip este necesar și cuvântul cheie `enum`: `enum Moneda moneda;`
+- pentru a folosi tipul de date `bool` și constantele `true` și `false`, am inclus `<stdbool.h>` (C99); spre deosebire de C++, limbajul C nu a avut de la început `bool`; tot spre deosebire de C++, în C constantele `true` și `false` sunt de fapt numerele întregi 0 și 1
+- deși variabilele de tipuri de date enumerabile trebuie să se comporte exact ca variabilele întregi și să poată fi folosite în locul acestora, nu putem citi direct o variabilă de tip enumerabil cu `scanf`; este necesară conversia explicită de la linia 19
+- `op1 /= op2` este prescurtare pentru `op1 = op1 / op2`, unde `op1` și `op2` sunt niște operanzi
+- atunci când declarăm o funcție (linia 6), este suficient să specificăm tipul de date al parametrilor, numele fiind opțional
 
 ### `for`
 [Înapoi la programe](#programe-discutate-1)
