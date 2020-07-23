@@ -73,7 +73,7 @@ Pentru a ne aminti instrucțiunea `if`, avem următorul program:
 int main()
 {
     int temperatura;
-    printf("Citeste temperatura (grade Celsius): ");
+    printf("Introduceti temperatura (grade Celsius): ");
     scanf("%d", &temperatura);
 
     if(temperatura < -20)
