@@ -66,7 +66,7 @@ Mie îmi apare de două ori `-Wall` pentru că este setat și la nivel de proiec
 
 ### Din nou `if`
 
-Pentru a ne aminti instrucțiunea `if`:
+Pentru a ne aminti instrucțiunea `if`, avem următorul program:
 ```c
 #include <stdio.h>
 
@@ -97,6 +97,8 @@ int main()
     return 0;
 }
 ```
+Citiți-l cu atenție pentru a înțelege ce face, apoi executați și faceți câteva modificări (dacă doriți).
+
 Am folosit funcția `puts` în loc de `printf` deoarece nu dorim să formatăm nimic, ci doar să afișăm un mesaj simplu. De asemenea, `puts` adaugă automat `\n`.
 
 Dacă declarăm `temperatura` de un tip de date real, programul se complică. Haideți să vedem de ce.
