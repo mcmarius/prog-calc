@@ -152,14 +152,14 @@ Urmând aceeași analogie, operatorii matematici (`*`, `+`, `-` etc.) au priorit
 ```c
 float epsilon = 1e-5;
 if(temperatura - 100 < epsilon || 100 - temperatura < epsilon)
-    puts("Fierbe apa!\n");
+    puts("Fierbe apa!");
 ```
 
 Sau folosim funcția [`fabs`](https://en.cppreference.com/w/c/numeric/math/fabs) din biblioteca [`<math.h>`](https://en.cppreference.com/w/c/numeric/math):
 ```c
 float epsilon = 1e-5;
 if(fabs(temperatura - 100) < epsilon)
-    puts("Fierbe apa!\n");
+    puts("Fierbe apa!");
 ```
 
 Soluția prezentată mai sus este acceptabilă pentru ce veți face în facultate. Momentan e important doar să știți că acest subiect este unul complicat. Ca punct de plecare, puteți începe să citiți de [aici](https://floating-point-gui.de) (pentru vizualizări [aici](https://bartaz.github.io/ieee754-visualization/)), iar strict pentru comparații [aici](https://floating-point-gui.de/errors/comparison/). Desigur, lucrurile sunt complicate, dar nu e bine nici să împușcăm musca cu tunul dacă nu e cazul.
