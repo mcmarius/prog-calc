@@ -447,6 +447,8 @@ Observații:
 
 ### Operații pe biți
 [Înapoi la programe](#programe-discutate-1)
+[Operatorul `<<`](#operatorul--deplasare-la-stânga)
+[Operatorul `>>`](#operatorul--deplasare-la-dreapta)
 
 În calculator, informația este reprezentată în baza 2 (binar). Operatorii pe biți acționează la nivelul fiecărui bit. În limbajul C, [acești operatori](https://en.cppreference.com/w/c/language/operator_arithmetic) au sens numai pentru numerele întregi (cu sau fără semn).
 
@@ -520,6 +522,7 @@ Exemplu:
 ```
 
 #### Operatorul `<<` (Deplasare la stânga)
+[Înapoi la Operații pe biți](#operații-pe-biți-1)
 
 Exemplu (presupunem că avem doar 8 biți și un întreg **fără** semn):
 ```
@@ -571,6 +574,7 @@ Observații:
   - dacă operandul din stânga este pozitiv, avem comportamend nedefinit atunci când un bit din număr s-ar duce "peste" bitul de semn (primul bit); pe exemplul de mai sus, asta s-ar întâmpla de exemplu la `19 << 3` (ar putea fi -104, 24, ??? sau un portal către o altă dimensiune)
 
 #### Operatorul `>>` (Deplasare la dreapta)
+[Înapoi la Operații pe biți](#operații-pe-biți-1)
 
 Exemplu (presupunem din nou că avem doar 8 biți):
 ```
