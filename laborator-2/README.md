@@ -314,7 +314,7 @@ Observații:
   - rezultatul expresiei nu este folosit în situația de mai sus, însă variabila `i` se modifică
   - diferența dintre operatorul prefix (`<op>i`, exemplu `++i`) și operatorul postfix (`i<op>`, exemplu `i++`) este aceea că pentru operatorul postfix este necesară o copie suplimentară pentru a reține valoarea anterioară; pentru limbajul C, în prezent este irelevant acest aspect din punctul de vedere al performanței, deoarece compilatorul face diverse optimizări
 - instrucțiunea de la linia 10 este doar ca să vedem mai ușor unde se termină afișarea de la primul `for`
-- putem avea mai multe atribuiri: în loc de `i = 1` putem avea `i = 1, j = 20` (presupunând că am declarat variabila `j`
+- putem avea mai multe atribuiri: în loc de `i = 1` putem avea `i = 1, j = 20` (presupunând că am declarat variabila `j`)
 - putem avea mai multe condiții: în loc de `i <= nr_viteze` putem avea `i <= nr_viteze && j > 0`
 - putem avea o expresie mai complexă: în loc de `i++` putem avea `i++, j -= 3`
 - putem scrie mai rapid un `for` în Code::Blocks dacă apăsăm `Ctrl`+`J` după ce apar sugestii ca mai jos
