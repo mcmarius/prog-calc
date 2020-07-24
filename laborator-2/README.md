@@ -448,7 +448,7 @@ Observații:
 ### Operații pe biți
 [Înapoi la programe](#programe-discutate-1)
 
-În calculator, informația este reprezentată în baza 2 (binar). Operatorii pe biți acționează la nivelul fiecărui bit. În limbajul C, acești operatori au sens numai pentru numerele întregi (cu sau fără semn).
+În calculator, informația este reprezentată în baza 2 (binar). Operatorii pe biți acționează la nivelul fiecărui bit. În limbajul C, [acești operatori](https://en.cppreference.com/w/c/language/operator_arithmetic) au sens numai pentru numerele întregi (cu sau fără semn).
 
 De exemplu, numărul `19` (baza 10) este `10011` în baza 2, adică `1*2^4 + 0*2^3 + 0*2^2 + 1*2^1 + 1*2^0 = 16 + 0 + 0 + 2 + 1`.
 
@@ -468,11 +468,10 @@ De ce sunt importante operațiile pe biți? Simplu, deoarece sunt foarte rapide.
 ‍|1|0
 
 Exemplu:
-
 ```
- 19 | 10011
------------
-~19 | 01100
+ 19 | 0 0 0 1 0 0 1 1
+---------------------
+~19 | 0 0 0 0 1 1 0 0
 ```
 
 #### Operatorul `&` (AND)
@@ -481,11 +480,29 @@ Exemplu:
 **0**|0|0
 **1**|0|1
 
+Exemplu:
+```
+ 19 | 0 0 0 1 0 0 1 1  &
+---------------------
+ 11 | 0 0 0 0 1 0 1 1
+---------------------
+    | 0 0 0 0 0 0 1 1
+```
+
 #### Operatorul `|` (OR)
 **\|**|0|1
 -----|-|-
 **0**|0|1
 **1**|1|1
+
+Exemplu:
+```
+ 19 | 0 0 0 1 0 0 1 1  |
+---------------------
+ 11 | 0 0 0 0 1 0 1 1
+---------------------
+    | 0 0 0 1 1 0 1 1
+```
 
 #### Operatorul `^` (XOR)
 **^**|0|1
@@ -493,6 +510,125 @@ Exemplu:
 **0**|0|1
 **1**|1|0
 
+Exemplu:
+```
+ 19 | 0 0 0 1 0 0 1 1  ^
+---------------------
+ 11 | 0 0 0 0 1 0 1 1
+---------------------
+    | 0 0 0 1 1 0 0 0
+```
+
+#### Operatorul `<<` (Deplasare la stânga)
+
+Exemplu (presupunem că avem doar 8 biți):
+```
+   19   | 0 0 0 1 0 0 1 1
+-------------------------
+19 << 1 | 0 0 1 0 0 1 1 0
+-------------------------
+19 << 2 | 0 1 0 0 1 1 0 0
+-------------------------
+19 << 3 | 1 0 0 1 1 0 0 0
+-------------------------
+19 << 4 | 0 0 1 1 0 0 0 0
+-------------------------
+   ...
+-------------------------
+19 << 7 | 1 0 0 0 0 0 0 0
+-------------------------
+19 << 8 | 0 0 0 0 0 0 0 0 ??? comportament nedefinit
+```
+
+Verificăm:
+```c
+#include <stdio.h>
+#include <inttypes.h>
+
+void deplasare_st(uint8_t nr, unsigned sh)
+{
+    uint8_t res;
+    res = nr << sh;
+    printf("%u << %u: %u\n", nr, sh, res);
+}
+
+int main()
+{
+    uint8_t nr = 19;
+    for (int i = 0; i < 8; i++)
+        deplasare_st(nr, i);
+    return 0;
+}
+```
+
+Observații:
+- dacă `sh` este negativ sau e mai mare sau egal cu numărul de biți, ai lui `nr`, avem [**comportament nedefinit**](https://en.cppreference.com/w/c/language/behavior), adică nu avem vreo garanție că programul face ce trebuie; un program *corect* nu conține comportament nedefinit
+  - acest lucru este valabil și pentru operatorul de deplasare la dreapta `>>`
+- operatorul `<<` realizează înmulțirea cu o putere a lui 2: `x << p` îl înmulțește pe `x` cu `2^p`
+- dacă tipul de date al operandului din stânga (`nr`) este fără semn, deplasarea la stânga se realizează în modul descris mai sus
+- dacă tipul de date al operandului din stânga este cu semn, atunci:
+  - dacă operandul din stânga este negativ, comportament nedefinit 💥
+  - dacă operandul din stânga este pozitiv, avem comportamend nedefinit atunci când un bit din număr s-ar duce "peste" bitul de semn (primul bit); pe exemplul de mai sus, asta s-ar întâmpla de exemplu la `19 << 3` (ar putea fi -104, 24, ??? sau un portal către o altă dimensiune)
+
+#### Operatorul `>>` (Deplasare la dreapta)
+
+Exemplu (presupunem din nou că avem doar 8 biți):
+```
+   19   | 0 0 0 1 0 0 1 1
+-------------------------
+19 >> 1 | 0 0 0 0 1 0 0 1
+-------------------------
+19 >> 2 | 0 0 0 0 0 1 0 0
+-------------------------
+19 >> 3 | 0 0 0 0 0 0 1 0
+-------------------------
+19 >> 4 | 0 0 0 0 0 0 0 1
+-------------------------
+19 >> 5 | 0 0 0 0 0 0 0 0
+```
+
+Dacă avem un întreg cu semn (), rezultatul depinde de implementare, iar majoritatea acestora procedează astfel, păstrând semnul (conform cppreference.com):
+```
+   -19   | 1 1 1 0 1 1 0 1
+--------------------------
+-19 >> 1 | 1 1 0 1 1 0 1 0
+--------------------------
+-19 >> 2 | 1 0 1 1 0 1 0 0
+--------------------------
+-19 >> 3 | 1 1 1 0 1 0 0 0
+--------------------------
+-19 >> 4 | 1 1 0 1 0 0 0 0
+--------------------------
+-19 >> 5 | 1 0 1 0 0 0 0 0
+```
+
+Programul aferent:
+```c
+#include <stdio.h>
+#include <inttypes.h>
+
+void deplasare_dr(int8_t nr, unsigned sh)
+{
+    int8_t res;
+    res = nr >> sh;
+    printf("%d >> %u: %d\n", nr, sh, res);
+}
+
+int main()
+{
+    int8_t nr = 19;
+    for (int i = 0; i < 8; i++)
+        deplasare_dr(nr, i);
+    return 0;
+}
+```
+
+Observații:
+- operatorul `>>` realizează împărțirea la o putere a lui 2: `x >> p` îl împarte pe `x` la `2^p`
+- numerele negative sunt reprezentate în complementul lui 2; citiți mai multe despre asta [aici](https://en.wikipedia.org/wiki/Two's_complement) și [aici](https://stackoverflow.com/questions/791328/how-does-the-bitwise-complement-operator-tilde-work)
+  - pe scurt, complementul lui 2 se determină astfel:
+    - se aplică NOT (~), iar apoi
+    - se adună 1
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
