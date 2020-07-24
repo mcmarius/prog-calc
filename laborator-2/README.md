@@ -456,14 +456,24 @@ Dacă ne referim la tipul de date `int`, acesta are de obicei 32 de biți (stand
 
 Dacă vrem să fim riguroși, folosim `int32_t` (din `<inttypes.h>`) care are *întotdeauna* 32 de biți. Pe de altă parte, nu este garantat că avem acces întotdeauna la `<inttypes.h>`, pe când `int` avem în toate implementările.
 
-Astfel, numărul 19 în binar este `00000000000000000000000000010011` în reprezentare [big-endian](https://en.wikipedia.org/wiki/Endianness), adică cifra cea mai semnificativă în stânga (citim de la stânga la dreapta).
+Astfel, numărul 19 în binar este `00000000000000000000000000010011` în reprezentare [big-endian](https://en.wikipedia.org/wiki/Endianness), adică cifra cea mai semnificativă este în stânga (citim de la stânga la dreapta).
 
 Totuși, pentru a fi mai simplu de înțeles, în exemplele următoare vom scrie doar 8 cifre, deci 19 în binar va fi `00010011`.
+
+De ce sunt importante operațiile pe biți? Simplu, deoarece sunt foarte rapide. De ce sunt foarte rapide? Pentru că sunt "aproape" de hardware.
 
 #### Operatorul `~` (NOT)
 ~|0|1
 -|-|-
 ‍|1|0
+
+Exemplu:
+
+```
+ 19 | 10011
+-----------
+~19 | 01100
+```
 
 #### Operatorul `&` (AND)
 **&**|0|1
