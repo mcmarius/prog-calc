@@ -284,7 +284,9 @@ for(<expresie_initializare>; <expresie_conditionala>; <expresie_iteratie>)
     instructiuni;
 }
 ```
-Acoladele pot lipsi dacă avem o singură instrucțiune. `<expresie_initializare>` se execută o singură dată, la început. Apoi se verifică dacă `<expresie_conditionala>` este diferită de 0 (adică este adevărată). Cât timp expresia condițională este adevărată, este executat blocul de `instructiuni`, iar apoi este evaluată `<expresie_iteratie>`, continuând cu verificarea expresiei condiționale până când aceasta devine falsă.
+`<expresie_initializare>` se execută o singură dată, la început. Apoi se verifică dacă `<expresie_conditionala>` este diferită de 0 (adică este adevărată). Cât timp expresia condițională este adevărată, este executat blocul de `instructiuni`, iar apoi este evaluată `<expresie_iteratie>`. Se continuă cu verificarea expresiei condiționale și executarea blocului de `instructiuni` și a `<expresie_iteratie>` până când `<expresie_conditionala>` devine falsă.
+
+Acoladele pot lipsi dacă avem o singură instrucțiune.
 
 Putem omite oricare dintre aceste 4 părți ale unei instrucțiuni `for`, însă este obligatoriu să punem ambele `;`. Dacă nu avem `instructiuni`, atunci punem fie `{}`, fie `;` după paranteza închisă de la `for`.
 
