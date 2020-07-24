@@ -381,7 +381,20 @@ Observație:
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
 
+- folosiți `break` și/sau `continue` în cadrul unei instrucțiuni `for`/`while`
 
+Exerciții din PDF (problemele 1-3 se vor rezolva folosind operații pe biți):
+1. Pentru valori întregi citite de la tastatură să se tiparească valoarea corespunzătoare în binar. Pentru verificare, folosiți aplicația "Calculator".
+
+2. Se citesc 2 numere întregi `x` și `n` unde `n` este între 0 si 15. Să se afișeze: bitul `n` din `x`, numărul `x` în care se setează bitul `n`, numărul `x` în care se șterge bitul `n`, numărul `x` în care se complementează bitul `n`.
+
+3. Se citesc întregii `x`, `y`, `n`, `p`. Să se copieze în `x`, începând din poziția `p`, ultimii `n` biți din `y` și să se afișeze noua valoare a lui `x`.
+
+4. Scrieți un program care primește ca input de la tastatură scrierea unui număr în baza 2 și calculează direct scrierea acestuia în baza 16 (nu mai trece prin baza intermediară 10). Realizați acest lucru inversând cele două baze (input – scrierea în baza 16, output – scrierea în baza 2).
+
+5. Se citesc numere naturale până la întâlnirea numărului 0. Să se afișeze toate perechile de numere consecutive citite cu proprietatea că al doilea număr reprezintă restul împărțirii primului număr la suma cifrelor sale.
+
+6. Se citește de la tastatură un număr natural `p`. Să se determine toate perechile distincte de numere întregi `(i, j, k)` cu proprietatea că ele pot reprezenta laturile unui triunghi de perimetru `p`. Folosiți maxim două instrucțiuni `for`.
 
 ## Întrebări, erori, diverse
 [Înapoi la cuprins](#cuprins)
@@ -392,6 +405,6 @@ Observație:
 - [cppreference.com](https://en.cppreference.com/w/c)
 - [StackOverflow](https://stackoverflow.com/questions/tagged/c?tab=Votes)
 - [C FAQ](http://c-faq.com/questions.html)
-- [C99 standard](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf)
+- [C99 standard](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf) (doar să îl răsfoiți un pic)
 
 
