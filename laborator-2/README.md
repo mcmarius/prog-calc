@@ -521,7 +521,7 @@ Exemplu:
 
 #### Operatorul `<<` (Deplasare la stânga)
 
-Exemplu (presupunem că avem doar 8 biți):
+Exemplu (presupunem că avem doar 8 biți și un întreg **fără** semn):
 ```
    19   | 0 0 0 1 0 0 1 1
 -------------------------
