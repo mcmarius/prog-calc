@@ -243,7 +243,7 @@ int main()
             break;
     }
     if(schimb)
-        printf("Suma dupa schimb: %.3f %s", suma, afis_moneda(moneda));
+        printf("Suma dupa schimb: %.3f %s", suma, afis_moneda(moneda));  // linia 38
     return 0;
 }
 
@@ -270,6 +270,9 @@ Observații:
 - deși variabilele de tipuri de date enumerabile trebuie să se comporte exact ca variabilele întregi și să poată fi folosite în locul acestora, nu putem citi direct o variabilă de tip enumerabil cu `scanf`; este necesară conversia explicită de la linia 19
 - `op1 /= op2` este prescurtare pentru `op1 = op1 / op2`, unde `op1` și `op2` sunt niște operanzi
 - atunci când declarăm o funcție (linia 6), este suficient să specificăm tipul de date al parametrilor, numele fiind opțional
+  - definiția funcției `afis_moneda` (corpul cu acolade) am scris-o la sfârșitul programului pentru a avea funcția `main` la început, "în prim plan"
+  - compilatorul parcurge sursa de sus în jos; dacă nu avem declarația de la linia 6 (o comentăm), vom primi eroare la linia 38 (de fapt warning), întrucât în acest punct funcția `main` nu are de unde să știe dacă funcția `afis_moneda` chiar există
+  - declarația de la linia 6 este o "promisiune" că undeva în codul nostru sursă (eventual în alt fișier) avem și definiția completă a funcției
 
 ### `for`
 [Înapoi la programe](#programe-discutate-1)
