@@ -277,7 +277,53 @@ Observații:
 ### `for`
 [Înapoi la programe](#programe-discutate-1)
 
+Forma uzuală a instrucțiunii `for` este:
+```c
+for(<expresie_initializare>; <expresie_conditionala>; <expresie_iteratie>)
+{
+    instructiuni;
+}
+```
+Acoladele pot lipsi dacă avem o singură instrucțiune. `<expresie_initializare>` se execută o singură dată, la început. Apoi se verifică dacă `<expresie_conditionala>` este diferită de 0 (adică este adevărată). Cât timp expresia condițională este adevărată, este executat blocul de `instructiuni`, iar apoi este evaluată `<expresie_iteratie>`, continuând cu verificarea expresiei condiționale până când aceasta devine falsă.
 
+Putem omite oricare dintre aceste 4 părți ale unei instrucțiuni `for`, însă este obligatoriu să punem ambele `;`. Dacă nu avem `instructiuni`, atunci punem fie `{}`, fie `;` după paranteza închisă de la `for`.
+
+Pentru a înțelege această instrucțiune, să ne uităm la programul de mai jos. 
+```c
+#include <stdio.h>
+
+int main()
+{
+    int i, nr_viteze;
+    nr_viteze = 6;
+    puts("Am pornit motorul\n");
+    for(i = 1; i <= nr_viteze; i++)
+        printf("Viteza %d\n", i);
+    puts("----------");  // linia 10
+    for(i = nr_viteze; i > 0; --i)
+        printf("Viteza %d\n", i);
+    puts("\nAm oprit motorul");
+    return 0;
+}
+```
+
+Observații:
+- expresia `i++` este prescurtare pentru `i = i + 1` și întoarce `i`, iar `--i` este prescurtare pentru `i = i - 1` și întoarce `i - 1`
+  - rezultatul expresiei nu este folosit, însă variabila `i` se modifică
+  - diferența dintre operatorul 
+- instrucțiunea de la linia 10 este doar ca să vedem mai ușor unde se termină afișarea de la primul `for`
+- putem avea mai multe atribuiri: în loc de `i = 1` putem avea `i = 1, j = 20` (presupunând că am declarat variabila `j`
+- putem avea mai multe condiții: în loc de `i <= nr_viteze` putem avea `i <= nr_viteze && j > 0`
+- putem avea o expresie mai complexă: în loc de `i++` putem avea `i++, j -= 3`
+- putem scrie mai rapid un `for` în Code::Blocks dacă apăsăm `Ctrl`+`J` după ce apar sugestii ca mai jos
+
+![Sugestie `for`](img/for1.png)
+
+După ce apăsăm `Ctrl`+`J`, ar trebui să obținem
+
+![Aplicare scurtătură](img/for2.png)
+
+Este subiectiv dacă vă ajută sau mai mult vă încurcă; puteți configura aceste shortcuts ca să vă genereze implicit mai mult cod de "umplutură".
 
 ### `while`
 [Înapoi la programe](#programe-discutate-1)
