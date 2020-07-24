@@ -448,8 +448,28 @@ Observații:
 ### Operații pe biți
 [Înapoi la programe](#programe-discutate-1)
 
+#### Operatorul `~` (NOT)
+~|0|1
+-|-|-
+‍|1|0
 
+#### Operatorul `&` (AND)
+**&**|0|1
+-----|-|-
+**0**|0|0
+**1**|0|1
 
+#### Operatorul `|` (OR)
+**\|**|0|1
+-----|-|-
+**0**|0|1
+**1**|1|1
+
+#### Operatorul `^` (XOR)
+**^**|0|1
+-----|-|-
+**0**|0|1
+**1**|1|0
 
 
 ## Exerciții
