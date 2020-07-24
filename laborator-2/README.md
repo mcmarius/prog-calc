@@ -362,6 +362,7 @@ int main()
 
 Observație:
 - întâi se evaluează expresia condițională (în acest caz `!absolvent`), iar dacă expresia este adevărată, se execută și instrucțiunile
+  - acești pași continuă până când expresia condițională nu mai este adevărată
 - operatorul `!` neagă expresia în fața căreia este pus
   - inițial, `absolvent` nu este o expresie adevărată, prin urmare `!absolvent` este adevărată
   - după ce `absolvent` devine `true`, expresia `!absolvent` devine falsă, iar corpul instrucțiunii `while` nu se mai execută și se trece la instrucțiunea următoare de la linia 14
@@ -369,6 +370,79 @@ Observație:
 ### `do`...`while`
 [Înapoi la programe](#programe-discutate-1)
 
+Instrucțiunea `do`...`while` este asemănătoare cu instrucțiunea `while`, cu diferența că întâi se execută blocul de instrucțiuni, iar *după* se verifică instrucțiunea condițională. De asemenea, este necesar să punem `;` la sfârșit. Putem omite acoladele dacă avem o singură instrucțiune (deși este mai rară această situație). Forma generală este:
+```c
+do
+{
+    instructiuni;
+} while(<expresie_conditionala>);
+```
+
+Exemplu:
+```c
+#include <stdio.h>
+
+int main()
+{
+    int nr_frunze = 100;
+    do
+    {
+        printf("Copacul mai are %d frunze...\n", nr_frunze);
+        nr_frunze -= 15;
+    } while(nr_frunze > 30);
+    puts("A venit toamna!");
+    return 0;
+}
+```
+
+Exemplu cu `break`:
+```c
+#include <stdio.h>
+
+int main()
+{
+    int nr_frunze = 100;
+    do
+    {
+        nr_frunze -= 15;
+        if(nr_frunze == 55)
+            break;
+        printf("Copacul mai are %d de frunze...\n", nr_frunze);
+    } while(nr_frunze > 30);
+    puts("A venit toamna mai repede!");
+    return 0;
+}
+```
+
+Observații:
+- instrucțiunile care urmează după `break` din cadrul blocului de instrucțiuni **nu** se mai execută, se iese direct din instrucțiunea repetitivă
+- dacă avem mai multe instrucțiuni repetitive îmbricate (una în interiorul alteia), instrucțiunea `break` ne scoate doar "un nivel"; vom vedea mai multe exemple mai târziu
+
+Exemplu cu `continue`:
+```c
+#include <stdio.h>
+
+int main()
+{
+    int nr_frunze = 100;
+    do
+    {
+        printf("Copacul mai are %d de frunze...\n", nr_frunze);
+        if(nr_frunze == 55)
+        {
+            puts("Dar vremea e frumoasa!");
+            nr_frunze += 10;
+            continue;
+        }
+        nr_frunze -= 15;
+    } while(nr_frunze > 30);
+    puts("A venit toamna mai tarziu!");
+    return 0;
+}
+```
+
+Observații:
+- după instrucțiunea `continue`, execuția continuă de la începutul acoladei instrucțiunii repetitive din care face parte
 
 
 ### Operații pe biți
@@ -382,6 +456,7 @@ Observație:
 [Înapoi la cuprins](#cuprins)
 
 - folosiți `break` și/sau `continue` în cadrul unei instrucțiuni `for`/`while`
+- folosiți instrucțiuni repetitive îmbricate pentru afișarea tuturor perechilor de două numere de la 1 la 5
 
 Exerciții din PDF (problemele 1-3 se vor rezolva folosind operații pe biți):
 1. Pentru valori întregi citite de la tastatură să se tiparească valoarea corespunzătoare în binar. Pentru verificare, folosiți aplicația "Calculator".
