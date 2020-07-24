@@ -452,7 +452,11 @@ Observații:
 
 De exemplu, numărul `19` (baza 10) este `10011` în baza 2, adică `1*2^4 + 0*2^3 + 0*2^2 + 1*2^1 + 1*2^0 = 16 + 0 + 0 + 2 + 1`.
 
-Dacă ne referim la tipul de date `int`, acesta are de obicei 32 de biți. Dacă vrem să fim riguroși, folosim `int32_t` (din `<inttypes.h>`) care are *întotdeauna* 32 de biți. Astfel, numărul 19 în binar este `00000000000000000000000000010011` în reprezentare [big-endian](https://en.wikipedia.org/wiki/Endianness), adică cifra cea mai semnificativă în stânga (citim de la stânga la dreapta).
+Dacă ne referim la tipul de date `int`, acesta are de obicei 32 de biți (standardul cere doar să aibă >= 16 biți).
+
+Dacă vrem să fim riguroși, folosim `int32_t` (din `<inttypes.h>`) care are *întotdeauna* 32 de biți. Pe de altă parte, nu este garantat că avem acces întotdeauna la `<inttypes.h>`, pe când `int` avem în toate implementările.
+
+Astfel, numărul 19 în binar este `00000000000000000000000000010011` în reprezentare [big-endian](https://en.wikipedia.org/wiki/Endianness), adică cifra cea mai semnificativă în stânga (citim de la stânga la dreapta).
 
 Totuși, pentru a fi mai simplu de înțeles, în exemplele următoare vom scrie doar 8 cifre, deci 19 în binar va fi `00010011`.
 
