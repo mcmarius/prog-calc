@@ -330,7 +330,41 @@ Este subiectiv dacă vă ajută sau mai mult vă încurcă; puteți configura ac
 ### `while`
 [Înapoi la programe](#programe-discutate-1)
 
+Instrucțiunea `while` este asemănătoare cu instrucțiunea `for`, însă ceva mai generală. Forma uzuală este următoarea:
+```c
+while(<expresie_conditionala>)
+{
+    instructiuni;
+}
+```
 
+Același comentariu ca mai sus referitor la acolade (pot lipsi dacă avem o singură instrucțiune).
+
+Exemplu:
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+int main()
+{
+    bool absolvent = false;
+    int ani = 0;
+    while(!absolvent)
+    {
+        if(++ani == 4)
+            absolvent = true;
+        printf("Sunt in anul %d\n", ani);
+    }
+    printf("Gata!\n");  // linia 14
+    return 0;
+}
+```
+
+Observație:
+- întâi se evaluează expresia condițională (în acest caz `!absolvent`), iar dacă expresia este adevărată, se execută și instrucțiunile
+- operatorul `!` neagă expresia în fața căreia este pus
+  - inițial, `absolvent` nu este o expresie adevărată, prin urmare `!absolvent` este adevărată
+  - după ce `absolvent` devine `true`, expresia `!absolvent` devine falsă, iar corpul instrucțiunii `while` nu se mai execută și se trece la instrucțiunea următoare de la linia 14
 
 ### `do`...`while`
 [Înapoi la programe](#programe-discutate-1)
