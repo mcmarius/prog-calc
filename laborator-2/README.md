@@ -447,8 +447,8 @@ Observații:
 
 ### Operații pe biți
 [Înapoi la programe](#programe-discutate-1)
-[Operatorul `<<`](#operatorul--deplasare-la-stânga)
-[Operatorul `>>`](#operatorul--deplasare-la-dreapta)
+#### [Operatorul `<<`](#operatorul--deplasare-la-stânga)
+#### [Operatorul `>>`](#operatorul--deplasare-la-dreapta)
 
 În calculator, informația este reprezentată în baza 2 (binar). Operatorii pe biți acționează la nivelul fiecărui bit. În limbajul C, [acești operatori](https://en.cppreference.com/w/c/language/operator_arithmetic) au sens numai pentru numerele întregi (cu sau fără semn).
 
