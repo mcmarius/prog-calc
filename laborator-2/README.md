@@ -587,7 +587,7 @@ Exemplu (presupunem din nou că avem doar 8 biți):
 19 >> 5 | 0 0 0 0 0 0 0 0
 ```
 
-Dacă avem un întreg cu semn (), rezultatul depinde de implementare, iar majoritatea acestora procedează astfel, păstrând semnul (conform cppreference.com):
+Dacă avem un întreg cu semn (⚠ primul bit este bitul de semn și este 1 dacă numărul este negativ), rezultatul depinde de implementare, iar majoritatea acestora procedează astfel, păstrând semnul (conform cppreference.com):
 ```
    -19   | 1 1 1 0 1 1 0 1
 --------------------------
