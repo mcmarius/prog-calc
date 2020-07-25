@@ -657,6 +657,17 @@ Exerciții din PDF (problemele 1-3 se vor rezolva folosind operații pe biți):
 ## Întrebări, erori, diverse
 [Înapoi la cuprins](#cuprins)
 
+### `for`-ul meu nu se oprește!
+Posibile greșeli:
+```c
+unsigned i;
+for(i = 10; i >= 0; i--)
+  // instructiuni
+```
+Acest cod probabil se va executa la infinit: un tip de date fără semn reprezintă doar numere pozitive: astfel, condiția `i >= 0` este întotdeauna adevărată, deoarece după ce `i` este 0, `i--` îl face `INT_MAX` (din `<limits.h>`) din cauza integer underflow (deși se poate întâmpla orice).
+
+Ca fapt divers, integer overflow/underflow reprezintă comportament nedefinit 💥
+
 * 🚧
 
 ## Resurse recomandate
