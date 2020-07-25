@@ -664,7 +664,7 @@ unsigned i;
 for(i = 10; i >= 0; i--)
   // instructiuni
 ```
-Acest cod probabil se va executa la infinit: un tip de date fără semn reprezintă doar numere pozitive: astfel, condiția `i >= 0` este întotdeauna adevărată, deoarece după ce `i` este 0, `i--` îl face `INT_MAX` (din `<limits.h>`) din cauza integer underflow (deși se poate întâmpla orice).
+Acest cod probabil se va executa la infinit: un tip de date fără semn reprezintă doar numere pozitive: astfel, condiția `i >= 0` este întotdeauna adevărată, deoarece după ce `i` este 0, `i--` îl face `UINT_MAX` (din `<limits.h>`) din cauza integer underflow, adică toți biții ajung din nou să fie 1 (deși se poate întâmpla orice).
 
 Ca fapt divers, integer overflow/underflow reprezintă comportament nedefinit 💥
 
