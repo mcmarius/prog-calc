@@ -595,15 +595,15 @@ Dacă avem un întreg cu semn (⚠ primul bit este bitul de semn și este 1 dac�
 ```
    -19   | 1 1 1 0 1 1 0 1
 --------------------------
--19 >> 1 | 1 1 0 1 1 0 1 0
+-19 >> 1 | 1 1 1 1 0 1 1 0
 --------------------------
--19 >> 2 | 1 0 1 1 0 1 0 0
+-19 >> 2 | 1 1 1 1 1 0 1 1
 --------------------------
--19 >> 3 | 1 1 1 0 1 0 0 0
+-19 >> 3 | 1 1 1 1 1 1 0 1
 --------------------------
--19 >> 4 | 1 1 0 1 0 0 0 0
+-19 >> 4 | 1 1 1 1 1 1 1 0
 --------------------------
--19 >> 5 | 1 0 1 0 0 0 0 0
+-19 >> 5 | 1 1 1 1 1 1 1 1
 ```
 
 Programul aferent:
@@ -633,6 +633,7 @@ Observații:
   - pe scurt, complementul lui 2 se determină astfel:
     - se aplică NOT (~), iar apoi
     - se adună 1
+  - pentru verificare: https://www.exploringbinary.com/twos-complement-converter/
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
