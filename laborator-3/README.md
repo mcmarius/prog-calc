@@ -92,8 +92,8 @@ Observații:
 - dacă avem `a + b + c`, expresia va fi tratată ca `(a + b) + c`, iar `a`, `b` și `c` pot fi la rândul lor expresii
 - `c` poate fi evaluată înaintea expresiei `a`
 - cu toate acestea, conversiile au loc de la stânga la dreapta, ceea ce [poate cauza sau nu un overflow](https://stackoverflow.com/questions/31630953/the-order-of-multiplications):
-  - `0 * INT_MAX * INT_MAX` funcționează 0 după cum e de așteptat
-  - `INT_MAX * INT_MAX * 0` produce overflow, chiar dacă aparent dă tot 0 (primim și warning)
+  - `0 * INT_MAX * INT_MAX` întoarce 0 după cum e de așteptat
+  - `INT_MAX * INT_MAX * 0` produce overflow, chiar dacă aparent întoarce tot 0 (primim și warning)
   - dacă avem `INT_MAX * (INT_MAX * 0)`, nu mai primim warning
 
 ### Pointeri
