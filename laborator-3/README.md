@@ -203,7 +203,8 @@ Observații:
 - un pointer de tip `void*` este convertit implicit la orice alt pointer
   - reciproca nu este adevărată, a se vedea `printf` cu `%p`
 - `sizeof(int*)` nu este neapărat egal cu `sizeof(int)`
-- pointerii către obiecte nu au neapărat același `sizeof` cu pointerii către funcții (despre pointeri la funcții vom vorbi prin laboratorul 8 sau 9)
+- pointerii către obiecte nu au neapărat același `sizeof` cu pointerii către funcții (despre pointeri la funcții vom vorbi în laboratorul 8 sau 9)
+- deși atunci când afișăm un pointer cu `%p` este afișată o adresă de memorie, standardul specifică doar afișarea unei reprezentări a pointerului sub forma unui șir de caractere *definit de implementare*
 - singurele garanții oferite de standardul C sunt: `sizeof(void*) == sizeof(char*)` și `sizeof(char) == 1`
 - în situațiile întâlnite în facultate, pointerii către obiecte de tipuri diferite vor avea cel mai probabil același `sizeof`
   - ca particularizare pe Windows pe 64 de biți:
