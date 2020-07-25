@@ -204,18 +204,23 @@ Observații:
   - reciproca nu este adevărată, a se vedea `printf` cu `%p`
 - `sizeof(int*)` nu este neapărat egal cu `sizeof(int)`
 - pointerii către obiecte nu au neapărat același `sizeof` cu pointerii către funcții (despre pointeri la funcții vom vorbi în laboratorul 8 sau 9)
-- deși atunci când afișăm un pointer cu `%p` este afișată o adresă de memorie, standardul specifică doar afișarea unei reprezentări a pointerului sub forma unui șir de caractere *definit de implementare*
+- deși atunci când afișăm un pointer cu `%p` este afișată o adresă de memorie, standardul specifică doar afișarea unei reprezentări a pointerului sub forma unui șir de caractere *dependent de implementare*
 - singurele garanții oferite de standardul C sunt: `sizeof(void*) == sizeof(char*)` și `sizeof(char) == 1`
 - în situațiile întâlnite în facultate, pointerii către obiecte de tipuri diferite vor avea cel mai probabil același `sizeof`
   - ca particularizare pe Windows pe 64 de biți:
     - dacă aveți MinGW simplu, atunci `sizeof(void*) == 4`
     - dacă aveți mingw-w64, atunci `sizeof(void*) == 8`
+    - [Detalii] pentru a afla ce versiune aveți, din `cmd` scrieți `gcc --verbose` și căutați `Target`
+      - pentru primul caz, va afișa (printre altele) `Target: mingw32`
+      - pentru al doilea caz, va afișa (printre altele) `Target: x86_64-w64-mingw32`
   - sistemele de operare pe 32 de biți nu pot avea în mod normal mai mult de 4GB memorie RAM, deoarece `sizeof(void*) == 4` și 2^32 = 4.294.967.296 octeți
 
-### Tablouri
+### [Tablouri](https://en.cppreference.com/w/c/language/array)
 [Înapoi la programe](#programe-discutate-1)
 
+Pentru moment, nu vorbim despre tablouri alocate dinamic.
 
+Un tablou unidimensional (sau vector) reprezintă o colecție de obiecte de același tip alocate în zone consecutive de memorie.
 
 ### Matrice
 [Înapoi la programe](#programe-discutate-1)
