@@ -606,7 +606,7 @@ Dacă avem un întreg cu semn (⚠ primul bit este bitul de semn și este 1 dac�
 -19 >> 5 | 1 1 1 1 1 1 1 1
 ```
 
-Programul aferent:
+Programul aferent (rulați, apoi înlocuiți 19 cu -19):
 ```c
 #include <stdio.h>
 #include <inttypes.h>
