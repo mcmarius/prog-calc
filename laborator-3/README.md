@@ -180,7 +180,7 @@ Putem avea pointeri care nu arată către ceva anume și pointeri care arată c�
 int main()
 {
     double *a;
-    // if(a == NULL)   // si aici avem undefined behavior, accesam o variabila neinitializata!
+    // if(a == NULL)   // aici a are o valoare nedeterminată deoarece este neinitializata!
     //    printf("a nu arata catre nimic\n");
     // else
     //    printf("a nu este initializat, dar este diferit de 0\n");
@@ -198,6 +198,18 @@ int main()
 Observații:
 - 💥 **Dereferențierea unui pointer neinițializat este comportament nedefinit!!!** 💥
 - 💥 **Accesarea unei variabile neinițializate (pointer sau altceva) este comportament nedefinit!!!** 💥
+  <details>
+    <summary>De fapt, vă mint un pic, dar e pentru o cauză nobilă 😇 </summary>
+    Pedantic, valoarea este doar <a href=https://stackoverflow.com/questions/25074180/is-aa-or-a-a-undefined-behaviour-if-a-is-not-initialized>nedeterminată</a>, iar dacă luăm adresa (cu <code>&</code>), atunci ar fi ok, dar <a href=http://blog.frama-c.com/index.php?post/2013/03/13/indeterminate-undefined>nu e bine</a> să ne bazăm pe asta.
+
+    Valoarea nespecificată poate să însemne că la o citire are o valoare, iar la următoarea citire are altă valoare.
+
+    De ce? Pentru că poate fi alocată o dată într-un registru al procesorului, iar ulterior în alt registru.
+
+    Valorile din regiștri nu au adresă; luând adresa (o simplă instrucțiune <code>&a;</code>), ar fi forțată astfel inițializarea cu ceva "constant".
+
+    Numai atunci când folosim o valoare nedeterminată într-o funcție de bibliotecă (de exemplu `printf`) avem comportament nedefinit 👻
+  </details>
 - 💥 **Dereferențierea unui pointer `NULL` este comportament nedefinit!!!** 💥
 - o variabilă neinițializată poate avea *orice* valoare, nu ne putem baza pe faptul că un pointer neinițializat este sau nu `NULL`
 - un pointer de tip `void*` este convertit implicit la orice alt pointer
@@ -213,14 +225,93 @@ Observații:
     - [Detalii] pentru a afla ce versiune aveți, din `cmd` scrieți `gcc --verbose` și căutați `Target`
       - pentru primul caz, va afișa (printre altele) `Target: mingw32`
       - pentru al doilea caz, va afișa (printre altele) `Target: x86_64-w64-mingw32`
-  - sistemele de operare pe 32 de biți nu pot avea în mod normal mai mult de 4GB memorie RAM, deoarece `sizeof(void*) == 4` și 2^32 = 4.294.967.296 octeți
+  - sistemele de operare pe 32 de biți nu pot avea în mod normal mai mult de 4GB memorie RAM, deoarece pointerii sunt folosiți pentru accesarea memoriei, `sizeof(void*) == 4` și 2^32 = 4.294.967.296 octeți
 
 ### [Tablouri](https://en.cppreference.com/w/c/language/array)
 [Înapoi la programe](#programe-discutate-1)
 
 Pentru moment, nu vorbim despre tablouri alocate dinamic.
 
-Un tablou unidimensional (sau vector) reprezintă o colecție de obiecte de același tip alocate în zone consecutive de memorie.
+Un tablou unidimensional (sau vector) reprezintă o colecție/grupare de obiecte de același tip, alocate la adrese consecutive de memorie.
+
+În limbajul C, accesarea elementelor unui vector se face cu operatorul `[]`. Primul element este pe poziția 0, iar cu operatorul `sizeof` aflăm dimensiunea vectorului:
+```c
+#include <stdio.h>
+
+int main()
+{
+    int v[5], i;
+    for (i = 0; i < 5; ++i)
+        v[i] = i + 1;
+    for (i = 0; i < 5; ++i)
+        printf("%d ", v[i]);
+    printf("\nVectorul v ocupă %zu bytes.\n", sizeof(v));
+    // pe Windows nu se poate printa portabil cu sizeof (care intoarce tipul size_t) si nu putem scapa de warnings
+    // o varianta un pic mai portabila este urmatoarea (este necesar header-ul <inttypes.h>)
+    // printf("\nVectorul v ocupă %" PRIu64 " bytes.\n", sizeof(v));
+    return 0;
+}
+```
+
+Observații:
+- `PRIu64` este un macro portabil pentru a afișa `long long unsigned int` și devine `llu` pe sisteme de operare bazate pe Unix sau `I64u` pe Windows
+- sintaxa `"text1" "text2" "text3"` devine `"text1text2text3"` după etapa de preprocesare
+
+Putem [inițializa un vector](https://en.cppreference.com/w/c/language/array_initialization) la momentul declarării folosind sintaxa cu acolade (sau cu ghilimele dacă este un șir de caractere):
+```c
+#include <stdio.h>
+
+int main()
+{
+    int i, v[5] = {1, 2, 3, 4, 5};
+    for (i = 0; i < 5; ++i)
+        printf("%d ", v[i]);
+    // eroare! accesam zone de memorie invalide
+    // printf("%d %d\n", v[-1], v[5]);
+    // eroare! scriem intr-o zona de memorie invalida
+    // v[5] = 10;
+    return 0;
+}
+```
+
+Observații:
+- dacă nu avem nevoie de elemente în plus, putem omite numărul de elemente din declarație: `int v[] = {1, 2, 3, 4, 5};`
+- dacă specificăm mai puține elemente în lista de inițializare, [celelalte vor fi inițializate cu zero](https://stackoverflow.com/questions/2589749/how-to-initialize-array-to-0-in-c#comment57710439_2589751): cu `int v[5] = {1, 2, 3};`, în `v` vom avea `1, 2, 3, 0, 0`
+- `int v[5] = {};` este invalid, trebuie să scriem cel puțin `int v[5] = {0};` dacă vrem să inițializăm toate elementele cu 0
+- apropo, nu putem avea `int v[];`, dar putem avea `extern int v[];`, care reprezintă un tip incomplet și este o variabilă declarată în alt fișier sursă
+- accesarea unor elemente din afara vectorului reprezintă, ați ghicit, comportament nedefinit 💥
+- scrierea unor valori într-un element din afara vectorului reprezintă și ea (mai e nevoie să spun?) comportament nedefinit 💥
+
+[Vectorii pot fi convertiți la pointeri](https://en.cppreference.com/w/c/language/array#Array_to_pointer_conversion). Pointerul rezultat arată către primul element din vector. Spre deosebire de `sizeof` pe vector, `sizeof` pe pointer întoarce doar dimensiunea primului element. Un argument de tip vector este de fapt interpretat ca un pointer:
+```c
+#include <stdio.h>
+
+void afis(int x[5], int n)  // linia 3
+{
+    int i;
+    for (i = 0; i < n; ++i)
+        printf("%d ", x[i]);
+    puts("");
+}
+
+int main()
+{
+    int v[5] = {0, 1, 2};
+    int *p;
+    p = &v;
+    printf("p are sizeof %zu\n", sizeof(p));  // 8, dar formal este sizeof(int*)
+    printf("v are sizeof %zu\n", sizeof(v));  // 20, dar formal este sizeof(int) * 5
+    afis(v, 5);
+    afis(p, 5);
+    return 0;
+}
+```
+
+Observații:
+- linia 3 este interpretată ca `void afis(int *x, int n)`, așadar în funcția `afis` nu avem disponibilă dimensiunea vectorului (cu un `sizeof`)
+- dacă vă place mai mult, puteți scrie ca `void afis(int x[], int n)` pentru a nu vă induce în eroare acel `5` de la linia 3 care este ignorat de compilator
+
+Despre șiruri de caractere vom discuta într-un laborator separat, deoarece este un subiect vast.
 
 ### Matrice
 [Înapoi la programe](#programe-discutate-1)
