@@ -456,7 +456,7 @@ De exemplu, numărul `19` (baza 10) este `10011` în baza 2, adică `1*2^4 + 0*2
 
 Dacă ne referim la tipul de date `int`, acesta are de obicei 32 de biți (standardul cere doar să aibă >= 16 biți).
 
-Dacă vrem să fim riguroși, folosim `int32_t` (din `<inttypes.h>`) care are *întotdeauna* 32 de biți. Pe de altă parte, nu este garantat că avem acces întotdeauna la `<inttypes.h>`, pe când `int` avem în toate implementările.
+Dacă vrem să fim riguroși, folosim `int32_t` (din `<stdint.h>`) care are *întotdeauna* 32 de biți. Pe de altă parte, nu este garantat că avem acces întotdeauna la `<stdint.h>`, pe când `int` avem în toate implementările.
 
 Astfel, numărul 19 în binar este `00000000000000000000000000010011` în reprezentare [big-endian](https://en.wikipedia.org/wiki/Endianness), adică cifra cea mai semnificativă este în stânga (citim de la stânga la dreapta).
 
@@ -546,7 +546,7 @@ Exemplu (presupunem că avem doar 8 biți și un întreg **fără** semn):
 Verificăm:
 ```c
 #include <stdio.h>
-#include <inttypes.h>
+#include <stdint.h>
 
 void deplasare_st(uint8_t nr, unsigned sh)
 {
@@ -609,7 +609,7 @@ Dacă avem un întreg cu semn (⚠ primul bit este bitul de semn și este 1 dac�
 Programul aferent (rulați, apoi înlocuiți 19 cu -19):
 ```c
 #include <stdio.h>
-#include <inttypes.h>
+#include <stdint.h>
 
 void deplasare_dr(int8_t nr, unsigned sh)
 {
