@@ -36,7 +36,8 @@ int f(short s, bool d)
     return c;
 }
 
-// apelare cu long l = f('x', 4);
+// exemplu de apelare din main sau din alta functie:
+long l = f('x', 4);
 ```
 - la apelul funcției, fiecare argument este convertit la tipul de date al parametrilor formali: 'x' este convertit la `short`, 4 este convertit la `bool`
 - în expresiile aritmetice, se face conversia la cel mai "mare" tip de date (mai multe detalii [aici](https://en.cppreference.com/w/c/language/conversion#Integer_promotions): este vorba de tipul de date cu rangul cel mai mare)
@@ -83,8 +84,8 @@ Am văzut deja un prim exemplu atunci când am afișat un pointer în primul lab
 
 Un exemplu în care o conversie explicită produce modificări:
 ```c
-int x = 5*(short)1.5;  // x este 5, deoarece 1.5 este convertit la `short` și devine 1
-x = 5*1.5; // x este 7
+int x = 5 * (short)1.5;  // x este 5, deoarece 1.5 este convertit la `short` și devine 1
+x = 5 * 1.5; // x este 7
 ```
 
 Observații:
@@ -96,10 +97,119 @@ Observații:
   - `INT_MAX * INT_MAX * 0` produce overflow, chiar dacă aparent întoarce tot 0 (primim și warning)
   - dacă avem `INT_MAX * (INT_MAX * 0)`, nu mai primim warning
 
-### Pointeri
+### [Pointeri](https://en.cppreference.com/w/c/language/pointer)
 [Înapoi la programe](#programe-discutate-1)
 
+Pointerii sunt tipuri de date derivate care se pot referi la alte obiecte (variabile, funcții). Această referire se referă la adresa de memorie și se obține cu operatorul `&`. Obținerea "înapoi" a obiectului către care se face referire prin pointer se face cu operatorul de dereferențiere `*`.
 
+Exemplu:
+```c
+#include <stdio.h>
+
+void schimba(double *x)
+{
+    *x += 2.0;  // dereferențierea pointerului x
+}
+
+int main()
+{
+    double z = 1.0;
+    printf("z este %.3f\n", z);
+    schimba(&z);  // trimitem ca parametru adresa lui z, deoarece functia schimba primeste un double*, adica o adresa catre un double
+    printf("z este %.3f\n", z);
+    schimba(&z);
+    schimba(&z);
+    printf("z este %.3f\n", z);
+    return 0;
+}
+```
+
+Încă un exemplu:
+```c
+#include <stdio.h>
+
+void schimba(double *x)
+{
+    *x += 2.0;
+}
+
+int main()
+{
+    double z = 1.0;
+    double *adr;
+    adr = &z;
+    // sau
+    // double z = 1.0, *adr;
+    // adr = &z;
+    // sau
+    // double z = 1.0, *adr = &z;
+    printf("z este %.3f\n", z);
+    schimba(&z);
+    printf("z este %.3f\n", z);
+    schimba(adr);
+    printf("z este %.3f\n", z);
+    printf("*adr este %.3f\n", *adr);
+    return 0;
+}
+```
+
+Putem avea pointeri la pointeri (și tot așa):
+```c
+#include <stdio.h>
+
+void schimba(double **x)
+{
+    **x += 2.0;
+}
+
+int main()
+{
+    double z = 1.0, *adr = &z;
+    printf("z este %.3f\n", z);
+    schimba(&adr);
+    printf("z este %.3f\n", z);
+    printf("*adr este %.3f\n", *adr);
+    return 0;
+}
+```
+
+Putem avea pointeri care nu arată către ceva anume și pointeri care arată către "nimic":
+```c
+#include <stdio.h>
+
+int main()
+{
+    double *a;
+    // if(a == NULL)   // si aici avem undefined behavior, accesam o variabila neinitializata!
+    //    printf("a nu arata catre nimic\n");
+    // else
+    //    printf("a nu este initializat, dar este diferit de 0\n");
+        // printf(" si contine intamplator valoarea %p", (void*)a);  // accesarea unei variabile neinitializate este comportament nedefinit!!!
+    // dereferentierea unui pointer neinitializat este comportament nedefinit!!!
+    // printf("*a poate fi %.3f\n", *a);
+
+    a = NULL;
+    // dereferentierea unui pointer NULL este comportament nedefinit!!!
+    // printf("*a poate fi %.3f\n", *a);
+    printf("Un pointer NULL are de obicei valoarea %p\n", (void*)a);
+    return 0;
+}
+```
+Observații:
+- 💥 **Dereferențierea unui pointer neinițializat este comportament nedefinit!!!** 💥
+- 💥 **Accesarea unei variabile neinițializate (pointer sau altceva) este comportament nedefinit!!!** 💥
+- 💥 **Dereferențierea unui pointer `NULL` este comportament nedefinit!!!** 💥
+- o variabilă neinițializată poate avea *orice* valoare, nu ne putem baza pe faptul că un pointer neinițializat este sau nu `NULL`
+- un pointer de tip `void*` este convertit implicit la orice alt pointer
+  - reciproca nu este adevărată, a se vedea `printf` cu `%p`
+- `sizeof(int*)` nu este neapărat egal cu `sizeof(int)`
+- pointerii către obiecte nu au neapărat același `sizeof` cu pointerii către funcții (despre pointeri la funcții vom vorbi prin laboratorul 8 sau 9)
+- singurele garanții oferite de standardul C sunt: `sizeof(void*) == sizeof(char*)` și `sizeof(char) == 1`
+- în situațiile întâlnite în facultate, pointerii către obiecte de tipuri diferite vor avea cel mai probabil același `sizeof`
+  - ca particularizare pe Windows pe 64 de biți:
+    - dacă aveți MinGW simplu, atunci `sizeof(void*) == 4`
+    - dacă aveți mingw-w64, atunci `sizeof(void*) == 8`
+  - sistemele de operare pe 32 de biți nu pot avea în mod normal mai mult de 4GB memorie RAM, deoarece `sizeof(void*) == 4` și 2^32 = 4.294.967.296 octeți
 
 ### Tablouri
 [Înapoi la programe](#programe-discutate-1)
