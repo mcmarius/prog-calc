@@ -10,6 +10,10 @@
 ## [Resurse recomandate](#resurse-recomandate-1)
 
 ## Programe discutate
+### [Conversii](#conversii-1)
+### [Pointeri](#pointeri-1)
+### [Tablouri unidimensionale](#tablouri-unidimensionale-1)
+### [Matrice](#matrice-1)
 
 ### Conversii
 
@@ -227,7 +231,7 @@ Observații:
       - pentru al doilea caz, va afișa (printre altele) `Target: x86_64-w64-mingw32`
   - sistemele de operare pe 32 de biți nu pot avea în mod normal mai mult de 4GB memorie RAM, deoarece pointerii sunt folosiți pentru accesarea memoriei, `sizeof(void*) == 4` și 2^32 = 4.294.967.296 octeți
 
-### [Tablouri](https://en.cppreference.com/w/c/language/array)
+### [Tablouri unidimensionale](https://en.cppreference.com/w/c/language/array)
 [Înapoi la programe](#programe-discutate-1)
 
 Pentru moment, nu vorbim despre tablouri alocate dinamic.
