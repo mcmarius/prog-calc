@@ -14,8 +14,8 @@
 ### [Conversii](#conversii-1)
 ### [Pointeri](#pointeri-1)
 ### [Tablouri unidimensionale](#tablouri-unidimensionale-1)
-### [Șiruri de caractere](#șiruri-de-caractere-1)
 ### [Matrice](#matrice-1)
+### [Șiruri de caractere](#șiruri-de-caractere-1)
 
 ### Conversii
 
@@ -406,6 +406,34 @@ Despre șiruri de caractere vom discuta și într-un laborator separat, deoarece
 Puteți instala ușor [`cppcheck`](http://cppcheck.sourceforge.net/#download) pe Windows.
 
 Vestea proastă este că nu am găsit vreun instrument de verificare a memoriei pentru Windows *care să și meargă*. Există [DrMemory](http://www.drmemory.org/) cu care m-am chinuit câteva ore să îl fac să meargă, apoi am renunțat.
+
+Dacă aveți deja ceva Unix-based, atunci ar trebui să fie relativ ușor: fie din package manager, fie instalat din [sursă](https://valgrind.org/downloads/repository.html). Pentru macOS nu pare să fie atât de simplu, vedeți de exemplu [aici](https://www.gungorbudak.com/blog/2018/04/28/how-to-install-valgrind-on-macos-high-sierra/). Altfel, folosiți varianta 1 de mai jos și nu trebuie să instalați nimic.
+
+Vestea bună e că aveți alte trei alternative (alegeți una singură):
+1. Folosiți GitHub cu GitHub Actions/Travis/altceva similar (sau GitLab) - varianta recomandată și **nu trebuie să instalați nimic**
+2. Instalați WSL (Windows Subsystem for Linux)
+3. Instalați o mașină virtuală de Linux
+
+1. Pași de urmat pentru GitHub cu GitHub Actions. Dacă doriți alte variante, le voi adăuga și pe acelea:
+- vă creați un cont pe GitHub
+- creați un repository
+- dați pe `Actions`, apoi click pe `set up a workflow yourself`
+
+În fișierul respectiv veți scrie următoarele:
+```
+TBA
+```
+
+- TBA restul pașilor
+
+2. WSL
+- `Control Panel` -> `Turn Windows features on or off` -> bifați `Windows Subsystem for Linux`
+- încercați întâi să urmați pașii de aici: https://docs.microsoft.com/en-us/windows/wsl/install-win10 (apoi de căutat pe net în funcție de eroare)
+- ☹ am instalat mai demult și între timp s-au schimbat lucrurile, posibil să nu vă meargă...
+
+3. Mașină virtuală
+- folosiți VirtualBox sau VMWare Player
+- descărcați un ISO cu ce distribuție doriți
 
 <!--
 Laboratorul 4:
