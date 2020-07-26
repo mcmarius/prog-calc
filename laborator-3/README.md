@@ -302,7 +302,7 @@ int main()
 {
     int v[5] = {0, 1, 2};
     int *p;
-    p = &v;
+    p = v;
     printf("p are sizeof %zu\n", sizeof(p));  // 8, dar formal este sizeof(int*)
     printf("v are sizeof %zu\n", sizeof(v));  // 20, dar formal este sizeof(int) * 5
     afis(v, 5);
@@ -312,8 +312,43 @@ int main()
 ```
 
 Observații:
-- linia 3 este interpretată ca `void afis(int *x, int n)`, așadar în funcția `afis` nu avem disponibilă dimensiunea vectorului (cu un `sizeof`)
+- linia 3 este interpretată ca `void afis(int *x, int n)`, așadar în funcția `afis` nu avem disponibilă dimensiunea vectorului (cu un `sizeof`) și trebuie să transmitem un parametru separat în acest scop
 - dacă vă place mai mult, puteți scrie ca `void afis(int x[], int n)` pentru a nu vă induce în eroare acel `5` de la linia 3 care este ignorat de compilator
+- dacă folosim `sizeof` într-o funcție care primește un tablou, primim următorul warning:
+  - `warning: 'sizeof' on array function parameter 'x' will return size of 'int *' [-Wsizeof-array-argument]`
+- un pointer către un întreg poate fi privit ca un vector cu un singur element
+
+Standardul C99 introduce vectori de lungime variabilă (VLA - variable length arrays). Aceștia nu pot fi inițializați cu sintaxa cu acolade, dar îi putem folosi pentru a aloca pe stivă un număr de elemente stabilit la execuție:
+```c
+#include <stdio.h>
+
+void afis(int *x, int n)
+{
+    int i;
+    for (i = 0; i < n; ++i)
+        printf("%d ", x[i]);
+    puts("");
+}
+
+int main()
+{
+    for(int n = 3; n < 10; n += 3)
+    {
+        int v[n], *p;
+        p = v;
+        printf("VLA de %d elemente are sizeof %zu\n", n, sizeof(v));
+        for(int i = 0; i < n; i++)
+            v[i] = n - i;
+        afis(v, n);
+        afis(p, n);
+    }
+    return 0;
+}
+```
+
+Observații:
+- în interiorul blocului `for`, vectorul `v` are de fiecare dată altă dimensiune
+- la fel ca la vectorii normali, atunci când transmitem un VLA unei funcții, acesta este convertit într-un pointer către primul element din vector
 
 Despre șiruri de caractere vom discuta într-un laborator separat, deoarece este un subiect vast.
 
