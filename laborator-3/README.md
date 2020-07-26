@@ -261,7 +261,7 @@ int main()
 
 Observații:
 - `PRIu64` este un macro portabil pentru a afișa `long long unsigned int` și devine `llu` pe sisteme de operare bazate pe Unix sau `I64u` pe Windows
-- sintaxa `"text1" "text2" "text3"` devine `"text1text2text3"` după etapa de preprocesare
+- sintaxa `"text1" "text2" "text3"` devine `"text1text2text3"` după etapa de preprocesare (mai exact, etapa 6 de [aici](https://en.cppreference.com/w/c/language/translation_phases))
 
 Putem [inițializa un vector](https://en.cppreference.com/w/c/language/array_initialization) la momentul declarării folosind sintaxa cu acolade (sau cu ghilimele dacă este un șir de caractere):
 ```c
@@ -319,6 +319,7 @@ Observații:
 - dacă folosim `sizeof` într-o funcție care primește un tablou, primim următorul warning:
   - `warning: 'sizeof' on array function parameter 'x' will return size of 'int *' [-Wsizeof-array-argument]`
 - un pointer către un întreg poate fi privit ca un vector cu un singur element
+- pe de altă parte, `int *v = {1, 2, 3};` este invalid (primim și warning)
 
 Standardul C99 introduce vectori de lungime variabilă (VLA - variable length arrays). Aceștia nu pot fi inițializați cu sintaxa cu acolade, dar îi putem folosi pentru a aloca pe stivă un număr de elemente stabilit la execuție:
 ```c
@@ -396,9 +397,86 @@ Observații:
 ### Șiruri de caractere
 [Înapoi la programe](#programe-discutate-1)
 
-🚧
+În limbajul C, un șir de caractere este un vector de caractere, urmate la sfârșit de caracterul special `'\0'`, numit terminator de șir ("Null-terminated string").
 
-Despre șiruri de caractere vom discuta și într-un laborator separat, deoarece este un subiect vast.
+La modul general, un caracter poate fi definit ca cea mai mică unitate de informație: de exemplu, o literă (`ă`), un simbol (`?`) sau un emoji (🤔). Un caracter este codificat printr-un singur byte sau *prin mai mulți bytes*, proces care poartă numele de encoding (codificare). Cu alte cuvinte, caracterele sunt un concept mai abstract, iar felul în care acestea sunt stocate de calculator este realizat cu ajutorul unui encoding.
+
+Un exemplu de encoding este Windows-1252, folosit pe majoritatea calculatoarelor din facultate. Acest encoding are o corespondență de 1 la 1 între caractere și bytes: un caracter este stocat într-un singur byte. Valorile primelor 127 de caractere se numesc coduri ASCII, iar valorile pentru următoarele 128 se numesc coduri din ASCII extins. Putem avea cel mult 255 de caractere, deoarece vom rezerva unul pentru caracterul special `'\0'`. Cam puțin, nu-i așa?
+
+Prin urmare, nu prea ne ajunge un singur byte pentru a codifica un caracter. După mulți ani de dezbateri, s-a ajuns la un consens. În prezent, cea mai folosită codificare este **UTF-8**. Citiți [aici](http://utf8everywhere.org/) mai multe despre avantajele sale (sau nu, ca să nu vă speriați). Pe scurt, fiecare caracter este codificat prin 1, 2, 3 sau 4 bytes (cel puțin în prezent).
+
+Din aceste motive, în C avem:
+- caracterele clasice reprezentate printr-un singur byte (byte strings - ce veți folosi în facultate)
+- caractere multibyte
+- caractere wide (să le spun caractere late??), care sunt reprezentări ale caracterelor multibyte
+
+Din cauza numeroaselor probleme de portabilitate, prelucrarea șirurilor de caractere ar trebui realizată cu biblioteci specializate, deoarece limbajul C nu oferă ceva suficient de portabil în acest sens.
+
+În continuare, ne vom limita la caractere clasice:
+```c
+#include <stdio.h>
+#include <string.h>  /* pentru strlen */
+
+void afis(char *s, char *nume)
+{
+    char *p = s;
+    printf("Sirul %s este %s si are lungimea %zu\n", nume, s, strlen(s));
+    while(*p != '\0')
+    {
+        printf("(%c) cu valoarea %d\n", *p, *p);
+        p++;
+    }
+    puts("\n-----------------\n");
+}
+
+int main()
+{
+    char s1[] = "qwe";  // contine si '\0', are tipul char[4] si poate fi modificat
+    afis(s1, "s1");
+    char *s2 = "rty";   // contine si '\0', nu poate fi modificat!  https://en.cppreference.com/w/c/language/array_initialization
+    afis(s2, "s2");
+    char s3[6] = "uio"; // contine si '\0' si poate fi modificat
+    afis(s3, "s3");
+
+    for(int i = 0; i < 6; ++i)
+        printf("(%c) cu valoarea %d\n", s3[i], s3[i]);
+    puts("\n-----------------\n");
+
+    // atentie!!
+    char s4[3] = "rew";  // nu contine '\0'
+    // afis(s4, "s4");  // !!!
+    for(int i = 0; i < 3; ++i)
+        printf("(%c) cu valoarea %d\n", s3[i], s3[i]);
+    puts("\n-----------------\n");
+
+    char* sir = "un sir de caractere";
+    printf(sir);
+    puts("\n-----------------\n");
+
+    char zi[15];
+    puts("\nCe zi este azi?");
+    scanf("%15s", zi);
+    while(getc(stdin) != '\n');
+    printf("Am citit %s!\n\n", zi);
+
+    // scanf se oprese dupa primul spatiu
+    // daca vrem sa citim si spatii, folosim fgets
+    char propozitie[100];
+    printf("Introduceti propozitia: ");
+    fgets(propozitie, 100, stdin);
+    printf("Am citit: \"");
+    fputs(propozitie, stdout);
+    puts("\"\nGata!");
+    return 0;
+}
+```
+
+Observații:
+- 🚧 de adăugat
+- https://stackoverflow.com/questions/2979209/using-fflushstdin
+- https://stackoverflow.com/questions/58403537/what-can-i-use-for-input-conversion-instead-of-scanf
+
+Despre șiruri de caractere vom mai discuta într-un laborator separat, deoarece este un subiect vast.
 
 ## `cppcheck` și `valgrind`
 [Înapoi la cuprins](#cuprins)
@@ -410,11 +488,13 @@ Vestea proastă este că nu am găsit vreun instrument de verificare a memoriei 
 Dacă aveți deja ceva Unix-based, atunci ar trebui să fie relativ ușor: fie din package manager, fie instalat din [sursă](https://valgrind.org/downloads/repository.html). Pentru macOS nu pare să fie atât de simplu, vedeți de exemplu [aici](https://www.gungorbudak.com/blog/2018/04/28/how-to-install-valgrind-on-macos-high-sierra/). Altfel, folosiți varianta 1 de mai jos și nu trebuie să instalați nimic.
 
 Vestea bună e că aveți alte trei alternative (alegeți una singură):
-1. Folosiți GitHub cu GitHub Actions/Travis/altceva similar (sau GitLab) - varianta recomandată și **nu trebuie să instalați nimic**
-2. Instalați WSL (Windows Subsystem for Linux)
-3. Instalați o mașină virtuală de Linux
+1. [Folosiți GitHub cu GitHub Actions/Travis/altceva similar (sau GitLab)](#din-browser) - varianta recomandată și **nu trebuie să instalați nimic**
+2. [Instalați WSL (Windows Subsystem for Linux)](#wsl)
+3. [Instalați o mașină virtuală de Linux](#mașină-virtuală)
 
-1. Pași de urmat pentru GitHub cu GitHub Actions. Dacă doriți alte variante, le voi adăuga și pe acelea:
+
+#### Din browser
+Pași de urmat pentru GitHub cu GitHub Actions. Dacă doriți alte variante, le voi adăuga și pe acelea:
 - vă creați un cont pe GitHub
 - creați un repository
 - dați pe `Actions`, apoi click pe `set up a workflow yourself`
@@ -426,12 +506,12 @@ TBA
 
 - TBA restul pașilor
 
-2. WSL
+#### WSL
 - `Control Panel` -> `Turn Windows features on or off` -> bifați `Windows Subsystem for Linux`
 - încercați întâi să urmați pașii de aici: https://docs.microsoft.com/en-us/windows/wsl/install-win10 (apoi de căutat pe net în funcție de eroare)
 - ☹ am instalat mai demult și între timp s-au schimbat lucrurile, posibil să nu vă meargă...
 
-3. Mașină virtuală
+#### Mașină virtuală
 - folosiți VirtualBox sau VMWare Player
 - descărcați un ISO cu ce distribuție doriți
 
