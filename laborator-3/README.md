@@ -5,6 +5,7 @@
 
 # Cuprins
 ## [Programe discutate](#programe-discutate-1)
+## [Instalare `cppcheck` și `valgrind`](#cppcheck-și-valgrind)
 ## [Exerciții](#exerciții-1)
 ## [Întrebări, erori și orice nu a fost acoperit deja](#întrebări-erori-diverse)
 ## [Resurse recomandate](#resurse-recomandate-1)
@@ -13,6 +14,7 @@
 ### [Conversii](#conversii-1)
 ### [Pointeri](#pointeri-1)
 ### [Tablouri unidimensionale](#tablouri-unidimensionale-1)
+### [Șiruri de caractere](#șiruri-de-caractere-1)
 ### [Matrice](#matrice-1)
 
 ### Conversii
@@ -332,12 +334,15 @@ void afis(int *x, int n)
 
 int main()
 {
-    for(int n = 3; n < 10; n += 3)
+    for(int j = 0; j < 3; ++j)
     {
+        int n;
+        printf("Introduceti n: ");
+        scanf("%d", &n);
         int v[n], *p;
         p = v;
         printf("VLA de %d elemente are sizeof %zu\n", n, sizeof(v));
-        for(int i = 0; i < n; i++)
+        for(int i = 0; i < n; ++i)
             v[i] = n - i;
         afis(v, n);
         afis(p, n);
@@ -349,12 +354,58 @@ int main()
 Observații:
 - în interiorul blocului `for`, vectorul `v` are de fiecare dată altă dimensiune
 - la fel ca la vectorii normali, atunci când transmitem un VLA unei funcții, acesta este convertit într-un pointer către primul element din vector
-
-Despre șiruri de caractere vom discuta într-un laborator separat, deoarece este un subiect vast.
+- `int n = 3; int v[n];` **nu** este un VLA deoarece dimensiunea vectorului este cunoscută la momentul compilării
 
 ### Matrice
 [Înapoi la programe](#programe-discutate-1)
 
+O matrice (sau tablou bidimensional) este un vector de vectori. Știm despre vectori că elementele sunt alocate la adrese consecutive de memorie. Similar, vectorii din matrice sunt și ei alocați la adrese consecutive de memorie, adică fiecare vector este în continuarea celui de dinaintea sa.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int nr_trotuare, locuri, i, j;
+    nr_trotuare = 2;
+    locuri = 10;
+    _Bool parcare[nr_trotuare][locuri];
+    for (i = 0; i < nr_trotuare; ++i)
+        for (j = 0; j < locuri; ++j)
+        {
+            // scanf("%d", &parcare[i][j]);   // linia 12
+            parcare[i][j] = ((i+j)%3 == 0);
+        }
+            
+
+    for (j = 0; j < locuri; ++j, puts(""))
+        for (i = 0; i < nr_trotuare; ++i)
+            parcare[i][j] ? printf("[x]\t") : printf("[ ]\t");
+    return 0;
+}
+```
+
+Observații:
+- operatorul `<cond> ? <expr_adev> : <expr_fals>` evaluează condiția `<cond>` și întoarce expresia `<expr_adev>` dacă `<cond>` este adevărată sau `<expr_fals>` în caz contrar
+- diferența dintre `if/else` și `? :` este aceea că a doua reprezintă o expresie, adică întoarce o valoare
+- în exemplul de mai sus, nu ne interesează valoarea și am folosit operatorul acesta pentru că este mai concis
+- dacă voiam să preluăm valoarea, aveam `int caractere_afisate = parcare[i][j] ? printf("[x]\t") : printf("[ ]\t");`, ceea ce nu puteam face la fel de simplu cu o instrucțiune `if/else`
+- dacă doriți să citiți valorile matricei de la tastatură, decomentați linia 12 și comentați linia următoare
+  - `scanf` nu poate citi în mod explicit `_Bool`, de aceea citim sub formă de `int` și ne folosim de conversiile implicite
+
+### Șiruri de caractere
+[Înapoi la programe](#programe-discutate-1)
+
+🚧
+
+Despre șiruri de caractere vom discuta și într-un laborator separat, deoarece este un subiect vast.
+
+## `cppcheck` și `valgrind`
+[Înapoi la cuprins](#cuprins)
+
+Puteți instala ușor [`cppcheck`](http://cppcheck.sourceforge.net/#download) pe Windows.
+
+Vestea proastă este că nu am găsit vreun instrument de verificare a memoriei pentru Windows *care să și meargă*. Există [DrMemory](http://www.drmemory.org/) cu care m-am chinuit câteva ore să îl fac să meargă, apoi am renunțat.
 
 <!--
 Laboratorul 4:
@@ -400,7 +451,12 @@ sau
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
 
+- modificați exemplul cu matricea astfel încât parcarea să fie afișată "orizontal" în loc de "vertical"
 
+Exerciții din PDF:
+1. Se citesc `n`, `m` și apoi două mulțimi `A` și `B` cu `n`, respectiv `m` numere întregi cuprinse între `[-x, x]`, `x <= 2000`. Să se afișeze numărul de elemente comune mulțimii. Indicație: mulțimile `A` și `B` nu se vor memora - se va crea un vector de frecvență.
+2. Se citesc: `n`, cele `n` elemente ale unui vector sortat crescator, apoi `x` și `y` două elemente din vector. Să se afișeze toate elementele vectorului cuprinse între `x` și `y`. Indicație: folosiți căutarea binară.
+<!-- 3, 4, 5, 6, 7 -->
 
 ## Întrebări, erori, diverse
 [Înapoi la cuprins](#cuprins)
