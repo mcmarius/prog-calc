@@ -590,9 +590,94 @@ sau
 - modificați exemplul cu matricea astfel încât parcarea să fie afișată "orizontal" în loc de "vertical"
 
 Exerciții din PDF:
-1. Se citesc `n`, `m` și apoi două mulțimi `A` și `B` cu `n`, respectiv `m` numere întregi cuprinse între `[-x, x]`, `x <= 2000`. Să se afișeze numărul de elemente comune mulțimii. Indicație: mulțimile `A` și `B` nu se vor memora - se va crea un vector de frecvență.
-2. Se citesc: `n`, cele `n` elemente ale unui vector sortat crescator, apoi `x` și `y` două elemente din vector. Să se afișeze toate elementele vectorului cuprinse între `x` și `y`. Indicație: folosiți căutarea binară.
-<!-- 3, 4, 5, 6, 7 -->
+1. Se citesc `n`, `m` și apoi două mulțimi `A` și `B` cu `n`, respectiv `m` numere întregi cuprinse între `[-x, x]`, `x <= 2000`. Să se afișeze numărul de elemente comune mulțimii.
+- indicație: mulțimile `A` și `B` nu se vor memora - se va crea un vector de frecvență; în codul de mai jos, `vf` este un vector de frecvență:
+```c
+int vf[11] = {0}, nr, i;
+do
+{
+    printf("Introduceti un numar de la 0 la 10 (-1 pentru oprire): ");
+    scanf("%d", &nr);
+    ++vf[nr];
+} while(nr != -1);
+
+for(i = 0; i <= 10; ++i)
+    printf("%d apare de %d ori.\n", i, v[i]);
+```
+- 🚧 teste
+
+2. Se citesc: `n`, cele `n` elemente ale unui vector sortat crescător, apoi `x` și `y` două elemente din vector. Să se afișeze toate elementele vectorului cuprinse între `x` și `y`. Indicație: folosiți căutarea binară:
+```c
+int cautare_binara(int *v, int x, int st, int dr)
+{
+    if(st > dr)     return -1;
+    if(v[st] == x)  return st;
+    if(v[dr] == x)  return dr;
+
+    int mijloc = (st + dr) / 2;
+    if(v[mijloc] == x)
+        return mijloc;
+    else if(x < v[mijloc])
+        return cautare_binara(v, x, st, mij - 1);  // caut doar in stanga
+    else
+        return cautare_binara(v, x, mij + 1, dr);  // caut doar in dreapta
+}
+```
+- 🚧 teste
+
+3. Se  citesc `x`, `y`, două numere mari (fiecare având peste 20 de cifre). Să se calculeze suma lor (folosind vectori).
+  a) Numerele sunt naturale
+  b) Numerele sunt întregi
+  - explicație: numerele mari le vom citi ca pe niște șiruri de caractere, apoi parcurgem în același timp vectorii de la dreapta la stânga, întrucât cifra cea mai nesemnificativă va fi în dreapta
+  - trebuie propagat un `1` dacă suma depășește 10
+  - numerele întregi pot avea același semn sau semne diferite
+  - 🚧 teste
+
+4. Se citesc de la tastatură `m` și `n` naturale nenule reprezentând dimensiunile unei matrice și apoi se citesc elementele matricei. Să se construiască și să se afișeze matricea transpusă.
+```
+A =  1  2  3 
+     4  5  6
+
+A^T =  1   4
+       2   5
+       3   6
+```
+- 🚧 teste
+
+5. Să se parcurgă o matrice în spirală.
+
+Exemplu: pentru matricea de mai jos se va afișa `1, 2, 3, 6, 9, 12, 11, 10, 7, 4, 5, 8`:
+```
+   1      2     3
+   4      5     6
+   7      8     9
+   10    11    12
+```
+- 🚧 teste
+
+6. Să se creeze o matrice patratică, în spirală, după regulile:
+  - numerele pornesc de la 1, din 1 în 1, în ordine crescătoare
+  - după fiecare număr neprim `x`, se adaugă cel mai mic divizor propriu al său, după care se continuă cu `x + 1`.
+
+Exemplu:
+```
+ 1   2   3   4   2
+11  12   2  13   5
+ 2  16   2  14   6
+10   3  15   2   2
+ 3   9   2   8   7
+```
+- 🚧 teste
+
+7. Se citește o matrice `A` de dimenisiuni `N x N` (1 <= `N` <= 100), (0 <= `A[i][j]` < 2^32). Să se efectueze o rotire spre dreapta a matricei `A`.
+
+Exemplu:
+```
+1   2        3   1
+        =>
+3   4        4   2
+```
+- 🚧 teste
 
 ## Întrebări, erori, diverse
 [Înapoi la cuprins](#cuprins)
