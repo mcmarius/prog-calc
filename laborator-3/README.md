@@ -320,6 +320,9 @@ Observații:
   - `warning: 'sizeof' on array function parameter 'x' will return size of 'int *' [-Wsizeof-array-argument]`
 - un pointer către un întreg poate fi privit ca un vector cu un singur element
 - pe de altă parte, `int *v = {1, 2, 3};` este invalid (primim și warning)
+- **numele unui vector este un pointer constant către adresa primului element**
+  - este constant deoarece nu îl putem modifica: nu putem scrie `s4 = s3;` sau `s3 = s2;` - încercați!
+  - în schimb, putem scrie `s2 = s3;`, deoarece `s2` este pointer!
 
 Standardul C99 introduce vectori de lungime variabilă (VLA - variable length arrays). Aceștia nu pot fi inițializați cu sintaxa cu acolade, dar îi putem folosi pentru a aloca pe stivă un număr de elemente stabilit la execuție:
 ```c
@@ -446,18 +449,20 @@ int main()
     char s4[3] = "rew";  // nu contine '\0'
     // afis(s4, "s4");  // !!!
     for(int i = 0; i < 3; ++i)
-        printf("(%c) cu valoarea %d\n", s3[i], s3[i]);
+        printf("(%c) cu valoarea %d\n", s4[i], s4[i]);
     puts("\n-----------------\n");
 
-    char* sir = "un sir de caractere";
+    char* sir = "un sir\tde\ncaractere";
     printf(sir);
     puts("\n-----------------\n");
 
     char zi[15];
     puts("\nCe zi este azi?");
-    scanf("%15s", zi);
-    while(getc(stdin) != '\n');
+    scanf("%14s", zi);
     printf("Am citit %s!\n\n", zi);
+
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF); // linia 46
 
     // scanf se oprese dupa primul spatiu
     // daca vrem sa citim si spatii, folosim fgets
@@ -472,9 +477,32 @@ int main()
 ```
 
 Observații:
-- 🚧 de adăugat
-- https://stackoverflow.com/questions/2979209/using-fflushstdin
-- https://stackoverflow.com/questions/58403537/what-can-i-use-for-input-conversion-instead-of-scanf
+- `s1` este un vector de caractere alocat static și inițializat asemănător cu sintaxa cu acolade:
+  - echivalentul este `char s1[] = {'q', 'w', 'e', '\0'};`
+- `s2` este un pointer către un literal de tip șir de caractere (string literal); modificarea unui string literal reprezintă comportament nedefinit 💥 
+- `s3` este asemănător cu `s1` și se aplică aceeași regulă de mai sus cu inițializarea cu 0 a celorlalte elemente:
+  - echivalentul este `char s1[] = {'q', 'w', 'e', '\0', '\0', '\0'};`
+- `s4` **nu conține `'\0'`**; dacă afișați `s4[3]` cu `%d`, cel mai probabil nu veți obține 0 corespunzător `'\0'`; și chiar dacă ați obține 0, este comportament nedefinit deoarece accesați un element din afara vectorului
+- spre deosebire de `s2`, șirurile `s1`, `s3` și `s4` pot fi modificate
+- pentru a putea folosi funcțiile de prelucrare pentru șiruri de caractere (de exemplu `strlen`), este obligatoriu ca șirul de caractere să aibă cel puțin un `'\0'`
+  - în caz contrar, se accesează zone invalide de memorie până la întâlnirea unui caracter `'\0'`
+- `sir` este doar ca să nu aveți impresia că șirurile de caractere nu pot conține spații
+- dacă vrem să citim șiruri de caractere cu `scanf`, **specificăm obligatoriu lungimea maximă**; [alternativ, folosim **`fgets`**](https://stackoverflow.com/questions/58403537/what-can-i-use-for-input-conversion-instead-of-scanf)
+  - funcția `scanf` se oprește la primul caracter alb (exemple: `' '`, `'\n'`) și este problematic dacă vrem să citim și altceva, deoarece comportamentul citirii spațiilor diferă pentru fiecare specificator de conversie
+  - `scanf` completează întotdeauna șirul cu `'\0'`
+  - nu citim cu `scanf("%14s", &zi);`, deoarece `zi` este un vector, dar este și un **pointer** la adresa primului element
+    - `&zi` are tipul `char(*)[15]`, adică un pointer la un vector de caractere de 15 elemente
+    - `zi` are tipul `char[15]`, echivalent cu `char*` la transmiterea ca parametru unei funcții
+  - funcția `fgets` primește un șir de caractere, numărul maxim de caractere + 1 (`nr`) pe care vrem să îl citim și locul de unde citim (fișier, tastatură etc)
+    - numărul de caractere va fi de obicei lungimea șirului de caractere în care citim: `fgets` citește `nr - 1` caractere, apoi completează cu `'\0'`
+    - `fgets` se oprește la rând nou (`'\n'`), iar șirul citit va conține acest caracter `'\n'`; dacă ne încurcă, îl putem șterge ulterior
+    - dacă există mai mult de `nr - 1` caractere, citirea se oprește după acele `nr - 1` caractere, iar șirul nu va conține caracterul de rând nou
+  - în ambele cazuri, trebuie să avem deja alocat spațiul pentru șirul de caractere
+  - un pointer către un șir de caractere literal nu poate fi folosit, deoarece nu avem voie să modificăm zona respectivă!
+- la linia 46 vrem să [eliminăm caracterul de rând nou](https://stackoverflow.com/questions/40554617/while-getchar-n) care a rămas de la `scanf`
+  - fără acest pas, `fgets` va citi doar acel `'\n'` rămas de dinainte! (de aceea este de preferat să citim doar cu `fgets`)
+  - de asemenea, adăugăm condiția cu `EOF` (end of file) pentru situația în care are loc o eroare la citirea de la tastatură sau dacă vrem să oprim citirea prin folosirea unui caracter de control: <kbd>Ctrl</kbd> + <kbd>Z</kbd> pe Windows, respectiv <kbd>Ctrl</kbd> + <kbd>D</kbd> pe Unix
+  - utilizarea `fflush` pentru dispozitive de intrare [nu are sens!](https://stackoverflow.com/questions/2979209/using-fflushstdin)
 
 Despre șiruri de caractere vom mai discuta într-un laborator separat, deoarece este un subiect vast.
 
@@ -485,7 +513,7 @@ Puteți instala ușor [`cppcheck`](http://cppcheck.sourceforge.net/#download) pe
 
 Vestea proastă este că nu am găsit vreun instrument de verificare a memoriei pentru Windows *care să și meargă*. Există [DrMemory](http://www.drmemory.org/) cu care m-am chinuit câteva ore să îl fac să meargă, apoi am renunțat.
 
-Dacă aveți deja ceva Unix-based, atunci ar trebui să fie relativ ușor: fie din package manager, fie instalat din [sursă](https://valgrind.org/downloads/repository.html). Pentru macOS nu pare să fie atât de simplu, vedeți de exemplu [aici](https://www.gungorbudak.com/blog/2018/04/28/how-to-install-valgrind-on-macos-high-sierra/). Altfel, folosiți varianta 1 de mai jos și nu trebuie să instalați nimic.
+Dacă aveți deja ceva Unix-based, atunci ar trebui să fie relativ ușor cu `valgrind`: fie din package manager, fie instalat din [sursă](https://valgrind.org/downloads/repository.html). Pentru macOS nu pare să fie atât de simplu, vedeți de exemplu [aici](https://www.gungorbudak.com/blog/2018/04/28/how-to-install-valgrind-on-macos-high-sierra/). Altfel, mai există varianta opțiunii de compilator `-fsanitize=address` (dacă primiți erori, încercați [asta](https://stackoverflow.com/questions/37970758/how-to-use-addresssanitizer-with-gcc/40215639#40215639)). Sau folosiți varianta 1 de mai jos și nu trebuie să instalați nimic.
 
 Vestea bună e că aveți alte trei alternative (alegeți una singură):
 1. [Folosiți GitHub cu GitHub Actions/Travis/altceva similar (sau GitLab)](#din-browser) - varianta recomandată și **nu trebuie să instalați nimic**
