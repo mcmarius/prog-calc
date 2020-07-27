@@ -669,7 +669,7 @@ Exemplu:
 ```
 - 🚧 teste
 
-7. Se citește o matrice `A` de dimenisiuni `N x N` (1 <= `N` <= 100), (0 <= `A[i][j]` < 2^32). Să se efectueze o rotire spre dreapta a matricei `A`.
+7. Se citește o matrice `A` de dimenisiuni `N x N` (`1 <= N <= 100`), (`0 <= A[i][j] < 2^32`). Să se efectueze o rotire spre dreapta a matricei `A`.
 
 Exemplu:
 ```
