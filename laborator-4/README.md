@@ -11,12 +11,74 @@
 ## [Resurse recomandate](#resurse-recomandate-1)
 
 ## Programe discutate
+### [Structuri](#structuri-1)
+### [`typedef`](#typedef-1)
+### [Uniuni](#uniuni-1)
+### [Câmpuri de biți](#câmpuri-de-biți-1)
+### [Alocare dinamică](#alocare-dinamică-1)
 
+### [Structuri](https://en.cppreference.com/w/c/language/struct)
+Structurile reprezintă o grupare de tipuri de date eterogene (diferite) pe care le vom numi câmpuri:
+```c
+struct Persoana
+{
+    char nume[30];
+    unsigned int varsta;
+};
+```
+Desigur, nu este obligatoriu ca tipurile de date ale câmpurilor să fie diferite:
+```c
+struct punct
+{
+    int x, y;
+};
+```
+Definițiile de mai sus introduc tipurile de date `struct Persoana` și `struct punct`. Declararea variabilelor se poate face la momentul definirii structurii sau ulterior:
+```c
+#include <stdio.h>
 
+struct Persoana
+{
+    char nume[30];
+    unsigned int varsta;
+};
 
-### Structuri
+int main()
+{
+    struct punct
+    {
+        int x, y;
+    } p1, p2;
+    printf("Introduceti coordonatele x si y separate printr-un spatiu: ");
+    scanf("%d %d", &p1.x, &p1.y);
+    p2 = p1;  // copierea se face bit cu bit
 
+    struct Persoana pers;
+    printf("Introduceti numele: ");
+    fgets(pers.nume, 30, stdin);  // folosim fgets deoarece numele poate contine spatii
+    pers[28] = '\0';  // eliminam '\n'
+    printf("Introduceti varsta: ");
+    scanf("%d", &pers.varsta);
+    printf("%s in varsta de %u ani se afla in punctul (%d, %d).\n", pers.nume, pers.varsta, p2.x, p2.y);
+    return 0;
+}
+```
+Observații:
+- declararea unui `struct punct` nu este posibilă decât în funcția `main`
+- tipul `struct Persoana` poate fi folosit și în alte funcții pentru declararea parametrilor, a variabilelor și a tipurilor de întoarcere
+- trebuie să aveți grijă la copierea structurilor dacă aveți câmpuri care sunt pointeri, deoarece se va copia valoarea pointerului
+  - asta înseamnă că, dacă modificăm câmpul în una dintre variabile, modificarea va fi vizibilă și în cealaltă variabilă, ceea ce nu este de dorit de obicei
+  - ar trebui copiate separat valorile spre care arată acel pointer
+- la copierea unor variabile de tip `struct Persoana` nu vom avea probleme, deoarece membrul `nume` are alocat spațiul (este un vector)
 
+Structurile pot fi [inițializate](https://en.cppreference.com/w/c/language/struct_initialization) folosind sintaxa cu acolade:
+```c
+struct Persoana pers = { { "M M" }, 2 };
+```
+Dacă nu știm ordinea câmpurilor în structură (destul de posibil când folosim alte biblioteci), putem folosi următoarea sintaxă:
+```c
+struct Persoana pers = { .varsta = 2, .nume = { "M M" } };
+```
 
 ### `typedef`
 [Înapoi la programe](#programe-discutate-1)
