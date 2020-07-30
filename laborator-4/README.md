@@ -235,7 +235,11 @@ union repr_char
     } bits;
 };
 ```
-Observație: o variabilă de tip `repr_char` va ocupa cel mai probabil 1 byte, deoarece va avea la sfârșit padding.
+Observații:
+- o variabilă de tip `repr_char` va ocupa cel mai probabil 1 byte, deoarece va avea la sfârșit padding
+- tipul membrului `bits` este o structură *anonimă*, deoarece nu are nume
+  - diferența față de o structură cu nume este aceea că putem declara variabile de acest tip doar la momentul definirii
+  - aceleași observații sunt valabile și pentru uniuni anonime
 
 Deoarece adresele trebuie să fie aliniate, nu putem accesa adresa unui câmp de biți:
 ```c
@@ -261,6 +265,220 @@ Standardul specifică faptul că putem avea câmpuri de biți pentru următoarel
 ## Organizarea codului în fișiere separate
 [Înapoi la cuprins](#cuprins)
 
+Pentru a putea vorbi despre compilarea mai multor fișiere, trebuie întâi să știm ce se întâmplă atunci când compilăm un singur fișier.
+
+De fapt, prin compilare se înțeleg de obicei mai multe etape:
+
+1. Preprocesare
+```c
+#define MAXN 5
+// comentariu
+int main()
+{
+    int n = MAXN;
+    return 0;
+}
+```
+Sunt aplicate toate directivele de preprocesare, ceea ce înseamnă pe scurt că se face copy-paste în tot programul în mod recursiv până când sunt eliminate toate directivele de procesare:
+- de exemplu, header-ul `<stdlib.h>` poate să includă header-ul `<limits.h>`, care poate include la rândul său alt header și tot așa
+- macro-urile sunt și ele aplicate; mai multe despre asta în laboratorul viitor, dar, pe scurt, în programul de mai sus, peste tot unde apare `MAXN`, va fi înlocuit cu 5
+- la final, toate directivele de preprocesare sunt înlocuite cu un spațiu alb; la fel și comentariile
+
+Aplicând doar preprocesarea (opțiunea de compilator din linie de comandă ar trebui să fie `-E`, vom obține
+```c
+
+
+int main()
+{
+    int n = 5;
+    return 0;
+}
+```
+2. Compilarea propriu-zisă (cu opțiunea de compilator `-S`, utilitarul `cc1.exe`): transformă codul sursă preprocesat în cod de asamblare
+```s
+        .file   "h.c"
+        .text
+        .globl  main
+        .type   main, @function
+main:
+.LFB0:
+        .cfi_startproc
+        pushq   %rbp
+        .cfi_def_cfa_offset 16
+        .cfi_offset 6, -16
+        movq    %rsp, %rbp
+        .cfi_def_cfa_register 6
+        movl    $5, -4(%rbp)
+        movl    $0, %eax
+        popq    %rbp
+        .cfi_def_cfa 7, 8
+        ret
+        .cfi_endproc
+.LFE0:
+        .size   main, .-main
+        .ident  "GCC: (Ubuntu 9.3.0-10ubuntu2~16.04) 9.3.0"
+        .section        .note.GNU-stack,"",@progbits
+```
+Sau pe Windows:
+```s
+	.file	"h.c"
+	.text
+	.def	__main;	.scl	2;	.type	32;	.endef
+	.globl	main
+	.def	main;	.scl	2;	.type	32;	.endef
+	.seh_proc	main
+main:
+	pushq	%rbp
+	.seh_pushreg	%rbp
+	movq	%rsp, %rbp
+	.seh_setframe	%rbp, 0
+	subq	$48, %rsp
+	.seh_stackalloc	48
+	.seh_endprologue
+	call	__main
+	movl	$5, -4(%rbp)
+	movl	$0, %eax
+	addq	$48, %rsp
+	popq	%rbp
+	ret
+	.seh_endproc
+	.ident	"GCC: (x86_64-win32-seh-rev0, Built by MinGW-W64 project) 8.1.0"
+```
+3. Asamblarea: transformă codul de asamblare în fișiere obiect (binar) cu opțiunea de compilator `-c`, utilitarul `as.exe`: o mică parte din binar pentru codul de mai sus
+
+![o parte din fișierul obiect pentru codul de mai sus](img/binar.png)
+
+4. Linking (legare), utilitarul `ld` (sau `collect2.exe`): în această etapă, unul sau mai multe fișiere obiect sunt transformate într-un fișier executabil
+
+Ca fișiere obiect, poate fi vorba și despre biblioteci. Acestea sunt de două tipuri: statice (`.lib` sau `.a`) sau dinamice (`.dll` sau `.so`). Cele statice vor fi incluse în executabil și vor crește dimensiunea acestuia. Cele dinamice pot cauza erori la execuția programului.
+
+Atunci când organizăm codul în mai multe fișiere, vom folosi fișiere de tip header (cu extensia `.h`) pentru **declarații** și fișiere de tip sursă (cu extensia `.c`) pentru **definiții**, adică pentru implementarea propriu-zisă. Fișierele header sau alte declarații expun **ce** funcții/variabile/tipuri de date folosim din alte fișiere.
+
+Pentru fiecare fișier care a trecut de etapa de preprocesare (numit translation unit), putem compila câte un fișier obiect separat. La final, în etapa de linking, din aceste fișiere obiect va fi obținut executabilul. Avantajul acestei abordări este că vom recompila doar fișierele modificate, iar singura etapă care se va realiza de fiecare dată va fi cea de linking.
+
+Exemplu:
+```c
+// main.c
+#include <stdio.h>
+#include "probleme.h"
+
+int main(void)
+{
+    puts("Apelez problema 1");
+    problema_1();
+    puts("Apelez problema 2");
+    problema_2();
+    puts("Gata");
+    return 0;
+}
+
+
+// probleme.h
+void problema_1(void);
+void problema_2(void);
+
+
+// probleme.c
+#include <stdio.h>
+#include "probleme.h"
+
+void problema_1(void)
+{
+    puts("p1");
+    /* rezolvare */
+}
+
+void problema_2(void)
+{
+    puts("p2");
+    /* rezolvare */
+}
+```
+
+Problemele apar atunci când într-un translation unit (fișier de după procesare) ajungem să includem același lucru de două ori fără să vrem (deoarece directivele `include` sunt procesate recursiv, până la "epuizare"). Să presupunem că în fișierul header mai definim și o structură:
+```c
+// main.c
+#include <stdio.h>
+#include "probleme.h"
+#include "probleme.h"
+
+int main(void)
+{
+    puts("Apelez problema 1");
+    problema_1();
+    puts("Apelez problema 2");
+    problema_2();
+    puts("Gata");
+    return 0;
+}
+
+
+// probleme.h
+#ifndef PROBLEME_H
+//#define PROBLEME_H
+
+void problema_1(void);
+void problema_2(void);
+
+struct Persoana
+{
+    int varsta;
+};
+
+#endif // PROBLEME_H
+
+
+// probleme.c
+#include <stdio.h>
+#include "probleme.h"
+
+void problema_1(void)
+{
+    puts("p1");
+    /* rezolvare */
+}
+
+void problema_2(void)
+{
+    puts("p2");
+    /* rezolvare */
+}
+```
+Ce se întâmplă?
+
+În etapa de preprocesare, se copiază de două ori definiția structurii, deoarece se face pur și simplu copy-paste (așa funcționează directivele de preprocesare).
+
+Soluția este să includem un fișier header doar dacă nu a fost inclus deja. Fie folosim un "include guard":
+```c
+// probleme.h
+#ifndef PROBLEME_H
+#define PROBLEME_H
+
+void problema_1(void);
+void problema_2(void);
+
+struct Persoana
+{
+    int varsta;
+};
+
+#endif // PROBLEME_H
+```
+Fie folosim o declarație `pragma`:
+```c
+#pragma once
+
+void problema_1(void);
+void problema_2(void);
+
+struct Persoana
+{
+    int varsta;
+};
+```
+Observații:
+- putem avea un singur fișier header și mai multe fișiere sursă, nu este obligatoriu să aibă același nume fișierul header cu cel sursă sau să existe o corespondență 1:1
+- în fișierul `probleme.c` nu este obligatoriu să includem header-ul dacă nu folosim tipurile de date definite, dar e bine să o facem pentru a documenta codul
 
 
 ## Exerciții
