@@ -567,6 +567,7 @@ int main()
 Observații:
 - dacă `sh` este negativ sau e mai mare sau egal cu numărul de biți, ai lui `nr`, avem [**comportament nedefinit**](https://en.cppreference.com/w/c/language/behavior), adică nu avem vreo garanție că programul face ce trebuie; un program *corect* nu conține comportament nedefinit
   - acest lucru este valabil și pentru operatorul de deplasare la dreapta `>>`
+  - am lăsat la sfârșit câteva link-uri dacă vreți să citiți mai multe despre asta
 - operatorul `<<` realizează înmulțirea cu o putere a lui 2: `x << p` îl înmulțește pe `x` cu `2^p`
 - dacă tipul de date al operandului din stânga (`nr`) este fără semn, deplasarea la stânga se realizează în modul descris mai sus
 - dacă tipul de date al operandului din stânga este cu semn, atunci:
@@ -675,5 +676,5 @@ Ca fapt divers, integer overflow/underflow pentru tipuri de date întregi *cu se
 - [StackOverflow](https://stackoverflow.com/questions/tagged/c?tab=Votes)
 - [C FAQ](http://c-faq.com/questions.html)
 - [C99 standard](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf) (doar să îl răsfoiți un pic)
-
+- Despre comportamentul nedefinit, mai multe [aici](https://stackoverflow.com/questions/2397984/undefined-unspecified-and-implementation-defined-behavior), [aici](https://blog.regehr.org/archives/213) și [aici](http://blog.llvm.org/2011/05/what-every-c-programmer-should-know.html)
 
