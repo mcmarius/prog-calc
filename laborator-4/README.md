@@ -395,7 +395,7 @@ void problema_2(void)
 }
 ```
 
-Problemele apar atunci când într-un translation unit (fișier de după procesare) ajungem să includem același lucru de două ori fără să vrem (deoarece directivele `include` sunt procesate recursiv, până la "epuizare"). Să presupunem că în fișierul header mai definim și o structură:
+Problemele apar atunci când într-un translation unit (fișier de după preprocesare) ajungem să includem același lucru de două ori fără să vrem (deoarece directivele `include` sunt procesate recursiv, până la "epuizare"). Să presupunem că în fișierul header mai definim și o structură:
 ```c
 // main.c
 #include <stdio.h>
