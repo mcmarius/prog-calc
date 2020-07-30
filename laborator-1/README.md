@@ -352,6 +352,7 @@ int main()
 - `(void*)` este necesar dacă vrem să respectăm standardul C; mai multe detalii [aici](https://stackoverflow.com/questions/9053658), [aici](https://stackoverflow.com/a/15292265) și [aici](https://stackoverflow.com/a/2369593)
 - `const tip_de_date` este echivalent cu `tip_de_date const`: important este să folosiți aceeași notație peste tot din simplul motiv că e mai ușor de înțeles codul; mai sus am folosit notații diferite *doar cu scop ilustrativ!* Detalii în [documentație](https://en.cppreference.com/w/c/language/declarations)
 - în limbajul C, de obicei spațiile nu sunt foarte importante: `int* adr` este echivalent cu `int *adr` sau `int*adr`
+- operatorul de atribuire este `=` deoarece atribuirea este o instrucțiune foarte frecventă, iar cei care au făcut limbajul au considerat că 2 caractere ar fi prea mult (în alte limbaje avem `:=` sau `<-`)
 - exemplul este destul de stufos, puteți reveni ulterior, nu vă faceți griji dacă nu ați înțeles tot
 - puneți întrebări
 
