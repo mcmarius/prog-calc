@@ -414,9 +414,6 @@ int main(void)
 
 
 // probleme.h
-#ifndef PROBLEME_H
-//#define PROBLEME_H
-
 void problema_1(void);
 void problema_2(void);
 
@@ -424,8 +421,6 @@ struct Persoana
 {
     int varsta;
 };
-
-#endif // PROBLEME_H
 
 
 // probleme.c
