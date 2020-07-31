@@ -360,7 +360,7 @@ Pentru situații mai speciale, putem să ne asumăm noi responsabilitatea admini
   - nu avem voie să eliberăm de două ori `free` consecutiv pe același pointer
     - ... pentru că este posibil ca, după primul apel, zona de memorie să fie refolosită în alte scopuri, iar al doilea apel la `free` va strica acea zonă de memorie
 
-**Orice bloc alocat dinamic trebuie eliberat în mod explicit cu `free`.
+**Orice bloc alocat dinamic trebuie eliberat în mod explicit cu `free`!**
 
 Cam atât despre alocarea dinamică, nu ar trebui să fie complicat: tot ce alocăm în mod explicit trebuie dezalocat în mod explicit cândva până la sfârșitul programului.
 
