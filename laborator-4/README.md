@@ -83,6 +83,8 @@ Dacă nu știm ordinea câmpurilor în structură (destul de posibil când folos
 struct Persoana pers = { .varsta = 2, .nume = { "M M" } };
 ```
 
+Dacă nu specificăm toate câmpurile în lista de inițializare, câmpurile lipsă vor fi inițializate cu 0, la fel ca în cazul inițializării vectorilor cu `{...}`.
+
 Câmpurile sunt alocate în ordinea în în care au fost definite în structură, în sensul că adresa unui câmp este mai mică decât adresele câmpurilor următoare.
 
 Adresele vor fi multiplu de `sizeof`-ul celui mai mare câmp pentru ca accesarea câmpurilor să fie făcută cât mai eficient. Din acest motiv, compilatorul are voie să introducă oricât de mulți biți consideră că sunt necesari între oricare două câmpuri și după ultimul câmp, numiți biți de aliniere (padding bits).
@@ -260,12 +262,74 @@ Standardul specifică faptul că putem avea câmpuri de biți pentru următoarel
 ### Alocare dinamică
 [Înapoi la programe](#programe-discutate-1)
 
+În limbajul C, variabilele pot avea mai multe [clase de memorare](https://en.cppreference.com/w/c/language/storage_duration). Speficifatorii de clase de memorare stabilesc durata de viață a unei variabile și modul de linking (secțiunea următoare).
 
+Există 4 specificatori (de fapt 5 în C11):
+- `auto`
+- `register`
+- `static`
+- `extern`
+
+Dintre acestea 4, numai `register` poate fi specificat pentru parametrii unei funcții.
+
+`auto` este specificatorul cel mai uzual și este considerat implicit. Înseamnă spațiu alocat automat și se referă la variabile locale, în interiorul unui bloc cu `{` și `}`:
+```c
+void f()
+{
+	int x;
+	{
+		float y;
+		// intr-un bloc interior putem accesa variabile din blocuri exterioare
+	}
+	// reciproca nu este adevarata: aici nu mai putem accesa y
+}
+// iar aici sau in alta functie nu mai putem accesa x din functia `void f`
+```
+Observații:
+- cuvântul cheie `auto` este permis doar pentru că limbajul C provine din [limbajul B](https://www.bell-labs.com/usr/dmr/www/kbman.html), pentru a oferi compatibilitate și pentru a traduce mai ușor programe B în programe C; limbajul B nu are tipuri de date, toate variabilele sunt `int`
+- `auto int x` sau `int auto x` sau `auto x` sau `x` sunt echivalente, cu mențiunea că doar `int x` și `auto int x` respectă standardul C
+- `float y` și `auto float y` sunt echivalente, dar `auto y = 1.5` convertește 1.5 la 1 și îl face întreg
+- concluzia: **nu avem nevoie să folosim în mod explicit `auto`**
+- printr-un abuz de limbaj frecvent folosit în sistemul de educație românesc, ne vom referi la variabilele locale ca fiind "alocate static", deși corect este "alocate automat"; în cazul variabilelor care sunt într-adevăr alocate static, declarate cu cuvântul cheie `static`, le vom spune "variabile alocate static cu `static`"
+- atenție: `auto` în limbajul C++ este util, dar [face altceva](https://en.cppreference.com/w/cpp/language/auto): deducerea automată a tipului unei expresii
+
+`register` este folosit pentru a-i cere compilatorului să aloce variabila într-un registru al procesorului, accesul fiind mult mai rapid decât în memoria RAM. Nu putem pune multe variabile în regiștri deoarece procesoarele au un număr mic de regiștri. Cererea programatorului către compilator poate fi ignorată. Deoarece variabilele declarate cu `register` nu "trăiesc" în memoria RAM, este o eroare de sintaxă să preluăm adresa unei astfel de variabile.
+
+În prezent, `register` poate fi util doar în programarea pe [**dispozitive embedded**](https://stackoverflow.com/questions/5507715/should-i-use-the-register-keyword-in-my-code#comment32082724_5507742). În orice alte situații, mai bine **nu folosim** `register`, deoarece compilatoarele moderne (adică nu cele de acum 20-30 de ani) știu mai bine decât noi să aloce variabilele în regiștri [în majoritatea cazurilor](https://stackoverflow.com/questions/578202/register-keyword-in-c).
+
+În limbajul C++, `register` a fost păstrat pentru compatibilitate cu limbajul C, doar că nu are vreun efect, apoi a fost complet înlăturat în 2017 (este rezervat și nu mai face nimic).
+
+Modul de alocare static (**nu** cuvântul cheie) este modul de alocare implicit pentru variabilele globale folosite într-un singur fișier (internal linkage) sau în mai multe fișiere (external linkage). Variabilele alocate static cu `static` "trăiesc" pe tot parcursul programului și sunt inițializate înaintea apelării funcției `main`.
+
+Cuvântul cheie `static` declară o variabilă ca fiind alocată static cu `static` și accesibilă doar din fișierul curent (internal linkage):
+- dacă o *funcție* este declarată cu `static`, atunci nu este vizibilă decât în interiorul fișierului curent (mai corect, translation unit)
+- dacă variabila este declarată global, este vizibilă în toate funcțiile din fișierul curent
+- dacă variabila este declarată local, într-o funcție sau într-un bloc, este accesibilă doar în interiorul funcției/blocului, dar își păstrează valoarea anterioară:
+```c
+#include <stdio.h>
+
+int glob1;
+static int glob2;
+
+void f()
+{
+	static int x = 1;
+	printf("x este %d\n");
+	++x;
+}
+
+int main()
+{
+	f();
+	f();
+	return 0;
+}
+```
 
 ## Organizarea codului în fișiere separate
 [Înapoi la cuprins](#cuprins)
 
-Pentru a putea vorbi despre compilarea mai multor fișiere, trebuie întâi să știm ce se întâmplă atunci când compilăm un singur fișier.
+Pentru a putea vorbi despre compilarea mai multor fișiere, trebuie întâi să știm [ce se întâmplă](https://en.cppreference.com/w/c/language/translation_phases) atunci când compilăm un singur fișier.
 
 De fapt, prin compilare se înțeleg de obicei mai multe etape:
 
@@ -279,12 +343,12 @@ int main()
     return 0;
 }
 ```
-Sunt aplicate toate directivele de preprocesare, ceea ce înseamnă pe scurt că se face copy-paste în tot programul în mod recursiv până când sunt eliminate toate directivele de procesare:
+Sunt aplicate toate directivele de preprocesare, ceea ce înseamnă pe scurt că se face copy-paste în tot programul în mod recursiv până când sunt eliminate toate directivele de preprocesare:
 - de exemplu, header-ul `<stdlib.h>` poate să includă header-ul `<limits.h>`, care poate include la rândul său alt header și tot așa
 - macro-urile sunt și ele aplicate; mai multe despre asta în laboratorul viitor, dar, pe scurt, în programul de mai sus, peste tot unde apare `MAXN`, va fi înlocuit cu 5
 - la final, toate directivele de preprocesare sunt înlocuite cu un spațiu alb; la fel și comentariile
 
-Aplicând doar preprocesarea (opțiunea de compilator din linie de comandă ar trebui să fie `-E`, vom obține
+Aplicând doar preprocesarea (opțiunea de compilator din linie de comandă ar trebui să fie `-E`, utilitarul `cc1.exe`), vom obține
 ```c
 
 
@@ -294,7 +358,7 @@ int main()
     return 0;
 }
 ```
-2. Compilarea propriu-zisă (cu opțiunea de compilator `-S`, utilitarul `cc1.exe`): transformă codul sursă preprocesat în cod de asamblare
+2. Compilarea propriu-zisă (cu opțiunea de compilator `-S`, tot `cc1.exe`): transformă codul sursă preprocesat în cod de asamblare
 ```s
         .file   "h.c"
         .text
@@ -443,6 +507,8 @@ Ce se întâmplă?
 
 În etapa de preprocesare, se copiază de două ori definiția structurii, deoarece se face pur și simplu copy-paste (așa funcționează directivele de preprocesare).
 
+Din asta deducem și că ordinea în care sunt scrise macroinstrucțiunile poate să conteze.
+
 Soluția este să includem un fișier header doar dacă nu a fost inclus deja. Fie folosim un "include guard":
 ```c
 // probleme.h
@@ -461,6 +527,7 @@ struct Persoana
 ```
 Fie folosim o declarație `pragma`:
 ```c
+// probleme.h
 #pragma once
 
 void problema_1(void);
