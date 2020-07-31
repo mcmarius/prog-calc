@@ -357,7 +357,7 @@ Pentru situații mai speciale, putem să ne asumăm noi responsabilitatea admini
   - dacă acest apel reușește, blocul anterior este dezalocat automat, dar este responsabilitatea noastră să eliberăm noul bloc de memorie
   - dacă apelul nu reușește, blocul anterior rămâne alocat și trebuie să îl eliberăm cu `free` până la sfârșitul programului
 - `free`: eliberează memoria alocată cu `malloc`, `calloc` sau `realloc`
-  - nu avem voie să folosim de două ori `free` consecutiv pe același pointer
+  - nu avem voie să folosim de două ori `free` consecutiv pe același pointer 💥
     - ... pentru că este posibil ca, după primul apel, zona de memorie să fie refolosită în alte scopuri, iar al doilea apel la `free` va strica acea zonă de memorie
 
 **Orice bloc alocat dinamic trebuie eliberat în mod explicit cu `free`!**
