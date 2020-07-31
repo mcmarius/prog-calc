@@ -15,6 +15,7 @@
 ### [`typedef`](#typedef-1)
 ### [Uniuni](#uniuni-1)
 ### [Câmpuri de biți](#câmpuri-de-biți-1)
+### [Clase de memorare](#clase-de-memorare-1)
 ### [Alocare dinamică](#alocare-dinamică-1)
 
 ### Structuri
@@ -259,7 +260,7 @@ Standardul specifică faptul că putem avea câmpuri de biți pentru următoarel
 - un câmp de biți de tip `_Bool` nu poate folosi mai mult de un bit
 - de obicei, câmpurile de biți consecutive se vor afla în același byte, pe cât posibil; astfel, putem economisi și mai mult memorie, împreună cu ordonarea descrescătoare a membrilor structurilor
 
-### Alocare dinamică
+### Clase de memorare
 [Înapoi la programe](#programe-discutate-1)
 
 În limbajul C, variabilele pot avea mai multe [clase de memorare](https://en.cppreference.com/w/c/language/storage_duration). Speficifatorii de clase de memorare stabilesc durata de viață a unei variabile și modul de linking (secțiunea următoare).
@@ -276,12 +277,12 @@ Dintre acestea 4, numai `register` poate fi specificat pentru parametrii unei fu
 ```c
 void f()
 {
-	int x;
-	{
-		float y;
-		// intr-un bloc interior putem accesa variabile din blocuri exterioare
-	}
-	// reciproca nu este adevarata: aici nu mai putem accesa y
+    int x;
+    {
+        float y;
+        // intr-un bloc interior putem accesa variabile din blocuri exterioare
+    }
+    // reciproca nu este adevarata: aici nu mai putem accesa y
 }
 // iar aici sau in alta functie nu mai putem accesa x din functia `void f`
 ```
@@ -299,7 +300,7 @@ Observații:
 
 În limbajul C++, `register` a fost păstrat pentru compatibilitate cu limbajul C, doar că nu are vreun efect, apoi a fost complet înlăturat în 2017 (este rezervat și nu mai face nimic).
 
-Modul de alocare static (**nu** cuvântul cheie) este modul de alocare implicit pentru variabilele globale folosite într-un singur fișier (internal linkage) sau în mai multe fișiere (external linkage). Variabilele alocate static cu `static` "trăiesc" pe tot parcursul programului și sunt inițializate înaintea apelării funcției `main`.
+Modul de alocare static (**nu** cuvântul cheie) este modul de alocare implicit pentru variabilele globale folosite într-un singur fișier (internal linkage) sau în mai multe fișiere (external linkage). Variabilele alocate static cu `static`/`extern` "trăiesc" pe tot parcursul programului și sunt inițializate înaintea apelării funcției `main`.
 
 Cuvântul cheie `static` declară o variabilă ca fiind alocată static cu `static` și accesibilă doar din fișierul curent (internal linkage):
 - dacă o *funcție* este declarată cu `static`, atunci nu este vizibilă decât în interiorul fișierului curent (mai corect, translation unit)
@@ -313,18 +314,57 @@ static int glob2;
 
 void f()
 {
-	static int x = 1;
-	printf("x este %d\n");
-	++x;
+    static int x = 1;
+    printf("x este %d\n", x);
+    ++x;
+}
+
+static void g()
+{
+    printf("glob2 este %d\n", glob1);
+    ++glob2;
 }
 
 int main()
 {
-	f();
-	f();
-	return 0;
+    f();
+    f();
+    g();
+    g();
+    return 0;
 }
 ```
+- variabila `glob1` poate fi vizibilă și în alte fișiere (are external linkage)
+- variabila `glob2` este vizibilă doar în fișierul curent (are internal linkage), deoarece am folosit specificatorul `static`
+- funcția `f` poate fi vizibilă și în alte fișiere (are external linkage)
+- funcția `g` este vizibilă doar în fișierul curent (are internal linkage), deoarece am folosit specificatorul `static`
+
+Cuvântul cheie `extern` specifică alocare statică și vizibilitate externă (external linkage), dacă variabila/funcția nu a fost declarată deja cu vizibilitate internă. Aceste este aplicat implicit variabilelor globale și funcțiilor. Nu putem folosi și `extern`, și `static`.
+
+`extern` este utilizat în fișiere header (vedeți secțiunea următoare) pentru a declara variabile pe care le folosim în mai multe fișiere. Utilizarea cuvântului cheie `extern` în cadrul unei *declarații fără definiție* (!) îi spune compilatorului faptul că acea variabilă/funcție este definită în alt fișier, iar "magia" va fi rezolvată de linker (vedeți secțiunea următoare). Declarațiile sunt scrise cu `extern` în fișierul header (`.h`), iar definiția este scrisă în fișierul `.c`. Funcțiile sunt implicit `extern`, dar este nevoie de declarație în fișierul header dacă vrem să folosim acea funcție în alte fișiere (prin includerea header-ului).
+
+### Alocare dinamică
+[Înapoi la cuprins](#cuprins)
+
+În secțiunea anterioară, am vorbit despre clase de memorare. Pentru clasele de mai sus, compilatorul se ocupă de alocarea/dezalocarea memoriei.
+
+Pentru situații mai speciale, putem să ne asumăm noi responsabilitatea administrării memoriei, prin alocări și dezalocări **explicite**.
+
+În limbajul C, există 4 funcții în acest scop:
+- `malloc`: vine de la "memory allocate" și ne întoarce un pointer către o zonă de memorie continuă alocată de sistemul de operare
+- `calloc`: la fel ca `malloc`, dar inițializează memoria respectivă cu 0; `c` vine de la "clear" ([probabil](https://stackoverflow.com/questions/31888422/what-does-the-first-c-stand-for-in-calloc))
+- `realloc`: redimensionează un bloc de memorie alocat anterior cu `malloc`, `calloc` sau `realloc`
+  - dacă acest apel reușește, blocul anterior este dezalocat automat, dar este responsabilitatea noastră să eliberăm noul bloc de memorie
+  - dacă apelul nu reușește, blocul anterior rămâne alocat și trebuie să îl eliberăm cu `free` până la sfârșitul programului
+- `free`: eliberează memoria alocată cu `malloc`, `calloc` sau `realloc`
+  - nu avem voie să eliberăm de două ori `free` consecutiv pe același pointer
+    - ... pentru că este posibil ca, după primul apel, zona de memorie să fie refolosită în alte scopuri, iar al doilea apel la `free` va strica acea zonă de memorie
+
+**Orice bloc alocat dinamic trebuie eliberat în mod explicit cu `free`.
+
+Cam atât despre alocarea dinamică, nu ar trebui să fie complicat: tot ce alocăm în mod explicit trebuie dezalocat în mod explicit cândva până la sfârșitul programului.
+
+Pentru a ne asigura că am eliberat memoria corect, vom folosi [instrumente specializate](https://github.com/mcmarius/prog-calc/tree/laborator-3/laborator-3#cppcheck-%C8%99i-valgrind) care ne vor ajuta să depistăm astfel de erori.
 
 ## Organizarea codului în fișiere separate
 [Înapoi la cuprins](#cuprins)
@@ -546,7 +586,52 @@ Observații:
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
 
+Adaptate din PDF:
 
+1. Să se implementeze o funcție care folosește o uniune pentru a inversa cei doi octeti ai unui întreg (reprezentat pe 2 octeți) citit de la tastatură. Programul principal va apela funcția pentru a codifica și decodifica un întreg dat. Indicație: pentru a avea un întreg pe 2 octeți, folosim un tip de date din `<stdint.h>`.
+```
+Exemplu: n = 20 -> 20 codificat este 5120
+                   5120 decodificat este 20
+```
+
+2. Folosind o singură structură, numită locuință, memorați următoarele date:
+- adresa (cel mult 100 de caractere)
+- suprafața
+- tipul locuinței (șir de cel mult 30 de caractere): "garsoniera", "casa" sau "apartament"
+  - vom folosi un `enum`, iar șirurile de caractere le vom folosi doar când facem citirea și afișarea
+- număr de camere
+- în funcție de tipul de locuință, să reținem (hint: uniune):
+  - pentru garsonieră: balcon/nu (1/0)
+  - apartament: decomandat/nedecomandat (D/N)
+  - casă: șir de caractere - una din variantele: "pe sol", "parter+mansarda", "nr etaje"
+
+Numele structurii va fi fără diacritice, pentru că doar din C11 putem face asta, iar momentan nu avem compilatoare și biblioteci standard conforme cu C11.
+
+Cerințe:
+  - citiți datele a `n` locuințe
+  - verificați faptul că o garsonieră nu are mai mult de o cameră
+  - pentru toate tipurile de locuințe, afișați suprafața și numele tipului de locuință
+  - pentru garsonierele cu balcon, afișați adresa
+  - pentru celelalte tipuri de locuință, afișați detalii despre camere
+
+3. Definiţi o structură pentru memorarea următoarelor informaţii despre angajații unei firme:
+- ~~vârsta: sub 65 de ani~~ (de ce nu avem nevoie de acest câmp?)
+- nume: maxim 30 de caractere
+- normă întreagă/part-time
+- CNP
+
+Cerințe:
+  - Definiţi structura în aşa fel încât să ocupe spaţiul minim de memorie posibil (hint: câmpuri de biți). Afişaţi spaţiul de memorie ocupat, folosind operatorul `sizeof`
+  - Folosind structura definită, citiţi de la tastatură informaţii despre un angajat, apoi afișați numai bărbații din firmă (pe baza CNP), mai tineri de 31 de ani (verificați vârsta folosind operatorii pe biți). Pentru calcularea vârstei, folosiți biblioteca [`<time.h>`](https://en.cppreference.com/w/c/chrono). Probabil aveți nevoie de `time` și `difftime`.
+
+4. Definiţi o structură de date ce ocupă spațiu minim, potrivită pentru a memora informația despre actele aduse de un angajat în dosarul firmei. Actele necesare sunt:
+- copie buletin
+- copie certificat căsătorie
+- copie diplomă licență
+- copie diplomă master
+- copie diplomă doctor
+- fișa de lichidare de la locul de muncă anterior
+- certificate de naștere copii – pentru deducere impozit
 
 ## Întrebări, erori, diverse
 [Înapoi la cuprins](#cuprins)
