@@ -366,6 +366,48 @@ Cam atât despre alocarea dinamică, nu ar trebui să fie complicat: tot ce aloc
 
 Pentru a ne asigura că am eliberat memoria corect, vom folosi [instrumente specializate](https://github.com/mcmarius/prog-calc/tree/laborator-3/laborator-3#cppcheck-%C8%99i-valgrind) care ne vor ajuta să depistăm astfel de erori.
 
+Exemplu:
+```c
+#include <stdio.h>
+#include <stdlib.h>  // pentru malloc, calloc, realloc, free
+
+int* aloc(int n)
+{
+    int *v;
+    v = malloc(sizeof(*v) * n);  // linia 7
+    return v;
+}
+
+int main()
+{
+    int i, nr;
+    int *vec;
+    nr = 10;  // sau cu scanf
+    vec = aloc(nr);
+
+    for(i = 0; i < nr; ++i)
+        vec[i] = i+1;
+    for(i = nr-1; i >= 0; --i)
+        printf("%d ", vec[i]);
+    puts("");
+
+    free(vec);
+
+    return 0;
+}
+```
+Observații:
+- la linia 7, puteam scrie `v = malloc(n * sizeof(int));`, dar există câteva inconveniente:
+  - dacă schimbăm tipul de date al lui `v`, este necesar să schimbăm și argumentul din `sizeof`
+  - înmulțirea a două numere are loc [de la stânga la dreapta](https://stackoverflow.com/questions/31630953/the-order-of-multiplications), deoarece operatorul `*` este asociativ de la stânga la dreapta
+    - **asta nu înseamnă că argumentele în sine sunt evaluate neapărat de la stânga la dreapta dacă aceste argumente sunt expresii**
+    - pentru situația de mai sus, când avem doar o singură înmulțire, **nu contează**, deoarece operația este efectuată cu tipul de date cel mai încăpător, adică `size_t`
+    - dacă, în schimb, am aloca spațiu pentru o matrice, este o diferență semnificativă între `m * n * sizeof(int)` și `sizeof(int) * m * n`, presupunând că `n` și `m` sunt declarate ca `int`, iar `sizeof(int) < sizeof(size_t)`:
+      - în prima situație, avem `(n * m) * sizeof(int)`, adică `(int * int) * sizeof_t`, deci prima înmulțire poate cauza overflow, deoarece rezultatul va fi `int`
+      - în cea de-a doua situație, avem `(size_t * int) * int`, ceea ce este mult mai puțin probabil să cauzeze overflow
+  - nu există un răspuns general valabil dacă [este necesar să facem cast la rezultatul întors de `malloc` sau nu](https://stackoverflow.com/a/62351067)
+- este [de preferat](https://stackoverflow.com/questions/2688466/why-mallocmemset-is-slower-than-calloc) să folosim `calloc` decât `malloc` și apoi imediat `memset`; apropo, `memset` se află în `<string.h>`
+
 ## Organizarea codului în fișiere separate
 [Înapoi la cuprins](#cuprins)
 
