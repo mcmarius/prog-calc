@@ -22,7 +22,7 @@
 ### Directive de preprocesare
 [Înapoi la programe](#programe-discutate-1)
 
-Directivele de preprocesare care ne interesează sunt următoarele:
+Directivele de preprocesare care ne interesează sunt următoarele: [`#include`](#include), [`#define`](#define) și [compilarea condiționată](#compilare-condiționată).
 
 #### `#include`
 
