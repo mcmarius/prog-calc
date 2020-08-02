@@ -364,6 +364,34 @@ Pentru situații mai speciale, putem să ne asumăm noi responsabilitatea admini
 
 Cam atât despre alocarea dinamică, nu ar trebui să fie complicat: tot ce alocăm în mod explicit trebuie dezalocat în mod explicit cândva până la sfârșitul programului.
 
+**Sfat: pentru a nu uita de `free`, un prim pas este să scrieți apelul `free` imediat după ce ați scris apelul de alocare dinamică.**
+
+<details>
+<summary>De fapt, lucrurile sunt mai complicate.</summary>
+  Totuși, deoarece execuția programului se poate ramifica, este foarte posibil să fie nevoie de mai multe apeluri <code>free</code> în program decât alocări. Da, sistemul de operare <a href=https://stackoverflow.com/questions/654754/what-really-happens-when-you-dont-free-after-malloc>ar trebui</a> să elibereze memoria dinamică alocată proceselor, însă e bine să eliberăm resursele folosite ca să ne obișnuim cu asta. Aceste resurse pot fi memorie, (descriptori de) fișiere, conexiuni la servere web/baze de date.
+
+ <br>
+ <br>
+  Dacă programul rulează o perioadă de timp îndelungată (ex: kernel, server), atunci este obligatoriu să eliberăm memoria. Pentru alte situații, eliberarea memoriei la sfârșitul programului poate să fie doar instrucțiuni în plus <a href=https://stackoverflow.com/questions/1421491/does-calling-free-or-delete-ever-release-memory-back-to-the-system>fără rost</a>. Alteori, poate nu avem nevoie să eliberăm memoria respectivă, deoarece va fi folosită și de alte procese.
+  
+  <a href=https://stackoverflow.com/questions/36584062/should-i-free-memory-before-exit>Un alt argument</a> pentru a elibera memoria este să eliminăm erorile fals pozitive atunci când folosim instrumente precum <code>valgrind</code>.
+  
+  De ce trebuie să folosim același pointer primit de la <code>malloc</code> când facem <code>free</code>? Formal, pentru că așa specifică standardul. Un răspuns mai practic ar fi pentru că implementarea poate să rețină informațiile despre dimensiunea blocului în locul imediat de dinaintea pointer-ului pe care ni-l trimite la alocare. De ce să nu putem trimite un pointer din interiorul blocului? Deoarece se folosesc operații pe biți pentru calcularea offset-ului negativ și se caută informațiile într-un loc fix, fără a mai fi nevoie reținerea în structuri suplimentare. Desigur, aceasta este doar o posibilă implementare.
+  <br> 
+  
+  Despre implementarea <code>malloc</code> la modul general: această funcție cere memorie de la sistemul de operare prin apeluri de sistem specifice: <code>mmap</code> (sau altceva, ex: <code>sbrk</code>) pe \*nix, <code>HeapAlloc</code> (sau altele, ex: <code>VirtualAlloc</code>) pe Windows. Eliberarea se face cu alte apeluri specifice: <code>munmap</code> sau <code>HeapFree</code>. Vă las să ghiciți căror apeluri de alocări corespund. După ce <code>malloc</code> obține memoria de la sistemul de operare, o organizează în diverse moduri și abia apoi o "oferă" programului nostru. Atunci când facem <code>free</code>, memoria nu ajunge neapărat înapoi la sistemul de operare, ci este marcată de implementarea <code>malloc</code> ca fiind din nou disponibilă. Astfel, la o nouă cerere de memorie a programului nostru folosind <code>malloc</code>, probabil va fi refolosită memoria alocată și eliberată anterior, fără să mai fie cerută memorie suplimentară de la sistemul de operare, <a href=https://stackoverflow.com/questions/1119134/how-do-malloc-and-free-work>din numeroase motive</a>.
+ <br>
+ <br>
+  Despre variante de <code>malloc</code>: există biblioteci specializate care gestionează memoria preluată de la sistemul de operare în moduri care pot fi mai eficiente decât cele uzuale, dar depinde de fiecare aplicație în parte. Fie sunt folosite apelurile specifice ale acestor biblioteci, fie sunt folosite în continuare <code>malloc</code> și <code>free</code> și se schimbă legăturile la etapa de linking.
+  <br>
+  <br>
+  Ca implementări ale bibliotecii C, avem așa: pe sistemele bazate pe Linux este folosit <code>glibc</code>, pe BSD există <code>BSD libc</code>, iar pe Alpine Linux - un sistem de operare ce ocupă foarte puțin spațiu - este folosit <code>musl</code>. <code>glibc</code> folosește <a href=https://code.woboq.org/userspace/glibc/malloc/malloc.c.html><code>ptmalloc</code></a>.
+
+  Câteva alternative sunt <code>jemalloc</code>, <code>tcmalloc</code> și <code>Hoard malloc</code>.
+  <br>
+  Despre Windows nu știu ce folosește pentru <code>malloc</code> în spatele MSVC++ ("implementarea" este în <code>MSVCRT.dll</code> (și altele) din System32), dar cei de la Microsoft au făcut <code>mimalloc</code>.
+</details>
+
 Pentru a ne asigura că am eliberat memoria corect, vom folosi [instrumente specializate](https://github.com/mcmarius/prog-calc/tree/laborator-3/laborator-3#cppcheck-%C8%99i-valgrind) care ne vor ajuta să depistăm astfel de erori.
 
 Exemplu:
