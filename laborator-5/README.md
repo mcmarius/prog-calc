@@ -293,13 +293,56 @@ int main()
     }
     fclose(f);
     return 0;
+}
 ```
 Observații:
 - citirea din fișiere se face implicit folosind buffere, adică se încarcă datele în memorie (RAM) și se fac operații de I/O (citiri/scrieri) mai rar, deoarece acestea sunt *foarte* lente
 - deschiderea fișierului într-un mod de scriere poate să eșueze dacă nu avem spațiu pe disc
 - la fel și în cazul închiderii, deoarece atunci se golesc automat bufferele
 - la un mod riguros, am putea verifica dacă a reușit `fclose` sau nu
+- putem folosi funcția [`perror`](https://en.cppreference.com/w/c/io/perror) pentru a afișa cauza erorii
 
+Până acum, am folosit două fișiere predefinite de tip `FILE*`:
+- `stdin`, asociat intrării standard (tastatura)
+- `stdout`, asociat ieșirii standard (ecranul)
+
+Putem folosi variante ale funcțiilor folosite până acum pentru citirea/scrierea din/în fișiere, care au ca parametru suplimentar un `FILE*` (despre `fgets` am vorbit deja):
+```c
+#include <stdio.h>
+
+int main()
+{
+    const char *nf = "numere.txt";
+    FILE *f = fopen(nf, "w");
+    if(f == NULL)
+    {
+        perror("Eroare la deschiderea fisierului pentru scriere");
+        return 1;
+    }
+
+    for(int i = 0; i < 10; i += 2)
+        fprintf(f, "%d %d\n", i, i/2);
+    fputc('5', f);
+    fputc('\n', f);
+    fclose(f);
+    fputs("Am scris fisierul!\n", stdout);  // nu pune '\n' la fel ca `puts`!
+
+    f = fopen(nf, "r");
+    if(f == NULL)
+    {
+        perror("Eroare la deschiderea fisierului pentru citire");
+        return 1;
+    }
+
+    int a, b, nr;
+    while((nr = fscanf(f, "%d %d", &a, &b)) == 2)
+        fprintf(stdout, "%d -> %d\n", b, a);
+    if(nr == 1)
+        printf("%d\n", a);
+    fclose(f);
+    return 0;
+}
+```
 
 ### Fișiere binare
 [Înapoi la programe](#programe-discutate-1)
