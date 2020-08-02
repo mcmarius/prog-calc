@@ -216,6 +216,89 @@ Ce este un fișier text?
 
 Un fișier text este orice fișier pe care, dacă îl deschidem cu Notepad, conținutul "are sens". Orice alt fișier este un fișier binar.
 
+La fel ca în cazul alocării dinamice, vă recomand ca, atunci când scrieți apelul de deschis fișiere, să îl scrieți și pe cel pentru închiderea fișierului, chiar dacă se ocupă sistemul de operare de asta.
+
+Funcția [`fopen`](https://en.cppreference.com/w/c/io/fopen) primește ca parametru numele fișierului (șir de caractere) și modul de deschidere (șir de caractere) și întoarce un pointer către o structură de tip `FILE`, adică `FILE*`. Toate acestea sunt incluse în `<stdio.h>`.
+
+Numele fișierului trebuie să fie calea relativă sau absolută a fișierului. Dacă creați fișierele cu <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> din Code::Blocks, puteți folosi direct numele fișierului (fără numele folderelor în care se află), deoarece se ocupă Code::Blocks de restul.
+
+Exemplu:
+- am creat fișierul `date.in`
+- structura fișierelor în cadrul proiectului Code::Blocks este următoarea (folderul se numește "fisiere"):
+```
+fisiere
+│   ceva.c
+│   fisiere.cbp
+│   fisiere.depend
+│   fisiere.layout
+│   date.in
+│   main.c
+│
+├───bin
+│   └───Debug
+│           fisiere.exe
+│
+└───obj
+    └───Debug
+            main.o
+```
+- calea absolută este ceva asemănător cu `C:\Users\marius\Documents\facultate\ore\prog-calc\laborator-5\fisiere`
+  - pe \*nix am avea ceva asemănător cu `/home/marius/facultate/ore/prog-calc/laborator-5/fisiere`
+- calea relativă este `date.in`
+  - dacă am executa noi direct executabilul din folderul `bin\Debug`, atunci calea relativă ar fi `..\..\date.in`, unde `..` semnifică folderul părinte
+  - dacă executăm din folderul "fisiere", apelarea executabilului s-ar face cu calea `bin\Debug\fisiere`, iar calea relativă pentru fișier ar rămâne `date.in`
+
+Ce se întâmplă dacă apare o eroare la deschiderea fișierului?
+- vom primi înapoi un pointer `NULL`
+
+Pentru a putea discuta ce erori pot apărea, vom menționa pe scurt modurile de deschidere pentru fișiere (tabel preluat din documentație):
+
+Mod | Explicație | Acțiune la deschidere | Fișier inexistent
+----|------------|---------|------------------
+`r` | mod citire | citire de la început | eroare
+`w` | mod scriere| șterge conținutul fișierului dacă există | creează fișierul dacă nu există
+`a` | append, adaugă la sfârșit | scrie la sfârșit | creează fișierul dacă nu există
+`r+`| citire/scriere | citire de la început | eroare
+`w+`| citire/scriere | șterge conținutul fișierului dacă există | creează fișierul dacă nu există
+`a+`| append/citire | scrie la sfârșit | creează fișierul dacă nu există
+
+Modurile extinse, cele cu `+`, funcționează astfel:
+- dacă ultima acțiune a fost una de citire, este necesar un apel la `fseek`, `fsetpos` sau `rewind` pentru a putea scrie
+- dacă ultima acțiune a fost una de scriere, este necesar un apel la `fflush`, `fseek`, `fsetpos` sau `rewind` pentru a putea citi
+
+De asemenea, toate modurile de mai sus pot avea opțional adăugat un `b` (ex: `rb`, `wb+`), care specifică deschiderea fișierului în mod binar, deoarece fișierele sunt deschise implicit în mod text. Distincția dintre fișiere binare și fișiere text în modul de citire (acest `b`) are efect doar pe Windows, iar pentru modul binar se întâmplă următoarele:
+- caracterele de rând nou nu sunt traduse în `\n`
+  - pe Windows, rândul nou este `\r\n`: `CR` - Carriage Return, apoi `LF` - Line Feed
+    - la citirea în mod text, `\r\n` este tradus în `\n`
+    - la scrierea în fișier, `\n` este tradus în `\r\n`
+  - pe Unix și pe MacOS(X) relativ noi: `\n`
+  - pe macOS vechi: `\r` (deși este posibil să apară `\r` pe macOS noi dacă sunt folosite programe vechi)
+- caracterul de control pentru sfârșit de fișier (`EOF`) pe Windows `\x1A` 9sau <kbd>Ctrl</kbd>+<kbd>Z</kbd>) nu este tratat special
+
+Pentru a închide fișierul, vom folosi funcția [`fclose`](https://en.cppreference.com/w/c/io/fclose), care primește un `FILE*`. *NU* mai putem folosi acel pointer decât pentru a deschide din nou alt fișier. Dacă încercăm operații de citire/scriere/închidere cu un pointer după ce am închis fișierul asociat, avem 💥.
+
+Prin urmare: **atunci când scriem apelul la `fopen`, scriem și apelul la `fclose` pentru a nu uita să închidem fișierul**.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    const char *nume_fisier = "date.in";
+    FILE *f = fopen(nume_fisier, "r");
+    if(f == NULL)
+    {
+        printf("Fisierul %s nu exista!\n", nume_fisier);
+        return 1;
+    }
+    fclose(f);
+    return 0;
+```
+Observații:
+- citirea din fișiere se face implicit folosind buffere, adică se încarcă datele în memorie (RAM) și se fac operații de I/O (citiri/scrieri) mai rar, deoarece acestea sunt *foarte* lente
+- deschiderea fișierului într-un mod de scriere poate să eșueze dacă nu avem spațiu pe disc
+- la fel și în cazul închiderii, deoarece atunci se golesc automat bufferele
+- la un mod riguros, am putea verifica dacă a reușit `fclose` sau nu
 
 
 ### Fișiere binare
