@@ -256,7 +256,10 @@ Standardul specifică faptul că putem avea câmpuri de biți pentru următoarel
 - valoarea zero este tratată special și poate fi folosită pentru a adăuga padding în mod explicit pentru a începe un nou slot, iar membrul respectiv nu trebuie să aibă nume: `unsigned : 0;`
 - `offsetof` pe un câmp de biți este UB 💥
 - `sizeof` ne spune numărul de bytes: dacă încercăm să folosim acest operator pe un câmp de biți, primim eroare la compilare
-- ordinea câmpurilor de biți în interiorul unui byte  depinde de platformă/procesor; ordinea este little-endian/big-endian sau altceva
+- **ordinea câmpurilor de biți în interiorul unui byte depinde de platformă/procesor**; ordinea este little-endian/big-endian sau altceva
+  - pentru exemplul `repr_char`, **nu avem vreo garanție pentru portabilitatea codului**
+  - nu putem presupune că `bit1` este la început sau la sfârșit; poate fi la mijloc...
+  - [problemele apar](https://stackoverflow.com/questions/17723604/bitfields-why-implementation-specific) atunci când codul depinde de această ordine
 - un câmp de biți de tip `_Bool` nu poate folosi mai mult de un bit
 - de obicei, câmpurile de biți consecutive se vor afla în același byte, pe cât posibil; astfel, putem economisi și mai mult memorie, împreună cu ordonarea descrescătoare a membrilor structurilor
 
