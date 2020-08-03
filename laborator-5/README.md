@@ -375,7 +375,21 @@ Chiar nu există în C11.
 ### Fișiere binare
 [Înapoi la programe](#programe-discutate-1)
 
+Una dintre definițiile fișierelor text este aceea că sunt organizate pe rânduri. Prin eliminare, fișierele binare nu au o organizare atât de evidentă, aceasta fiind stabilită pentru fiecare format în parte. Cazul extrem este să nu existe niciun fel de organizare și să fie doar un șir de bytes.
 
+Este momentul să precizăm că extensia unui fișier nu este prea relevantă pentru conținutul fișierului, ci este doar o convenție. Nu există o metodă care să garanteze 100% că un fișier este de un anumit tip, însă un indiciu mult mai bun în acest sens este utilizarea [numerelor magice](https://en.wikipedia.org/wiki/File_format#Magic_number). Astfel, informația despre tipul fișierului este scrisă direct în conținutul fișierului.
+
+Am precizat în secțiunea anterioară că modul de deschidere al unui fișier binar în limbajul C este obținut prin adăugarea literei `b`.
+
+Pentru a citi/scrie din/în fișiere binare, există două funcții speciale: [`fread`](https://en.cppreference.com/w/c/io/fread) și [`fwrite`](https://en.cppreference.com/w/c/io/fwrite). Ambele funcții prelucrează datele în blocuri de lungime fixă.
+
+Exemplu:
+```c
+
+```
+
+Alte observații:
+- dacă folosim alte funcții de scriere în cazul fișierelor binare (ex: `fprintf`, `fputs`), acestea vor scrie șiruri de caractere; deoarece caracterele asta înseamnă, reprezentarea acestora este ușor de citit de către om
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
