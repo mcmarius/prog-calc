@@ -346,6 +346,10 @@ int main()
 }
 ```
 Observații:
+- **verificăm întotdeauna dacă citirea a reușit**
+  - **nu este foarte relevant dacă am ajuns la sfârșitul fișierului; dacă apare o altă eroare, apelul la `feof` nu ne va spune nimic!**
+  - există în schimb `ferror`
+  - citiți mai multe [aici](https://stackoverflow.com/questions/5431941/why-is-while-feof-file-always-wrong)
 - am putea verifica dacă operațiile de scriere în fișier au reușit
 - dacă nu închideam fișierul pentru scriere înainte să încercăm să începem citirea, existau unele inconveniente:
   - fișierul deschis pentru scriere ar trebui închis pe ambele ramuri, indiferent dacă deschiderea fișierului pentru citire reușește sau nu
