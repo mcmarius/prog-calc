@@ -351,6 +351,7 @@ Observații:
   - fișierul deschis pentru scriere ar trebui închis pe ambele ramuri, indiferent dacă deschiderea fișierului pentru citire reușește sau nu
   - nu aveam ce să citim, dacă buffer-ul nu a fost golit (putem cere explicit asta cu [`fflush`](https://en.cppreference.com/w/c/io/fflush))
 - **`fflush` este doar pentru stream-uri de ieșire** (altfel 💥), vedeți [aici](https://stackoverflow.com/questions/2979209/using-fflushstdin)
+- este bine să închidem și fișierele deschise doar pentru citire, deoarece fiecare proces are o limită pentru câte fișiere poate avea deschise la un moment dat
 - **nu folosiți header-ul nestandard `<conio.h>`** (existent doar pe Windows) dacă vreți programe portabile!
   - pentru console interactive, ar trebui folosite biblioteci specializate care să asigure portabilitatea
   - exemple de funcții din acest header: `getch`, `getche`, `putch`; bonus, nici documentația de la Microsoft nu le recomandă
