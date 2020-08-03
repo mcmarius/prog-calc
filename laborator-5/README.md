@@ -343,7 +343,23 @@ int main()
     return 0;
 }
 ```
-
+Observații:
+- am putea verifica dacă operațiile de scriere în fișier au reușit
+- dacă nu închideam fișierul pentru scriere înainte să încercăm să începem citirea, existau unele inconveniente:
+  - fișierul deschis pentru scriere ar trebui închis pe ambele ramuri, indiferent dacă deschiderea fișierului pentru citire reușește sau nu
+  - nu aveam ce să citim, dacă buffer-ul nu a fost golit (putem cere explicit asta cu [`fflush`](https://en.cppreference.com/w/c/io/fflush))
+- **`fflush` este doar pentru stream-uri de ieșire** (altfel 💥), vedeți [aici](https://stackoverflow.com/questions/2979209/using-fflushstdin)
+- **nu folosiți header-ul nestandard `<conio.h>`** (existent doar pe Windows) dacă vreți programe portabile!
+  - pentru console interactive, ar trebui folosite biblioteci specializate care să asigure portabilitatea
+  - exemple de funcții din acest header: `getch`, `getche`, `putch`; bonus, nici documentația de la Microsoft nu le recomandă
+  - posibil ca Herbert Schildt să fie vinovat pentru popularizarea acestei biblioteci în învățământ
+  - [pe Windows încă merge](https://blog.codinghorror.com/the-works-on-my-machine-certification-program/) să le folosiți, însă pe orice altceva veți obține
+```
+main.c:10:19: fatal error: conio.h: No such file or directory
+ #include <conio.h>
+                   ^
+compilation terminated.
+```
 ### Fișiere binare
 [Înapoi la programe](#programe-discutate-1)
 
@@ -366,5 +382,6 @@ int main()
 - [C99 standard](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf) (doar să îl răsfoiți un pic)
 
 ### Resurse de evitat
+- Herbert Schildt și cărțile lui
 - cursul de Programarea Calculatoarelor de la UT Cluj ținut de Ion Giosan (vedeți [aici](#alte-observații) de ce)
   - și am o vagă bănuială că e bine să evitați și cursul său de POO
