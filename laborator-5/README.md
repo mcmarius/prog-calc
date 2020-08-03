@@ -266,7 +266,7 @@ Modurile extinse, cele cu `+`, funcționează astfel:
 - dacă ultima acțiune a fost una de citire, este necesar un apel la `fseek`, `fsetpos` sau `rewind` pentru a putea scrie
 - dacă ultima acțiune a fost una de scriere, este necesar un apel la `fflush`, `fseek`, `fsetpos` sau `rewind` pentru a putea citi
 
-De asemenea, toate modurile de mai sus pot avea opțional adăugat un `b` (ex: `rb`, `wb+`), care specifică deschiderea fișierului în mod binar, deoarece fișierele sunt deschise implicit în mod text. Distincția dintre fișiere binare și fișiere text în modul de citire (acest `b`) are efect doar pe Windows, iar pentru modul binar se întâmplă următoarele:
+De asemenea, toate modurile de mai sus pot avea opțional adăugat un `b` (ex: `rb`, `wb+` sau `w+b`), care specifică deschiderea fișierului în mod binar, deoarece fișierele sunt deschise implicit în mod text. Distincția dintre fișiere binare și fișiere text în modul de citire (acest `b`) are efect doar pe Windows, iar pentru modul binar se întâmplă următoarele:
 - caracterele de rând nou nu sunt traduse în `\n`
   - pe Windows, rândul nou este `\r\n`: `CR` - Carriage Return, apoi `LF` - Line Feed
     - la citirea în mod text, `\r\n` este tradus în `\n`
@@ -274,6 +274,8 @@ De asemenea, toate modurile de mai sus pot avea opțional adăugat un `b` (ex: `
   - pe Unix și pe MacOS(X) relativ noi: `\n`
   - pe macOS vechi: `\r` (deși este posibil să apară `\r` pe macOS noi dacă sunt folosite programe vechi)
 - caracterul de control pentru sfârșit de fișier (`EOF`) pe Windows `\x1A` 9sau <kbd>Ctrl</kbd>+<kbd>Z</kbd>) nu este tratat special
+
+Observație: standardul nu definește caracterul `t` pentru deschidere explicită în mod text. Orice alt caracter în afara celor de mai sus constituie 💥, unul dintre comportamente fiind cel de a ignora caracterele în plus.
 
 Pentru a închide fișierul, vom folosi funcția [`fclose`](https://en.cppreference.com/w/c/io/fclose), care primește un `FILE*`. *NU* mai putem folosi acel pointer decât pentru a deschide din nou alt fișier. Dacă încercăm operații de citire/scriere/închidere cu un pointer după ce am închis fișierul asociat, avem 💥.
 
