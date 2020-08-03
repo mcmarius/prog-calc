@@ -360,6 +360,11 @@ main.c:10:19: fatal error: conio.h: No such file or directory
                    ^
 compilation terminated.
 ```
+
+⛔ **Nu am menționat deloc funcția `gets`, presupuneți că nu există!** ⛔
+
+Chiar nu există în C11.
+
 ### Fișiere binare
 [Înapoi la programe](#programe-discutate-1)
 
