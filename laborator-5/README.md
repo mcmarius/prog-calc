@@ -275,6 +275,8 @@ De asemenea, toate modurile de mai sus pot avea opțional adăugat un `b` (ex: `
   - pe macOS vechi: `\r` (deși este posibil să apară `\r` pe macOS noi dacă sunt folosite programe vechi)
 - caracterul de control pentru sfârșit de fișier (`EOF`) pe Windows `\x1A` 9sau <kbd>Ctrl</kbd>+<kbd>Z</kbd>) nu este tratat special
 
+Cu toate că nu are efect decât pe Windows faptul că precizăm modul de deschidere binar sau text, funcțiile `ftell` și `fseek` au comportament specific pentru fiecare mod (cel puțin teoretic).
+
 Observație: standardul nu definește caracterul `t` pentru deschidere explicită în mod text. Orice alt caracter în afara celor de mai sus constituie 💥, unul dintre comportamente fiind cel de a ignora caracterele în plus.
 
 Pentru a închide fișierul, vom folosi funcția [`fclose`](https://en.cppreference.com/w/c/io/fclose), care primește un `FILE*`. *NU* mai putem folosi acel pointer decât pentru a deschide din nou alt fișier. Dacă încercăm operații de citire/scriere/închidere cu un pointer după ce am închis fișierul asociat, avem 💥.
@@ -373,7 +375,7 @@ compilation terminated.
 Chiar nu există în C11.
 
 ### Fișiere binare
-[Înapoi la programe](#programe-discutate-1)
+[Înapoi la programe](#programe-discutate-1) | [Scriere](#scriere) | [Citire](#citire)
 
 Una dintre definițiile fișierelor text este aceea că sunt organizate pe rânduri. Prin eliminare, fișierele binare nu au o organizare atât de evidentă, aceasta fiind stabilită pentru fiecare format în parte. Cazul extrem este să nu existe niciun fel de organizare și să fie doar un șir de bytes.
 
@@ -383,13 +385,147 @@ Am precizat în secțiunea anterioară că modul de deschidere al unui fișier b
 
 Pentru a citi/scrie din/în fișiere binare, există două funcții speciale: [`fread`](https://en.cppreference.com/w/c/io/fread) și [`fwrite`](https://en.cppreference.com/w/c/io/fwrite). Ambele funcții prelucrează datele în blocuri de lungime fixă.
 
-Exemplu:
+#### Scriere
 ```c
+#include <stdio.h>
 
+int main()
+{
+    int a[] = { 123456789, 634, 42 };
+    size_t nr, count;
+    //float b[] = { 98765.4321, 1.41, 6.43, 1.2 };
+    //double c[] = { 91.294655, 222.222 };
+
+    FILE *f = fopen("fis.bin", "wb");
+    count = sizeof(a) / sizeof(a[0])
+    nr = fwrite(a, sizeof(a[0]), count, f);
+    if(nr < count)
+        perror("Eroare la scriere");
+    //fwrite(c, sizeof(c[0]), sizeof(c) / sizeof(c[0]), f);
+    //fwrite(b, sizeof(b[0]), sizeof(b) / sizeof(b[0]), f);
+    fclose(f);
+    return 0;
+}
+```
+Observații:
+- numirea fișierelor binare cu extensia ".bin" este doar o convenție
+- fișierul va conține reprezentarea binară a numerelor întregi din vectorul `a` și nimic mai mult
+  - nu există un caracter echivalent cu `EOF` de la fișierele text
+- depinde de aplicație dacă este necesar să verificăm dacă scrierea a fost efectuată cu succes (prin valoarea întoarsă de `fwrite`)
+  - o situație când scrierea nu reușește este când nu mai avem spațiu pe disc
+
+Dacă încercăm să deschidem fișierul rezultat cu un editor de text, obținem ceva de neînțeles:
+```
+// fisierul fis.bin cu encoding Windows-1252
+�[z  *   
+// fisierul fis.bin cu encoding UTF-8
+͛z  *   
+```
+- cu ocazia aceasta, putem vedea o caracteristică a fișierelor text despre care am vorbit într-un laborator anterior: encoding
+  - în codificările mai vechi, un byte reprezintă un caracter, vedeți rândul 2
+  - în codificările moderne, un caracter este codificat prin unul sau mai mulți bytes, motiv pentru care obținem ceva mai "scurt"
+- desigur, ce am afișat mai sus nu are niciun sens: noi am scris niște numere întregi în mod binar și încercăm să le afișăm ca text
+- pentru a vedea într-un mod mai coerent conținutul fișierelor binare, putem să îl deschidem din Code::Blocks cu Hex editor
+  - trebuie să adăugăm fișierul în proiect: click dreapta pe numele proiectului sau din meniu `Project` -> `Add files...`
+  - click dreapta pe fișierul "fis.bin", `Open with` -> `Hex editor`
+- ceea ce veți obține poate să difere, deoarece reprezentarea binară depinde de platformă/compilator/procesor
+  - în cazul meu, reprezentarea este little-endian, iar `sizeof(int) == 4`
+```
+15 CD 5B 07 7A 02 00 00 2A 00 00 00
+^^^^^^^^^^^
+- acesta este primul număr, 123456789, sau 0x075BCD15 (07 5B CD 15) în reprezentare big-endian
+- observăm că mai sus octeții sunt în ordine "inversă", deoarece acolo sunt little-endian
+- fiecare grupare de 2 "cifre" reprezintă un byte: avem afișarea în baza 16, deci fiecare "cifră" poate avea
+  valori de la 0 la 15 (2^4 - 1); două astfel de "cifre" înseamnă de la 0 la 2^8 - 1, 8 biți, adică 1 octet
+
+15 CD 5B 07 7A 02 00 00 2A 00 00 00
+            ^^^^^^^^^^^
+- al doilea număr, 634, sau 0x0000027A (00 00 02 7A) în reprezentare big-endian
+
+2A în baza 10 este 2*16^1 + 10*16^0 = 32 + 10 = 42 (A este 10)
+De asemenea, 42 este codul ASCII pentru caracterul '*', motiv pentru care îl vedem mai sus
+Similar, 7A este codul ASCII pentru caracterul 'z'
 ```
 
+De ce ambele caractere apar în ambele reprezentări, dar caracterul `[` apare doar în cazul ASCII?
+Așa s-a nimerit. Este adevărat că UTF-8 este compatibil cu ASCII, doar că interpretarea în UTF-8 este următoarea:
+- primul octet este 15 (`0001 0101`), înseamnă că avem o grupare de un octet, iar acesta este un caracter de control
+  - mai exact, NAK, folosit în [protocoale de comunicare](https://en.wikipedia.org/wiki/Acknowledgement_(data_networks))
+- al doilea octet este CD (`1100 1101`), adică un caracter reprezentat prin 2 octeți: `CD 5B` (sau `\xcd\x5b`)
+  - acești octeți sunt o combinație invalidă în UTF-8 (cel puțin conform convertorului pe care l-am folosit)
+  - `\xcd\x80` pare să fie următorul caracter valid: `̓`, ceea ce ar putea explica de ce vedem un fel de mic apostrof la al doilea semn de întrebare (următoarele sunt diacritice sau apostrofuri)
+  - desigur, e vorba de o încercare a browser-ului să afișeze ceva, în ciuda erorilor
+- apoi avem [07](https://en.wikipedia.org/wiki/Bell_character), un alt caracter de control, care scotea un sunet pe calculatoarele mai vechi
+- 7A (0111 1010), deci `'z'` se va afișa la fel
+- [02](https://en.wikipedia.org/wiki/C0_and_C1_control_codes#STX), alt caracter de control
+- 00 sunt caractere nule
+- 2A este caracterul `'*'`, apoi alte caractere nule
+
+M-am folosit de tabelul de [aici](https://en.wikipedia.org/wiki/UTF-8#Description) și de acest [convertor](https://onlineutf8tools.com/convert-hexadecimal-to-utf8).
+
+#### Citire
+```c
+#include <stdio.h>
+
+enum { N = 3 };
+
+void verif_sfarsit(FILE *f)
+{
+    printf("Suntem la pozitia %lu.\n", ftell(f));
+    if(feof(f))
+        puts("Am ajuns la sfarsitul fisierului!");
+    else if(ferror(f))
+        perror("Eroare la citire");
+    else
+        puts("Nu am citit tot fisierul.");
+}
+
+int main()
+{
+    int a[N];
+    size_t i, nr;
+    FILE *f = fopen("fis.bin", "rb");
+    nr = fread(a, sizeof(a[0]), N, f);
+    if(nr < N)
+    {
+        printf("Am incercat sa citim %d bytes, dar am citit %zu bytes.\n", N, nr);
+        fclose(f);
+        return 1;
+    }
+    verif_sfarsit(f);
+
+    for(i = N; i > 0; --i)
+        printf("%d ", a[i-1]);
+    printf("\n");
+    nr = fread(a, sizeof(a[0]), 1, f);
+    if(nr < 1)
+        verif_sfarsit(f);
+    fclose(f);
+    return 0;
+}
+/* daca totul merge bine, va afisa
+Suntem la pozitia 12.
+Nu am citit tot fisierul.
+42 634 123456789
+Suntem la pozitia 12.
+Am ajuns la sfarsitul fisierului!
+*/
+```
+Observații:
+- dacă facem `fseek` în afara fișierului (intenționat sau nu) și nu efectuăm operații de citire/scriere, funcția `feof` nu va returna deloc eșec!
+  - de ce? deoarece `fseek` șterge statusul referitor la ajungerea la `EOF`; de ce face asta? pentru că este o presupunere de bun-simț: dacă vrem să ne mutăm prin fișier, cel mai probabil nu ne mutăm în afara lui
+- morala (din nou): verificăm ce ne întoarce funcția `fread` pentru a ști dacă citirea a reușit sau nu
+  - dacă numărul de elemente întors de `fread` diferă de ce ne-am așteptat, există două situații:
+    - am ajuns la sfârșitul fișierului: verificăm cu `feof`
+    - alte erori de I/O: verificăm cu `ferror` și afișăm eroarea cu `perror`
+  - apelul `feof` are sens numai **după** ce știm că avem erori de citire, iar asta aflăm prin rezultatul întors de funcțiile care efectuează citirea/scrierea, `fread`/`fwrite` în cazul fișierelor binare
+  - am afișat numerele în sens invers pentru a varia lucrurile, dar și pentru a ilustra o greșeală frecventă:
+    - `i` are tipul `size_t`, care este un întreg *fără* semn, deci condiția `i >= 0` ar fi mereu adevărată, deoarece operațiile de adunare/scădere sunt bine definite pentru întregii fără semn
+
 Alte observații:
-- dacă folosim alte funcții de scriere în cazul fișierelor binare (ex: `fprintf`, `fputs`), acestea vor scrie șiruri de caractere; deoarece caracterele asta înseamnă, reprezentarea acestora este ușor de citit de către om
+- dacă folosim alte funcții de scriere în cazul fișierelor binare (ex: `fprintf`, `fputs`), acestea vor scrie șiruri de caractere
+  - de ce? deoarece caracterele asta înseamnă, reprezentarea acestora este ușor de citit de către om
+- dacă argumentele funcției `memcpy` se suprapun, avem 💥; în cazul `memmove`, pot exista suprapuneri
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
