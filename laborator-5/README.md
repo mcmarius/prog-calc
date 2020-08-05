@@ -273,7 +273,7 @@ De asemenea, toate modurile de mai sus pot avea opțional adăugat un `b` (ex: `
     - la scrierea în fișier, `\n` este tradus în `\r\n`
   - pe Unix și pe MacOS(X) relativ noi: `\n`
   - pe macOS vechi: `\r` (deși este posibil să apară `\r` pe macOS noi dacă sunt folosite programe vechi)
-- caracterul de control pentru sfârșit de fișier (`EOF`) pe Windows `\x1A` 9sau <kbd>Ctrl</kbd>+<kbd>Z</kbd>) nu este tratat special
+- caracterul de control pentru sfârșit de fișier (`EOF`) pe Windows `\x1A` sau <kbd>Ctrl</kbd>+<kbd>Z</kbd>) nu este tratat special
 
 Cu toate că nu are efect decât pe Windows faptul că precizăm modul de deschidere binar sau text, funcțiile `ftell` și `fseek` au comportament specific pentru fiecare mod (cel puțin teoretic).
 
@@ -526,11 +526,32 @@ Alte observații:
 - dacă folosim alte funcții de scriere în cazul fișierelor binare (ex: `fprintf`, `fputs`), acestea vor scrie șiruri de caractere
   - de ce? deoarece caracterele asta înseamnă, reprezentarea acestora este ușor de citit de către om
 - dacă argumentele funcției `memcpy` se suprapun, avem 💥; în cazul `memmove`, pot exista suprapuneri
+- un exemplu de utilitate pentru `fseek` este citirea parțială a unui fișier de tip arhivă (de exemplu `.zip`):
+  - putem extrage un singur fișier dintr-o arhivă mare, citind doar partea de care avem nevoie
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
+- scrieți într-un fișier binar întregul cu semn `-1801150480` în baza 10 sau întregul fără semn `2493816816`
+  - întregul trebuie să aibă un tip de date adecvat (minim 32 de biți)
+  - deschideți fișierul cu un editor text cu encoding-ul UTF-8
+  - dacă nu am greșit ceva, ar trebui să vedeți un emoji
+  - deschideți fișierul cu Hex editor și verificați faptul că acest caracter este codificat prin 4 octeți
+  - folosiți modul de scriere pentru adăugare (`a` sau append) pentru a adăuga acest întreg la fișierul existent din exemplul dat
+  - folosiți funcția `fseek` pentru a poziționa caracterul spre sfârșitul fișierului pentru a citi doar conținutul introdus anterior: citiți din nou fișierul și scrieți conținutul respectiv într-un alt fișier separat
 
+Din PDF:
+1. Să se construiască o structură ce conține următoarele date despre candidații la admitere: `nr_legitimatie`, `nume`, `nota_mate`, `nota_info`, `nota_bac`, `medie`, `admis` (Y/N).
+2. Să se definească o macroinstrucțiune ce calculează media de admitere după regula: 80% media la examen, 20% media de bac.
+3. Să se definească o constantă pentru pragul minim de promovabilitate egală cu 5.
+4. Să se scrie o funcție care citește dintr-un fișier datele unui candidat, în afară de medie, admis și buget, și le adaugă unui vector al tuturor candidaților, păstrând ordinea alfabetică. Media și promovabilitatea vor fi calculate folosind definițiile de la punctele `2` și `3`. Numărul de candidați este citit din fișier. Numele se vor compara folosind funcția [`strcmp`](https://en.cppreference.com/w/c/string/byte/strcmp).
+5. Să se scrie o funcție care primește un vector de candidați și îi introduce într-un fișier text, apoi o altă funcție care citește datele din fișier și le afișează.
+6. Similar cu `5`, doar că veți folosi fișiere binare.
 
+7, 8 etc. Cerințele 1-6 adaptate la problemele cu structuri din laboratorul anterior.
+
+Folosiți mai multe fișiere pentru organizarea codului. Este suficient un fișier header.
+
+Verificați codul de retur al funcțiilor de citire!
 
 ## Întrebări, erori, diverse
 [Înapoi la cuprins](#cuprins)
