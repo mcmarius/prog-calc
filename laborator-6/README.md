@@ -105,7 +105,7 @@ Observații:
 - funcția `localeconv` ne întoarce o structură de tip `lconv`, cu ajutorul căreia putem folosi diverse elemente specifice unei localizări
 
 ### Caractere mici și mari
-[Înapoi la programe](#programe-discutate-1)
+[Înapoi la programe](#programe-discutate)
 
 Pentru a determina dacă un caracter single-byte este mic sau mare, putem folosi funcțiile `islower` și `isupper` (`<ctype.h>`). Parametrul trebuie să poată fi reprezentat ca un `unsigned char`. Valoarea returnată este zero dacă condiția nu este îndeplinită.
 
@@ -182,32 +182,32 @@ Alte observații:
 - astfel, pentru a putea folosi caracterele `ș` și `ț` (și variantele lor `Ș` și `Ț`), ar trebui să folosim codificarea UTF-8
 
 ### Clasificarea caracterelor
-[Înapoi la programe](#programe-discutate-1)
+[Înapoi la programe](#programe-discutate)
 
 
 
 ### Despre spații
-[Înapoi la programe](#programe-discutate-1)
+[Înapoi la programe](#programe-discutate)
 
 
 
 ### Conversii
-[Înapoi la programe](#programe-discutate-1)
+[Înapoi la programe](#programe-discutate)
 
 
 
 ### Modificări
-[Înapoi la programe](#programe-discutate-1)
+[Înapoi la programe](#programe-discutate)
 
 
 
 ### Examinări
-[Înapoi la programe](#programe-discutate-1)
+[Înapoi la programe](#programe-discutate)
 
 
 
 ### Diverse
-[Înapoi la programe](#programe-discutate-1)
+[Înapoi la programe](#programe-discutate)
 
 
 
