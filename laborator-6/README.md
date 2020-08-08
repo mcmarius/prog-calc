@@ -28,7 +28,7 @@
 - formatul în care sunt afișate datele calendaristice
 - alegerea separatorului zecimal (punct sau virgulă)
 
-În limbajul C, funcția pentru a afla și a seta localizarea este [`setlocale`](https://en.cppreference.com/w/c/locale/setlocale):
+În limbajul C, funcția pentru a afla și a seta localizarea este [`setlocale`](https://en.cppreference.com/w/c/locale/setlocale) (header-ul `<locale.h>`):
 - primul argument este un macro pentru categoria de localizare; pentru toate categoriile, folosim `LC_ALL`
 - al doilea argument este șirul de caractere pentru localizare
   - acesta conține limba și/sau setul de caractere/codificarea (depinde de sistemul de operare, compilator, mediu)
@@ -41,7 +41,7 @@
   - astfel, sunt foarte dificil de scris și utilizat programe care doresc să folosească mai multe localizări, mai ales în programe care folosesc multiple fire de execuție (multi-threading)
   - deși probabil nu veți avea de-a face cu localizare în limbajul C, este bine să cunoașteți aceste aspecte, deoarece ele sunt valabile într-o oarecare măsură în multe alte contexte
 
-Localizarea implicită a programului este `"C"` și reprezintă o localizare minimală. De obicei, caracterele sunt codificate cu coduri ASCII, iar în aceste situații, valorile 0-127 sunt aceleași în toate programele. Nu ne putem baza pe ce reprezintă valorile 128-255.
+Localizarea implicită a programului este `"C"` și reprezintă o localizare minimală. De obicei, caracterele sunt codificate cu coduri ASCII, iar în aceste situații, caracterele corespunzătoare valorilor 0-127 ar trebui să fie aceleași în toate programele. Nu ne putem baza pe ce reprezintă valorile 128-255.
 
 Categoriile de localizare:
 - `LC_COLLATE` determină ordinea caracterelor: în codificarea implicită (`"C"`), ordinea este determinată de codurile ASCII
@@ -105,11 +105,81 @@ Observații:
 - funcția `localeconv` ne întoarce o structură de tip `lconv`, cu ajutorul căreia putem folosi diverse elemente specifice unei localizări
 
 ### Caractere mici și mari
+[Înapoi la programe](#programe-discutate-1)
 
+Pentru a determina dacă un caracter single-byte este mic sau mare, putem folosi funcțiile `islower` și `isupper` (`<ctype.h>`). Parametrul trebuie să poată fi reprezentat ca un `unsigned char`. Valoarea returnată este zero dacă condiția nu este îndeplinită.
+
+Cu localizarea `"C"`, numai `abcdefghijklmnopqrstuvwxyz` sunt considerate litere mici și numai `ABCDEFGHIJKLMNOPQRSTUVWXYZ` sunt considerate litere mari. Alte localizări pot defini și alte caractere ca fiind litere mici sau mari.
+
+De exemplu, litera `ă` nu este nici literă mică, nici literă mare în localizarea `"C"`.
 ```c
+#include <stdio.h>
+#include <ctype.h>
+#include <wctype.h>
+#include <locale.h>
+
+void lower_upper(unsigned char c)
+{
+    printf("islower(%c) (%#x): %d\n", c, c, islower(c));
+    printf("isupper(%c) (%#x): %d\n", c, c, isupper(c));
+    unsigned char conv;
+    if(islower(c))
+        conv = toupper(c);
+    else if(isupper(c))
+        conv = tolower(c);
+    else
+        return;
+    printf("islower(%c) (%#x): %d\n", conv, conv, islower(conv));
+    printf("isupper(%c) (%#x): %d\n", conv, conv, isupper(conv));
+
+    unsigned char conv2;
+    if(islower(conv))
+        conv2 = toupper(conv);
+    else
+        conv2 = tolower(conv);
+    printf("conv_back(%c): %c\n", conv, conv2);
+}
+
+int main()
+{
+    unsigned char c = '\xc3';
+    lower_upper(c);
+    puts(setlocale(LC_ALL, "romanian_Romania.1250"));
+    lower_upper(c);
+    lower_upper('\xaa');
+    wchar_t wc = L'î';
+    wprintf(L"mic? %d\nmare? %d\nwupper: %c\nwlower: %c\n", iswlower(wc), iswupper(wc), towupper(wc), towlower(wc));
+    return 0;
+}
 
 ```
+Observații:
+- caracterul `'\xc3'` corespunde caracterului `'Ă'` în codificarea ISO 8859-2 sau Windows-1250
+- caracterul `ă` (`'\xe3'`) poate fi introdus direct în codul sursă doar dacă salvăm fișierul cu encoding-ul ISO 8859-2 sau Windows-1250; implicit, salvarea fișierelor se face cu codificarea UTF-8! dacă folosiți un sistem de operare mai vechi, aceasta este posibil să fie ISO 8859-1 sau Windows-1252
+  - trebuie să faceți distincția între codificarea fișierului sursă și codificarea utilizată în program
+- în cazul în care nu era deja evident, în codificarea ASCII nu putem avea decât valori între 0 și 127
+- dacă scriem caracterul `ă` direct în sursă și salvăm fișierul cu codificarea UTF-8, atunci acesta va fi reprezentat prin 2 bytes: `'\xc4'` și `'\x83'`; totuși, dacă facem asta, `'ă'` nu mai este un caracter pe un singur byte, ci este un caracter multi-byte
+  - sesizați problema? 🤔
+  - funcțiile `isupper`/`islower` primesc ca argument un `unsigned char`!
+  - asta înseamnă că nu putem determina dacă un caracter este mic sau mare
+  - în acest scop, există caractere multi-byte și șiruri de caractere "late"
+  - `wprintf(L"%c", towupper(L'ă'));`
+    - trebuie incluse headere speciale (`<wchar.h>`, eventual `<wctype.h>`)
+    - `L` în fața unui caracter literal `char`/șir de caractere literal `char*` îl transformă în literal "lat"
+    - acestea corespund codificărilor folosite mai demult (ex: UTF-16), mai ales pe Windows
+    - nu funcționează cu `ș` și `ț`!
+    - `'\xaa'` este `ș` cu sedilă!
+- totuși, din experimentele mele, nu am reușit să obțin ceva suficient de util cu caracterele "late", întrucât funcțiile de citire și scriere din biblioteca C standard nu par să funcționeze corect cu MinGW, ceea ce le face cam inutile
+- ele există mai mult din motive istorice
+- soluția:
+  - pentru operații simple, mai bine ne implementăm noi funcționalitățile de care avem nevoie
+  - pentru operații complicate, căutăm biblioteci specializate
+  - funcțiile din biblioteca C standard sunt **inutile** pentru situații în care nu vrem să ne limităm la ASCII, adică în orice situație practică, dar probabil nu vă veți lovi de aceste probleme în timpul facultății
+  - excepție: inevitabil, avem nevoie în aplicații care au fost făcute mai demult cu aceste concepte oribile
 
+Alte observații:
+- în codificările pe un singur byte, **nu avem caracterele `ș` și `ț`**, deoarece indivizii de la Unicode (inainte de 1999) și cei de la ISO/IEC care s-au ocupat de standardizări au considerat că pot fi folosite caracterele cu sedilă `ş` și `ţ`; au presupus că diferența este insesizabilă pe ecrane cu rezoluție mică și că cei care furnizează fonturile ar trebui să facă afișările în mod diferit, ceea ce nu s-a întâmplat în realitate
+- astfel, pentru a putea folosi caracterele `ș` și `ț` (și variantele lor `Ș` și `Ț`), ar trebui să folosim codificarea UTF-8
 
 ### Clasificarea caracterelor
 [Înapoi la programe](#programe-discutate-1)
