@@ -184,17 +184,68 @@ Alte observații:
 ### Clasificarea caracterelor
 [Înapoi la programe](#programe-discutate)
 
+În header-ul `<ctype.h>` avem o multitudine de funcții pentru clasificarea caracterelor după diverse criterii. Am văzut două dintre acestea în secțiunea precedentă. Menționez încă o dată că localizarea influențează comportamentul acestor funcții. În contextul UTF-8, trebuie folosite funcții echivalente din biblioteci specializate.
 
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <locale.h>
+
+void afis_clasificare()
+{
+    for (int ndx=0; ndx<=255; ndx++)
+    {
+        printf("%c %d (0x%02x):\t", ndx, ndx, ndx);
+        if(isalnum(ndx)) printf("alnum\t");
+        if(isalpha(ndx)) printf("alpha\t");
+        if(islower(ndx)) printf("lower\t");
+        if(isupper(ndx)) printf("upper\t");
+        if(isdigit(ndx)) printf("digit\t");
+        if(isxdigit(ndx)) printf("xdigit\t");
+        if(iscntrl(ndx)) printf("cntrl\t");
+        if(isgraph(ndx)) printf("graph\t");
+        if(isspace(ndx)) printf("space\t");
+        if(isblank(ndx)) printf("blank\t");
+        if(isprint(ndx)) printf("print\t");
+        if(ispunct(ndx)) printf("punct");
+        printf("\n");
+    }
+}
+
+int main()
+{
+    afis_clasificare();
+    puts(setlocale(LC_ALL, "romanian_Romania.1250"));
+    afis_clasificare();
+    return 0;
+}
+```
+Observații:
+- pentru codificarea ASCII (localizarea `"C"`), nu există caractere cu valori după 127, motiv pentru care nu se afișează nimic
+- funcția `isblank` este introdusă în standardul C99
+- puteți citi [documentația](https://en.cppreference.com/w/c/string/byte) atunci când aveți nevoie de ceva specific
+- în mod curios, caracterul `µ` (`'\xb5'`) în localizarea de mai sus este și caracter alfabetic, și semn de punctuație
+- tot în localizarea de mai sus, caracterul tab `'\t'` (`'\x09'`) este considerat caracter printabil, dar în localizarea `"C"` nu
 
 ### Despre spații
 [Înapoi la programe](#programe-discutate)
 
+Am menționat în secțiunea precedentă funcțiile din biblioteca C standard care ne pot ajuta să detectăm caractere albe (whitespace). Totuși, acestea funcționează doar pentru caractere ASCII! În Unicode, există mult mai multe caractere pentru spații: vedeți lista [aici](https://en.wikipedia.org/wiki/Whitespace_character#Unicode).
 
+În mod neașteptat, funcția [`iswspace`](https://en.cppreference.com/w/c/string/wide/iswspace) pare să funcționeze corect. Cu toate acestea, există unele caractere "dubioase" care nu sunt considerate de Unicode ca fiind caractere albe, consecința fiind că nu sunt considerate spații nici de funcția `iswspace`. Probabil cel mai întâlnit astfel de caracter este [ZWJ (zero-width joiner)](https://en.wikipedia.org/wiki/Zero-width_joiner), utilizat pentru combinarea a două caractere pentru a le afișa în mod diferit.
+
+Câteva utilizări:
+- combinarea a două emoji-uri (emoji-urile pot fi considerate caractere pe 4 bytes)
+- combinarea unor caractere în unele limbi
+- trimiterea de mesaje goale
+- formatarea tabelelor Markdown pe GitHub
+
+Partea mai puțin fericită este că aceste caractere albe pot cauza multe dificultăți în validarea datelor. Nu trebuie să vă preocupe rezolvarea acestor probleme acum, ci doar să știți ce să căutați când veți avea nevoie de asta.
 
 ### Conversii
 [Înapoi la programe](#programe-discutate)
 
-
+<!-- https://stackoverflow.com/questions/22865622/atoi-vs-atol-vs-strtol-vs-strtoul-vs-sscanf -->
 
 ### Modificări
 [Înapoi la programe](#programe-discutate)
@@ -204,7 +255,7 @@ Alte observații:
 ### Examinări
 [Înapoi la programe](#programe-discutate)
 
-
+<!-- https://en.wikipedia.org/wiki/Collation https://en.cppreference.com/w/c/string/byte/strcoll -->
 
 ### Diverse
 [Înapoi la programe](#programe-discutate)
