@@ -364,17 +364,200 @@ Observații:
 ### Modificări
 [Înapoi la programe](#programe-discutate)
 
+Reluăm din laboratorul 3: ce înseamnă un șir de caractere?
 
+În limbajul C, un șir de caractere este un vector de caractere, unde ultimul caracter este `'\0'`, numit terminator de șir. Putem aloca un vector mai mare decât dimensiunea șirului de caractere, însă funcțiile care prelucrează șiruri de caractere se opresc la `'\0'`. Astfel, este **obligatoriu** ca șirurile de caractere să aibă terminator de șir. În caz contrar, avem comportament nedefinit 💥, deoarece sunt accesate zone invalide de memorie.
+
+```c
+char sir1[] = "asd";  // echivalent cu char sir1[4] = {'a', 's', 'd', '\0'};
+char *sir2 = "asd";  // NU este complet echivalent cu randul de mai sus, deoarece sir2 este un pointer
+// sir2[1] = 'b';   // comportament nedefinit! nu avem voie sa modificam un literal
+                   // dar putem face atribuirea urmatoare
+sir2 = sir1;      // deoarece facem ca pointerul sir2 sa arate catre altceva!
+```
+
+Ce știm despre vectori și pointeri?
+
+Numele unui vector reprezintă un pointer constant către adresa de început a vectorului. De ce este important acel "constant"? Deoarece nu putem copia vectori element cu element folosind atribuirea obișnuită.
+
+```c
+char vec1[10] = "qwertyuio";
+char vec2[10] = "asdfghjkl";
+// vec1 = vec2;  // eroare la compilare!
+```
+
+De ce nu putem copia vectori pur și simplu?
+
+Un vector este transformat într-un pointer imediat ce apare într-o expresie. De ce se întâmplă asta?
+
+Pentru că limbajul este destul de vechi și lucrurile se pot complica foarte mult dacă copierea vectorilor ar fi posibilă în mod direct: dacă elementele vectorului sunt la rândul lor vectori, și ele trebuie copiate element cu element și tot așa. Plus că ar trebui verificat că au aceeași dimensiune. Mai mult, limbajul C a evoluat din limbajul B, iar unele anomalii sau chichițe provin din nevoia de a păstra compatibilitatea cu programe scrise în B (a se citi înainte de 1970).
+
+<details>
+  <summary>Arheologie</summary>
+
+  Dacă vreți să mergeți direct la sursă, găsim detalii <a href=https://www.bell-labs.com/usr/dmr/www/chist.html>aici</a>:
+  <blockquote cite="https://www.bell-labs.com/usr/dmr/www/chist.html">
+    <p>The solution constituted the crucial jump in the evolutionary chain between typeless BCPL and typed C. It eliminated the materialization of the pointer in storage, and instead caused the creation of the pointer when the array name is mentioned in an expression. The rule, which survives in today's C, is that values of array type are converted, when they appear in expressions, into pointers to the first of the objects making up the array.
+      <br><br>
+      This invention enabled most existing B code to continue to work, despite the underlying shift in the language's semantics.</p>
+    <br>
+    -- Dennis M. Ritchie, History of C
+  </blockquote>
+
+  Alte detalii puteți citi <a href=https://stackoverflow.com/questions/35597019/cs-aversion-to-arrays/35598701#35598701>aici</a> și <a href=https://stackoverflow.com/questions/3437110/why-do-c-and-c-support-memberwise-assignment-of-arrays-within-structs-but-not>aici</a>. Structurile au fost adăugate ulterior. Un <a href=https://stackoverflow.com/questions/6966570/why-declare-a-struct-that-only-contains-an-array-in-c>truc</a> pentru a copia vectori ar fi să le "ascundem" în niște structuri, însă de obicei nu vrem să facem asta dacă vectorii au multe elemente.
+</details>
+
+Revenind... Putem copia pointerii, dar copierea se face prin valoare, ceea ce înseamnă că se copiază adresa dintr-un pointer în alt pointer. Atunci când avem nevoie de o copie, vrem ca această copiere să se realizeze element cu element, nu să copiem adrese.
+
+```c
+char sir[] = "teste";
+char *p = sir;
+p[0] = 'p';
+printf("Sirul initial: %s\nSirul p:\n", sir, p);
+```
+
+În codul de mai sus nu are loc decât o copiere de pointeri. Modificând șirul prin `p` se modifică și șirul inițial.
+
+Am putea folosi o instrucțiune repetitivă, însă există funcții predefinite care îndeplinesc acest scop: [`strcpy`](https://en.cppreference.com/w/c/string/byte/strcpy) și[`strncpy`](https://en.cppreference.com/w/c/string/byte/strncpy) (`<string.h>`):
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+    char *nume = "Mega Byte", *nume2 = "Vitamina C", *nume3 = "main.c";
+    char copie[20];
+    strcpy(copie, nume);
+    copie[2] = 't';
+    printf("Sirul initial: %s\nCopia: %s\n", nume, copie);
+    strncpy(copie, nume2 + 4, 4);
+    copie[0] = 'v';
+    //copie[4] = '\0';
+    printf("Sirul initial: %s\nCopia: %s\n", nume2, copie);
+    strncpy(copie, nume3, 15);
+    copie[0] = 'r';
+    printf("Sirul initial: %s\nCopia: %s\n", nume3, copie);
+    return 0;
+}
+```
+Observăm că `strncpy` nu pune `'\0'` dacă nu copiază tot șirul! Cel mai sigur este să punem de fiecare dată `'\0'` pe poziția `nr`, pentru că nu este greșit să scriem din nou această valoare; prin `nr` mă refer la ultimul parametru de la `strncpy`.
+
+Alte observații:
+- ar trebui să fie ușor să reținem ordinea argumentelor, deoarece este aceeași ca la atribuirea obișnuită: `destinatie = sursa;`
+- șirul sursă și șirul destinație **nu au voie să se suprapună** 💥: construcțiile întâlnite în liceu de forma `strcpy(s, s + 1)` pentru a șterge caractere dintr-un șir sunt **complet greșite**
+- șirul sursă trebuie să aibă terminator de șir! altfel, 💥
+  - excepție în cazul `strncpy` dacă se copiază mai puține caractere decât dimensiunea sursei, deși putem determina dimensiunea sursei dacă aceasta nu are `'\0'` numai în cazul în care este un vector
+  - totuși, mult mai sigur și sănătos este să avem `'\0'`
+- șirul destinație trebuie să aibă alocat suficient spațiu! trebuie să fie cel puțin `nr`! în caz contrar, 💥
+- dacă `nr` este mai mare decât `strlen(sursa)`, atunci restul de octeți (până sunt scriși `nr` octeți) din destinație sunt completați cu `'\0'` (ultima copie din exemplul de mai sus)
+
+O altă operație destul de comună cu șirurile de caractere este concatenarea: avem [`strcat`](https://en.cppreference.com/w/c/string/byte/strcat) și [`strncat`](https://en.cppreference.com/w/c/string/byte/strncat).
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+    char *sufix = "t", *sufix2 = "-am";
+    char destinatie[20] = "trecu";
+    strcat(destinatie, sufix);
+    printf("Destinatie: %s\nSursa: %s\n", destinatie, sufix);
+    strncat(destinatie, sufix2, 2);
+    printf("Destinatie: %s\nSursa: %s\n", destinatie, sufix2);
+    //strncat(destinatie, sufix2, 20);  // nu concateneaza mai mult de lungimea lui sufix2, desi am specificat 20
+    //printf("Destinatie: %s\nSursa: %s\n", destinatie, sufix2); // am comentat doar pt ca trecut-a-am nu are sens
+    return 0;
+}
+```
+Observații:
+- ambele funcții adaugă `'\0'` la final (e greșit în curs, citiți documentația)
+- `strncat` scrie cel mult `nr + 1` caractere, deoarece adaugă `'\0'`! se oprește când dă de `'\0'` în șirul sursă
+- dacă nu avem alocat suficient spațiu în șirul destinație, 💥
+- și sursa, și destinația trebuie să aibă terminator de șir! altfel, 💥
+- șirurile sursă și destinație nu au voie să se suprapună! 💥
 
 ### Examinări
 [Înapoi la programe](#programe-discutate)
 
-<!-- https://en.wikipedia.org/wiki/Collation https://en.cppreference.com/w/c/string/byte/strcoll -->
+Am menționat o primă funcție de examinare a șirurilor de caractere în secțiunea anterioară: [`strlen`](https://en.cppreference.com/w/c/string/byte/strlen). Foarte important: am mai spus, dar repet că șirurile de caractere **trebuie să conțină terminatorul de șir**. De ce? Deoarece toate funcțiile care prelucrează șiruri de caractere se bazează pe asta. Fără acest caracter, avem comportament nedefinit 💥, deoarece se va umbla prin memorie până se va găsi un byte care să fie 0.
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+    char sir1[] = "test";
+    char *sir2 = "test";
+    printf("strlen: %zu, sizeof: %zu\n", strlen(sir1), sizeof(sir1));
+    printf("strlen: %zu, sizeof: %zu\n", strlen(sir2), sizeof(sir2));
+    return 0;
+}
+```
+Observații:
+- `strlen` întoarce lungimea șirului, **fără** `'\0'`
+- deși au aceeași lungime (aflată cu `strlen`), `sir1` și `sir2` nu au același `sizeof`, deoarece `sir2` este un simplu pointer
+- `sizeof` este determinat întotdeauna la compilare și nu evaluează argumentele (singura excepție: VLA - nu e cazul aici)
+
+Căutarea unui caracter într-un șir de caractere o facem cu [`strchr`](https://en.cppreference.com/w/c/string/byte/strchr) sau [`strrchr`](https://en.cppreference.com/w/c/string/byte/strrchr). Căutarea unui subșir o facem cu [`strstr`](https://en.cppreference.com/w/c/string/byte/strstr):
+```c
+#include <stdio.h>
+#include <string.h>
+
+void caut(char *sir, char ch)
+{
+    char *p;
+    p = strchr(sir, ch);
+    if(p != NULL)
+        printf("strchr(%s, %c): %s\n", sir, ch, p);
+    else
+        printf("Nu am gasit %c in %s!\n", ch, sir);
+}
+
+int main()
+{
+    char sir[] = "unde o fi acul in caru' cu fn?";
+    char c1 = 'a', c2 = 'l', c3 = 'A';
+    caut(sir, c1);
+    caut(sir, c3);
+    
+    char *p;
+    p = strrchr(sir, c2);
+    if(p != NULL)
+        printf("strrchr(%s, %c): %s\n", sir, c2, p);
+    else
+        printf("Nu am gasit %c in %s!\n", c2, sir);
+    
+    char *acul = "acul";
+    if((p = strstr(sir, acul)) != NULL)
+        printf("Am gasit acul in carul cu fn la pozitia %td!\n%s\n", p - sir, p);
+    else
+        printf("Nu am gasit subsirul!\n");
+    return 0;
+}
+```
+Observații:
+- putem căuta și după `'\0'`
+- în caz de succes, este util să primim un pointer la caracterul găsit, deoarece putem continua cu alte operații de prelucrare de la poziția respectivă; majoritatea funcțiilor de prelucrare a șirurilor de caractere întorc un astfel de pointer
+- diferența dintre doi pointeri este de tip [`ptrdiff_t`](https://en.cppreference.com/w/c/types/ptrdiff_t) și se afișează cu `%td` sau `%tu`
+- alte funcții de căutare pe care puteți să le încercați sunt [`strspn`](https://en.cppreference.com/w/c/string/byte/strspn) și [`strcspn`](https://en.cppreference.com/w/c/string/byte/strcspn), însă nu apar în curs
+
+<!-- 
+https://en.cppreference.com/w/c/string/byte/strpbrk
+https://en.cppreference.com/w/c/string/byte/strtok
+https://en.cppreference.com/w/c/string/byte/strcmp  // not locale sensitive
+https://en.cppreference.com/w/c/string/byte/strncmp // not locale sensitive
+https://en.wikipedia.org/wiki/Collation https://en.cppreference.com/w/c/string/byte/strcoll -->
 
 ### Diverse
 [Înapoi la programe](#programe-discutate)
 
-
+<!-- 
+- unicode
+- https://github.com/unicode-org/icu
+- https://stackoverflow.com/questions/372980/do-you-use-the-tr-24731-safe-functions?noredirect=1&lq=1
+- funcții "sigure" cu sufixul `_s`
+-->
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
