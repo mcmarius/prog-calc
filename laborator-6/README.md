@@ -297,14 +297,69 @@ Ca fapt divers, am putea folosi funcția `sscanf`, însă aceasta poate fi [mai 
 
 ```c
 #include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <inttypes.h>
+#include <math.h>
 
 int main()
 {
+    char sir[] = "123 456.76 0 eroare";
+    long nr1; long long nr2; int nr3, nr4;
+    nr1 = atol(sir);
+    nr2 = atoll(sir + 4);
+    nr3 = atoi(sir + 11);
+    nr4 = atoi(sir + 13);
+    printf("%ld\t%s\n%"PRId64"\t%s\n%d\t%s\n%d\t%s\n", nr1, sir, nr2, sir+4, nr3, sir+11, nr4, sir+13);
 
+    char *ptr, *sf;
+    ptr = sir;
+    errno = 0;
+    nr1 = strtol(ptr, &sf, 0);
+    if(ptr == sf)
+    {
+        printf("Eroare la conversie: `%s`\n", ptr);
+        return 1;
+    }
+    if(errno == ERANGE)
+    {
+        perror("eroare la conversie");
+        return 1;
+    }
+    if(errno)
+    {
+        perror("alta eroare la strtol");
+        return 1;
+    }
+    printf("Citit %ld; sirul ramas: `%s`\n", nr1, ptr);
+    double nrf;
 
+    do
+    {
+        ptr = sf;
+        errno = 0;
+        nrf = strtod(ptr, &sf);
+        if(ptr == sf)
+        {
+            printf("Eroare la conversie: `%s`\n", ptr);
+            break;
+        }
+        if(errno == ERANGE) // sau if(nrf == HUGE_VAL)
+        {
+            perror("eroare la conversie");
+            break;
+        }
+        printf("Citit %f; sirul ramas: `%s`\n", nrf, ptr);
+    } while(ptr != sf);
     return 0;
 }
 ```
+Observații:
+- `strtol` întoarce `long`, nu `int`; trebuie verificat pe implementare dacă `sizeof(int) == sizeof(long)`
+- deși funcțiile `atoi` & co sunt mai ușor de folosit, este imposibil să distingem între un `0` corect și un `0` provenit dintr-o eroare de citire
+- codul cu `strtol` este mai complex, însă știm cu siguranță când avem erori de conversie
+- pentru siguranță, este bine ca de fiecare dată să setăm `errno` la 0 înainte de funcții care îl modifică, pentru a avea garanția că verificăm ce trebuie
+- am preferat să verificăm `errno` și nu să comparăm cu `HUGE_VAL`, deoarece acel macro este valabil doar pentru tipuri de date `double`; pentru alte tipuri de date trebuie folosite alte constante, însă verificarea valorii `errno` este la fel și pentru `float`, și pentru `double`, și pentru `long double`
 
 ### Modificări
 [Înapoi la programe](#programe-discutate)
