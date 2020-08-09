@@ -29,7 +29,7 @@
 - alegerea separatorului zecimal (punct sau virgulă)
 
 În limbajul C, funcția pentru a afla și a seta localizarea este [`setlocale`](https://en.cppreference.com/w/c/locale/setlocale) (header-ul `<locale.h>`):
-- primul argument este un macro pentru categoria de localizare; pentru toate categoriile, folosim `LC_ALL`
+- primul argument este un macro pentru [categoria de localizare](https://en.cppreference.com/w/c/locale/LC_categories); pentru toate categoriile, folosim `LC_ALL`
 - al doilea argument este șirul de caractere pentru localizare
   - acesta conține limba și/sau setul de caractere/codificarea (depinde de sistemul de operare, compilator, mediu)
   - `NULL` întoarce localizarea curentă fără a modifica nimic
@@ -102,16 +102,18 @@ Observații:
   - totuși, pe Windows, terminalul nu are fonturi disponibile pentru a afișa orice caractere din UTF-8
 - trebuie să avem instalate localizările respective pentru ca programul să afișeze ceva în mod diferit
 - am afișat ce întoarce `setlocale` pentru a verifica dacă argumentul al doilea este valid
-- funcția `localeconv` ne întoarce o structură de tip `lconv`, cu ajutorul căreia putem folosi diverse elemente specifice unei localizări
+- funcția [`localeconv`](https://en.cppreference.com/w/c/locale/localeconv) ne întoarce o structură de tip [`lconv`](https://en.cppreference.com/w/c/locale/lconv), cu ajutorul căreia putem folosi diverse elemente specifice unei localizări
 
 ### Caractere mici și mari
 [Înapoi la programe](#programe-discutate)
 
-Pentru a determina dacă un caracter single-byte este mic sau mare, putem folosi funcțiile `islower` și `isupper` (`<ctype.h>`). Parametrul trebuie să poată fi reprezentat ca un `unsigned char`. Valoarea returnată este zero dacă condiția nu este îndeplinită.
+Pentru a determina dacă un caracter single-byte este mic sau mare, putem folosi funcțiile [`islower`](https://en.cppreference.com/w/c/string/byte/islower) și [`isupper`](https://en.cppreference.com/w/c/string/byte/isupper) (`<ctype.h>`). Parametrul trebuie să poată fi reprezentat ca un `unsigned char`. Valoarea returnată este zero dacă condiția nu este îndeplinită.
+
+Dacă un caracter este o literă mică, acesta poate fi convertit la o literă mare folosind funcția [`toupper`](https://en.cppreference.com/w/c/string/byte/toupper); similar, există funcția [`tolower`](https://en.cppreference.com/w/c/string/byte/tolower). Dacă acel caracter nu este literă mare sau mică, se returnează nemodificat caracterul primit ca parametru.
 
 Cu localizarea `"C"`, numai `abcdefghijklmnopqrstuvwxyz` sunt considerate litere mici și numai `ABCDEFGHIJKLMNOPQRSTUVWXYZ` sunt considerate litere mari. Alte localizări pot defini și alte caractere ca fiind litere mici sau mari.
 
-De exemplu, litera `ă` nu este nici literă mică, nici literă mare în localizarea `"C"`.
+De exemplu, litera `ă` nu este nici literă mică, nici literă mare în localizarea `"C"`. Desigur, este ambiguu și ce înțelegem prin litera `ă`, deoarece are reprezentări diferite: în codificarea ISO 8859-2 este reprezentată printr-un singur byte, iar în UTF-8 este reprezentată prin 2 bytes.
 ```c
 #include <stdio.h>
 #include <ctype.h>
@@ -161,7 +163,7 @@ Observații:
 - dacă scriem caracterul `ă` direct în sursă și salvăm fișierul cu codificarea UTF-8, atunci acesta va fi reprezentat prin 2 bytes: `'\xc4'` și `'\x83'`; totuși, dacă facem asta, `'ă'` nu mai este un caracter pe un singur byte, ci este un caracter multi-byte
   - sesizați problema? 🤔
   - funcțiile `isupper`/`islower` primesc ca argument un `unsigned char`!
-  - asta înseamnă că nu putem determina dacă un caracter este mic sau mare
+  - asta înseamnă că nu putem determina dacă acest caracter este mic sau mare
   - în acest scop, există caractere multi-byte și șiruri de caractere "late"
   - `wprintf(L"%c", towupper(L'ă'));`
     - trebuie incluse headere speciale (`<wchar.h>`, eventual `<wctype.h>`)
@@ -169,7 +171,7 @@ Observații:
     - acestea corespund codificărilor folosite mai demult (ex: UTF-16), mai ales pe Windows
     - nu funcționează cu `ș` și `ț`!
     - `'\xaa'` este `ș` cu sedilă!
-- totuși, din experimentele mele, nu am reușit să obțin ceva suficient de util cu caracterele "late", întrucât funcțiile de citire și scriere din biblioteca C standard nu par să funcționeze corect cu MinGW, ceea ce le face cam inutile
+- totuși, din experimentele mele, nu am reușit să obțin ceva suficient de util cu caracterele "late", întrucât variantele "late" ale funcțiilor de prelucrare a fișierelor din biblioteca C standard nu par să funcționeze corect cu MinGW, ceea ce le face cam inutile
 - ele există mai mult din motive istorice
 - soluția:
   - pentru operații simple, mai bine ne implementăm noi funcționalitățile de care avem nevoie
@@ -223,7 +225,7 @@ int main()
 Observații:
 - pentru codificarea ASCII (localizarea `"C"`), nu există caractere cu valori după 127, motiv pentru care nu se afișează nimic
 - funcția `isblank` este introdusă în standardul C99
-- puteți citi [documentația](https://en.cppreference.com/w/c/string/byte) atunci când aveți nevoie de ceva specific
+- puteți citi [documentația](https://en.cppreference.com/w/c/string/byte#Character_classification) atunci când aveți nevoie de ceva specific
 - în mod curios, caracterul `µ` (`'\xb5'`) în localizarea de mai sus este și caracter alfabetic, și semn de punctuație
 - tot în localizarea de mai sus, caracterul tab `'\t'` (`'\x09'`) este considerat caracter printabil, dar în localizarea `"C"` nu
 
@@ -245,7 +247,64 @@ Partea mai puțin fericită este că aceste caractere albe pot cauza multe dific
 ### Conversii
 [Înapoi la programe](#programe-discutate)
 
-<!-- https://stackoverflow.com/questions/22865622/atoi-vs-atol-vs-strtol-vs-strtoul-vs-sscanf -->
+Până acum, am făcut conversii de la numere la șiruri de caractere folosind funcțiile `printf` și `fprintf`. Similar cu `fprintf`, există și funcția [`snprintf`](https://en.cppreference.com/w/c/io/fprintf) (C99), care primește un buffer de tip `char*` în loc de `FILE*` ca prim argument. Acel buffer trebuie alocat anterior.
+
+🚮 **Evitați** funcția `sprintf`, deoarece este la fel de periculoasă ca `gets`, întrucât există pericol de buffer overflow. Ca fapt divers, funcția `itoa` nu este standard 👽, cu toate că `atoi` este funcție standard.
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    char buf[100];
+    snprintf(buf, sizeof(buf), "%d %f ~$> |\n\n%c\t%.3f ?!", -10, 1.23, 'a', 543.21251);
+    puts(buf);
+
+    char *buf2;
+    int len;
+    len = snprintf(NULL, 0, "%d %f ~$> |\n\n%c\t%.3f ?!", -10, 1.23, 'a', 543.21251);
+    buf2 = malloc(sizeof(*buf2) * (len + 1));
+    snprintf(buf2, len + 1, "%d %f ~$> |\n\n%c\t%.3f ?!", -10, 1.23, 'a', 543.21251);
+    puts(buf2);
+    free(buf2);
+    return 0;
+}
+```
+Observații:
+- toți specificatorii de format sunt aceiașî ca în cazul funcțiilor `printf`/`fprintf`
+- există un truc pentru a afla dimensiunea buffer-ului, apelând întâi `snprintf` cu `NULL` și `0`
+- desigur, am putea să verificăm și celelalte valori de retur ale `snprintf`
+- funcția nestandard `itoa` avea și parametru pentru bază, însă putem să ne implementăm noi această funcționalitate sau să preluăm o implementare existentă dacă avem nevoie de conversii în baze arbitrare
+- în unele situații, convertirea multor numere în șiruri de caractere poate fi costisitoare, caz în care vom folosi biblioteci specializate
+
+<!-- https://github.com/jeaiii/itoa -->
+<!-- https://github.com/fmtlib/fmt -->
+
+În sens invers, dorim să convertim un șir de caractere la un număr întreg sau real. Toate funcțiile cu `long long` sunt introduse în C99.
+
+Pe de o parte, avem funcțiile `atof` și `atoi`/`atol`/`atoll`. `a` vine de la alfabetic, `f` de la `float`, `i` de la `integer`, `l` de la `long`, `ll` de la `long long`. Deși aceste funcții fac ce trebuie atunci când șirul de caractere dat ca parametru conține date valide, ele întorc valoarea `0.0` sau `0` în caz de eroare, ceea ce nu este deloc util, din moment ce nu putem ști în acea situație dacă am dat de o eroare sau nu. Singurul lor avantaj este că sunt mai ușor de folosit.
+
+Pe de altă parte, avem funcțiile [`strtol`/`strtoll`](https://en.cppreference.com/w/c/string/byte/strtol), [`strtoul`/`strtoull`](https://en.cppreference.com/w/c/string/byte/strtoul) și [`strtof` (C99)/`strtod`/`strtold` (C99)](https://en.cppreference.com/w/c/string/byte/strtof). Acestea ne furnizează un mecanism de detecție a erorilor de conversie:
+- `strtol` & co setează variabila specială `errno` (`<errno.h>`) la `ERANGE` în caz de eroare de interval (overflow sau underflow)
+  - dacă nu a putut fi efectuată vreo conversie, dar nici nu avem eroare de interval, se va întoarce 0: pentru a determina dacă acest `0` este rezultatul unei conversii sau al unei erori, vom folosi un argument suplimentar care ne va spune poziția din șirul de caractere la care s-a ajuns
+    - dacă pointer-ul rezultat este diferit de cel trimis ca parametru, conversia a avut succes
+    - dacă pointer-ul rezultat este identic cu cel trimis ca parmetru, avem eroare
+  - spre deosebire de `atoi`, putem specifica baza de conversie
+- `strtod` & co întorc niște [valori speciale](https://en.cppreference.com/w/c/numeric/math/HUGE_VAL) în caz de eroare de interval: putem compara cu aceste valori pentru a detecta astfel de erori
+  - pentru alte tipuri de erori, folosim același procedeu descris mai sus cu argumentul suplimentar
+
+Ca fapt divers, am putea folosi funcția `sscanf`, însă aceasta poate fi [mai lentă](https://stackoverflow.com/questions/22865622/atoi-vs-atol-vs-strtol-vs-strtoul-vs-sscanf).
+
+```c
+#include <stdio.h>
+
+int main()
+{
+
+
+    return 0;
+}
+```
 
 ### Modificări
 [Înapoi la programe](#programe-discutate)
