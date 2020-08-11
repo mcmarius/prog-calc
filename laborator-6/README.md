@@ -609,10 +609,71 @@ Observații:
 - ne oprim dacă am ajuns la sfârșitul șirului sau dacă `strpbrk` nu mai găsește nimic, caz în care întoarce `NULL`
 - altă funcție de căutare pe care puteți să o încercați este [`strcspn`](https://en.cppreference.com/w/c/string/byte/strcspn); nu vă dau spoilere
 
-<!-- 
-https://en.cppreference.com/w/c/string/byte/strcmp  // not locale sensitive
-https://en.cppreference.com/w/c/string/byte/strncmp // not locale sensitive
-https://en.wikipedia.org/wiki/Collation https://en.cppreference.com/w/c/string/byte/strcoll -->
+Pentru un ultim exemplu, vom compara două șiruri de caractere folosind funcția [`strcmp`](https://en.cppreference.com/w/c/string/byte/strcmp).
+
+Această funcție **nu** este influențată de localizare (\*) și compară două șiruri de caractere lexicografic, adică literă cu literă (sau caracter cu caracter), pe baza codurilor ASCII (asta se întâmplă cu localizarea implicită `"C"`), de la stânga la dreapta. Aceste comparații au loc cât timp literele sunt egale. Ca o analogie, puteți să vă gândiți că e ca ordinea din dicționar, însă este generalizată, deoarece putem compara și cifre sau semne de punctuație.
+
+`strcmp` întoarce:
+- o valoare negativă, dacă primul șir este mai mic din punct de vedere lexicografic decât al doilea șir
+- zero, dacă șirurile au toate caracterele egale
+- o valoare pozitivă, dacă primul șir este mai mare din punct de vedere lexicografic decât al doilea șir
+
+Similar cu alte funcții prezentate anterior, există și funcția [`strncmp`](https://en.cppreference.com/w/c/string/byte/strncmp) care scanează cel mult `nr` caractere din fiecare șir. Această funcție are aceleași convenții pentru valorile de retur ca `strcmp`, comparând (cel mult) primele `nr` caractere.
+
+În unele situații (nu în cele întâlnite în facultate), ordinea lexicografică folosind codurile ASCII poate să fie "ciudată": caracterul `c` este mai mare decât caracterul `C`. Utilizarea unei alte localizări decât cea implicită (`"C"`) poate să afecteze modul de ordonare al caracterelor, însă este necesară utilizarea altor funcții: `strcoll` (de la "string collation") și `strxfrm` (de la ??? habar nu am, nu am găsit; probabil "x-form" sau "x-transform", cu `x` pentru "orice").
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <locale.h>
+
+void afis(const char *locale)
+{
+    const char* s1 = "notă mică👎";
+    const char* s2 = "👍notă MARE";
+
+    printf("In the %s locale: ", locale);
+    if(strcoll(s1, s2) < 0)
+        printf("%s before %s\n", s1, s2);
+    else
+        printf("%s before %s\n", s2, s1);
+ 
+    printf("In lexicographical comparison: ");
+    if(strcmp(s1, s2) < 0)
+        printf("%s before %s\n", s1, s2);
+    else
+        printf("%s before %s\n", s2, s1);
+}
+
+int main(void)
+{
+    afis("default C");
+    puts(setlocale(LC_COLLATE, "ro_RO.utf8"));
+    afis("RO");
+}
+/*
+Dacă vă merg font-urile și aveți instalată localizare UTF-8, ar trebui să se afișeze:
+In the default C locale: notă mică👎 before 👍notă MARE
+In lexicographical comparison: notă mică👎 before 👍notă MARE
+ro_RO.utf8
+In the RO locale: 👍notă MARE before notă mică👎
+In lexicographical comparison: notă mică👎 before 👍notă MARE
+*/
+```
+
+De ce nu am folosit funcția `strxfrm`? Și ce face funcția asta?
+
+Teoretic, această funcție transformă un șir de caractere într-o formă "normalizată" pentru a putea face ulterior comparații cu `strncmp` ca și cum am compara cu `strcoll`, în ideea că această normalizare ar face comparațiile ulterioare mai rapide. Deși standardul C specifică faptul că `strxfrm` + `strncmp` ar trebui să dea aceleași rezultate cu `strcoll`, realitatea contrazice aceste mărețe idealuri.
+
+Cea mai populară implementare de pe Linux a bibliotecii C standard, [`glibc`](https://en.wikipedia.org/wiki/GNU_C_Library), are (sau avea) un bug în `strxfrm` sau în `strcoll` (sau în ambele??), detalii [aici](https://bugzilla.redhat.com/show_bug.cgi?id=1320356). Asta a cauzat, printre altele, [probleme](http://wiki.postgresql.org/wiki/Abbreviated_keys_glibc_issue) de performanță în Postgres (o bază de date destul de cunoscută). Chiar dacă versiuni noi de `glibc` repară aceste probleme, durează destul de mult ca noile versiuni să fie adoptate la scară largă. Exemplu de adaptare lentă: Windows XP, Windows 7.
+
+Concluzia: folosiți `strcmp`/`strncmp`, însă e bine să știți unde să căutați sau [de la ce](https://en.wikipedia.org/wiki/Collation) să plecați atunci când comparațiile între șiruri de caractere nu funcționează cum v-ați aștepta.
+
+<!--
+https://en.cppreference.com/w/c/string/byte/strcoll
+https://blog.anayrat.info/en/2017/11/19/postgresql-10-icu-abbreviated-keys/
+https://postgresql.verite.pro/blog/2018/07/25/icu-extension.html
+-->
 
 ### Diverse
 [Înapoi la programe](#programe-discutate)
