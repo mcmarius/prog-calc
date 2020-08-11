@@ -540,11 +540,76 @@ Observații:
 - putem căuta și după `'\0'`
 - în caz de succes, este util să primim un pointer la caracterul găsit, deoarece putem continua cu alte operații de prelucrare de la poziția respectivă; majoritatea funcțiilor de prelucrare a șirurilor de caractere întorc un astfel de pointer
 - diferența dintre doi pointeri este de tip [`ptrdiff_t`](https://en.cppreference.com/w/c/types/ptrdiff_t) și se afișează cu `%td` sau `%tu`
-- alte funcții de căutare pe care puteți să le încercați sunt [`strspn`](https://en.cppreference.com/w/c/string/byte/strspn) și [`strcspn`](https://en.cppreference.com/w/c/string/byte/strcspn), însă nu apar în curs
+
+În curs este prezentată funcția `strtok` și vine de la "string tokenization". Tokenizarea este procesul de împărțire a unui șir de caractere în tokeni (token-uri?).
+
+Un exemplu din limbaje naturale este împărțirea unui text în cuvinte sau în silabe (depinde la ce nivel este realizată tokenizarea). Cuvintele (sau silabele) astfel obținute se numesc tokeni. Un mod uzual de tokenizare este după spații și semne de punctuație.
+
+Paranteză: pentru unele limbaje naturale nu funcționează această abordare, un exemplu fiind limba chineză.
+
+Un alt exemplu este împărțirea unui cod sursă în identificatori, operatori și așa mai departe, toți aceștia fiind numiți la modul general tokeni în acest context. Acesta este motivul pentru care majoritatea limbajelor de programare ignoră de obicei spațiile, acestea fiind utile doar pentru a simplifica procesul de tokenizare. Spre deosebire de limbajele naturale, limbajele de programare (submulțime a limbajelor formale) pot fi procesate fără a avea ambiguități.
+
+#### Un exemplu concret
+
+Vrem să împărțim șirul de caractere "Astazi este o zi minunata; daca maine ploua, imi iau umbrela (maine). Dar daca e soare?" în cuvintele: `Astazi`, `este`, `o`, `zi`, `minunata` etc.
+
+Ca separatori, vom folosi spații și semne de punctuație: vom folosi șirul ` ;,().?!`.
+
+Nu voi folosi funcția `strtok` deoarece a fost deja prezentată în curs și prezintă mai multe dezavantaje:
+- folosește o variabilă statică (declarată cu `static`) pentru a reține starea curentă a șirului prelucrat
+  - consecința este că nu poate fi folosită în programe multi-threading!
+- distruge șirul de caractere de intrare primit ca parametru
+  - pentru a evita acest lucru, ar trebui să facem prelucrarea pe o copie, ceea ce consumă resurse!
+
+Exemplul este adaptat din cel din documentația pentru [`strpbrk`](https://en.cppreference.com/w/c/string/byte/strpbrk):
+```c
+#include <stdio.h>
+#include <string.h>
+ 
+int main(void)
+{
+    const char* str = "hello world, friend of mine!";
+    const char* sep = " ,!";
+ 
+    unsigned int cnt = 0;
+    do {
+        const char *str0 = str;
+        str = strpbrk(str, sep); // find separator
+        if(str == NULL)
+            break;
+
+        char word[50];
+        strncpy(wrd, str0, str - str0);
+        wrd[str - str0] = '\0';
+
+        if(strlen(wrd))
+            printf("%s\n", wrd);
+        else
+            --cnt;  // wrd is an empty word
+
+        if(str) str += strspn(str, sep); // skip separator
+        ++cnt; // increment word count
+    } while(str && *str);
+ 
+    printf("There are %u words\n", cnt);
+}
+```
+Observații:
+- funcția `strpbrk` ne întoarce poziția în șir a primului separator din lista de separatori
+- funcția [`strspn`](https://en.cppreference.com/w/c/string/byte/strspn) sare peste toți separatorii întâlniți, ceea ce ne ajută să ajungem la începutul următorului cuvânt
+  - funcția ne întoarce numărul de caractere care separă cuvintele
+- folosim variabila `str0` pentru a reține poziția anterioară din șirul inițial: aceasta va arăta spre începutul unui cuvânt
+- împreună cu ce ne întoarce `strpbrk`, facem diferența și obținem lungimea cuvântului
+- ce putem face acum? copiem cuvântul cu `strncpy` într-un vector temporar
+  - presupunem că nu există cuvinte mai mari de 50 de caractere (dacă e cazul, putem aloca dinamic)
+    - ... cu toate că [în unele limbi](https://en.wikipedia.org/wiki/Longest_words) se pot forma cuvinte de lungime arbitrară
+  - nu e frumos ce am făcut pentru că am hardcodat constanta (`50`) pentru a simplifica exemplul; voi să nu faceți așa :smile:
+- punem `'\0'` la sfârșit, deoarece nu ne putem baza pe `strncpy` pentru asta
+- decrementăm numărul de cuvinte dacă lungimea cuvântului este 0: putem întâlni această situație dacă șirul nu începe cu un cuvânt
+- ne oprim dacă am ajuns la sfârșitul șirului sau dacă `strpbrk` nu mai găsește nimic, caz în care întoarce `NULL`
+- altă funcție de căutare pe care puteți să o încercați este [`strcspn`](https://en.cppreference.com/w/c/string/byte/strcspn); nu vă dau spoilere
 
 <!-- 
-https://en.cppreference.com/w/c/string/byte/strpbrk
-https://en.cppreference.com/w/c/string/byte/strtok
 https://en.cppreference.com/w/c/string/byte/strcmp  // not locale sensitive
 https://en.cppreference.com/w/c/string/byte/strncmp // not locale sensitive
 https://en.wikipedia.org/wiki/Collation https://en.cppreference.com/w/c/string/byte/strcoll -->
@@ -562,7 +627,7 @@ https://en.wikipedia.org/wiki/Collation https://en.cppreference.com/w/c/string/b
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
 
-
+- înlocuiți șirul de caractere din exemplul cu `strpbrk` cu șirul de caractere dat ca exemplu, cel cu `Astazi este o zi...`
 
 ## Întrebări, erori, diverse
 [Înapoi la cuprins](#cuprins)
