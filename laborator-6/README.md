@@ -561,7 +561,7 @@ Nu voi folosi funcția `strtok` deoarece a fost deja prezentată în curs și pr
 - distruge șirul de caractere de intrare primit ca parametru
   - pentru a evita acest lucru, ar trebui să facem prelucrarea pe o copie, ceea ce consumă resurse!
 
-Exemplul este adaptat din cel din documentația pentru [`strpbrk`](https://en.cppreference.com/w/c/string/byte/strpbrk):
+Exemplul este adaptat din cel din documentația pentru [`strpbrk`](https://en.cppreference.com/w/c/string/byte/strpbrk) ("string pointer break"):
 ```c
 #include <stdio.h>
 #include <string.h>
@@ -596,7 +596,8 @@ int main(void)
 ```
 Observații:
 - funcția `strpbrk` ne întoarce poziția în șir a primului separator din lista de separatori
-- funcția [`strspn`](https://en.cppreference.com/w/c/string/byte/strspn) sare peste toți separatorii întâlniți, ceea ce ne ajută să ajungem la începutul următorului cuvânt
+- funcția [`strspn`](https://en.cppreference.com/w/c/string/byte/strspn) sare peste toți separatorii întâlniți, până ajunge la începutul următorului cuvânt
+  - se avansează un pointer cât timp caracterul curent face parte din lista de separatori
   - funcția ne întoarce numărul de caractere care separă cuvintele
 - folosim variabila `str0` pentru a reține poziția anterioară din șirul inițial: aceasta va arăta spre începutul unui cuvânt
 - împreună cu ce ne întoarce `strpbrk`, facem diferența și obținem lungimea cuvântului
@@ -660,6 +661,13 @@ In the RO locale: 👍notă MARE before notă mică👎
 In lexicographical comparison: notă mică👎 before 👍notă MARE
 */
 ```
+Observații:
+- este necesară salvarea fișierului cu encoding UTF-8
+- exemplul este oarecum eronat, deoarece `strcmp` și `strcoll` fac comparații la nivel de byte, nu la nivel de caracter (👍 este un caracter pe 4 bytes în UTF-8: `0xF0`, `0x9F`, `0x91` și `0x8D`)
+- aceste funcții primesc ca argumente `char*`, nu `unsigned char*`, însă în cazul `strcmp`/`strncmp`, caracterele sunt interpretate ca `unsigned char`
+  - `👍` este "mai mare" decât litera `n`, întrucât `0xF0` este 240 ca extended ASCII și este evident mai mare ca `n` (acesta e mai mic decât 128)
+- utilizarea localizării `"C"` este de preferat, deoarece are un comportament determinist, care nu depinde de localizare
+  - dezavantajul este că prelucrarea se face la nivel de byte și în unele situații s-ar putea să "taie" un caracter, dar nu le putem avea pe toate `¯\_(ツ)_/¯`
 
 De ce nu am folosit funcția `strxfrm`? Și ce face funcția asta?
 
@@ -678,12 +686,27 @@ https://postgresql.verite.pro/blog/2018/07/25/icu-extension.html
 ### Diverse
 [Înapoi la programe](#programe-discutate)
 
-<!-- 
-- unicode
-- https://github.com/unicode-org/icu
-- https://stackoverflow.com/questions/372980/do-you-use-the-tr-24731-safe-functions?noredirect=1&lq=1
-- funcții "sigure" cu sufixul `_s`
--->
+#### Despre Unicode și UTF-8
+
+Unicode este un standard pentru a obține codificări pentru **toate** caracterele/simbolurile posibile (sau cât mai multe). Acesta nu are legătură cu reprezentarea lor pe bytes. În standardul Unicode, fiecărui caracter îi este alocat un "codepoint" unic (îl putem considera un fel de ID) printr-o legătură 1 la 1. Unicode se ocupă cu organizarea și alocarea acestor codepoints.
+
+Codificarea UTF-8 transpune aceste codepoints abstracte într-o formă concretă și face legătura între un codepoint și unul sau mai mulți bytes.
+
+În prezent, un codepoint în UTF-8 este reprezentat prin unul sau mai mulți bytes. Această codificare este la nivel de byte, ceea ce înseamnă că nu contează dacă suntem pe o platformă little-endian sau big-endian, deoarece citirea trebuie efectuată byte cu byte, deci acești bytes nu sunt grupați în vreun fel când are loc citirea (spre deosebire de citirea/scrierea din/în fișiere binare a numerelor întregi, de exemplu).
+
+Această codificare a fost concepută în așa fel încât primul byte să ne spună și pe câți bytes este caracterul din care am început să citim; exemplu de cod [aici](https://stackoverflow.com/a/21745211).
+
+O bibliotecă foarte cunoscută care oferă prelucrări pe șiruri de caractere funcționale cu Unicode este [ICU](https://github.com/unicode-org/icu).
+
+**Concluzia** și cu ce trebuie să rămâneți: textul nu este doar ASCII!
+
+#### Despre funcțiile "sigure"
+
+Dacă v-ați uitat prin documentație (sau dacă folosiți Visual Studio), probabil ați aflat de existența unor funcții precum `scanf_s` sau altele cu sufixul `_s`. În teorie, acestea ar trebui să prevină erori comune de programare, de exemplu erori de ieșire din vector și altele care să cauzeze buffer overflow.
+
+Acestea au fost implementate inițial ca funcții nestandard de către cei de la Microsoft. Probabil la insistențele Microsoft, acestea au fost incluse până la urmă în standardul C11 ca funcții opționale, însă ordinea parametrilor este diferită, ceea ce face ca implementarea lor să nu respecte standardul.
+
+Alte compilatoare cunoscute (printre care și `gcc`) nu au considerat că are rost să le implementeze. Corect ar fi să spunem `glibc`, deoarece cu MinGW par să meargă (nu am verificat ordinea parametrilor). Întrucât aceste funcții nu au fost adoptate de prea multă lume (și [au avut motive](https://stackoverflow.com/questions/372980/do-you-use-the-tr-24731-safe-functions) pentru această decizie), le putem ignora, cel puțin dacă ne interesează să avem un cod cât de cât portabil.
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
