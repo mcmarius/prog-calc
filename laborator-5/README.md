@@ -534,7 +534,7 @@ Alte observații:
 - scrieți într-un fișier binar întregul cu semn `-1801150480` în baza 10 sau întregul fără semn `2493816816`
   - întregul trebuie să aibă un tip de date adecvat (minim 32 de biți)
   - deschideți fișierul cu un editor text cu encoding-ul UTF-8
-  - dacă nu am greșit ceva, ar trebui să vedeți un emoji
+  - dacă nu am greșit ceva, ar trebui să vedeți un emoji; dacă am greșit și sunteți pe o platformă big-endian, trebuie să inversați octeții
   - deschideți fișierul cu Hex editor și verificați faptul că acest caracter este codificat prin 4 octeți
   - folosiți modul de scriere pentru adăugare (`a` sau append) pentru a adăuga acest întreg la fișierul existent din exemplul dat
   - folosiți funcția `fseek` pentru a poziționa caracterul spre sfârșitul fișierului pentru a citi doar conținutul introdus anterior: citiți din nou fișierul și scrieți conținutul respectiv într-un alt fișier separat
