@@ -713,6 +713,20 @@ Alte compilatoare cunoscute (printre care și `gcc`) nu au considerat că are ro
 
 - înlocuiți șirul de caractere din exemplul cu `strpbrk` cu șirul de caractere dat ca exemplu, cel cu `Astazi este o zi...`
 
+Din PDF:
+
+1. Se citește de pe prima linie a unui fișier o literă. Se citește apoi din fișier un text. Să se scrie textul eliminând din toate cuvintele litera citită de pe prima linie:
+    * a. într-un fișier nou;
+    * b. la sfârșitul fișierului din care se citește.
+
+2. Se citesc de pe prima linie a unui fișier două litere separate prin spațiu. Se citește pe următoarea linie un text. Să se rescrie textul înlocuind din toate cuvintele litera citită de pe prima linie cu cea de-a doua literă. Se va suprascrie fișierul din care s-a citit.
+
+3. Se citește dintr-un fișier un text. Să se înlocuiască fiecare cuvânt cu unul care are inversate majusculele cu minusculele și viceversae (de ex, cuvântul "infORmaTică" va fi înlocuit cu "INForMAtTICĂ"). Să se realizeze operaţia folosind un singur fișier. Observație: folosiți localizarea ISO8859-2 sau Windows-1250 pentru a putea inversa corect caracterul `ă`. Limitarea este că nu avem `ș` și `ț`, dar ne mulțumim și cu atât.
+
+4. Scrieți un program care afișează cele mai frecvente litere care apar într-un fișier. Programul nu va face distincție între literele mari și mici. Dacă există mai multe litere care apar de cele mai multe ori în fișier, programul le va afișa pe toate. Dacă nu există nici o literă în fișier, programul va afișa un mesaj corespunzător.
+
+5. Se citește dintr-un fișier un text și de la tastatură se introduce un cuvânt. Să se scrie într-un fișier toate cuvintele care conţin cuvântul citit.
+
 ## Întrebări, erori, diverse
 [Înapoi la cuprins](#cuprins)
 
