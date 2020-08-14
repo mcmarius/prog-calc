@@ -18,7 +18,37 @@
 
 ### Sortarea cu `qsort`
 
+Pentru a sorta un vector, fie implementăm noi sortarea, fie folosim o funcție de bibliotecă deja implementată care face asta pentru noi:
+```c
+#include <stdio.h>
+#include <stdlib.h>
 
+int cmp(const void *a, const void *b)
+{
+    int A = *((int*)a);
+    int B = *((int*)b);
+    if(A < B) return 1;
+    if(A > B) return -1;
+    return 0;
+}
+
+void afis(int *v, int n)
+{
+    for(int i = 0; i < n; ++i)
+        printf("%d ", v[i]);
+    printf("\n");
+}
+
+int main(void)
+{
+    int v[] = {5, 3, 7, 3, 2, 8, 2, 0, 1, 9, -1, 4};
+    int n = sizeof(v) / sizeof(v[0]);
+    afis(v, n);
+    qsort(v, n, sizeof(v[0]), cmp);
+    afis(v, n);
+    return 0;
+}
+```
 
 ### Căutarea cu `bsearch`
 [Înapoi la programe](#programe-discutate)
