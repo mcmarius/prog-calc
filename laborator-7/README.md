@@ -55,7 +55,7 @@ Observații:
 - funcția `qsort` are 4 parametri:
   - `v` este vectorul de numere pe care vrem să îl sortăm
   - `n` este numărul de elemente al vectorului `v`
-  - al treilea argument este `sizeof`-ul unui element din vector
+  - al treilea argument este `sizeof`-ul unui element din vector: este necesar să specificăm acest lucru, deoarece `qsort` vede vectorul ca fiind de tip `void*`!
   - al patrulea argument este o funcție comparator, adică un **pointer la funcție**
     - altfel spus, este numele unei funcții, *fără paranteze*
     - de ce fără paranteze? dacă punem paranteze, înseamnă că *apelăm* funcția, dar cu ce argumente? 🤔
@@ -78,20 +78,124 @@ Observații:
   - nu vrem să facem scăderea direct `B - A`, deoarece există posibilitate de underflow/overflow
   - atenție la tipurile de date! `A` și `B` sunt întregi, nu pointeri către întregi: dacă folosim pointeri, posibil să avem nevoie de paranteze în plus pentru a nu scădea pointeri!
 
-Sortarea unui vector de structuri
+Sortarea unui vector de structuri după mai multe criterii:
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+typedef struct
+{
+    enum { AMAR, ACRU, SARAT, DULCE } gust;
+    int calorii;
+    char nume[16];
+} Aliment;
 
-### Căutarea cu `bsearch`
+int cmp_aliment(const void *a, const void *b)
+{
+    Aliment A = *((const Aliment*)a);
+    Aliment B = *((const Aliment*)b);
+    if(A.gust > B.gust)
+        return -1;
+    if(A.gust < B.gust)
+        return 1;
+    return strcmp(A.nume, B.nume);
+}
+
+const char* afis_gust(Aliment a)
+{
+    switch(a.gust)
+    {
+        case AMAR:  return "AMAR";
+        case ACRU:  return "ACRU";
+        case SARAT: return "SARAT";
+        case DULCE: return "DULCE";
+        default:    return "??";
+    }
+}
+
+void afis(Aliment *v, int n)
+{
+    for(int i = 0; i < n; ++i)
+        printf("%-15s gust %-6s %3d de calorii\n", v[i].nume, afis_gust(v[i]), v[i].calorii);
+    printf("\n");
+}
+
+int main(void)
+{
+    Aliment v[] = {
+        { .nume = "lamai",         .gust = ACRU,  .calorii = 100 },
+        { .nume = "cirese amare",  .gust = AMAR,  .calorii = 200 },
+        { .nume = "alune cu sare", .gust = SARAT, .calorii = 400 },
+        { .nume = "portocale",     .gust = DULCE, .calorii =  90 },
+        { .nume = "piersici",      .gust = DULCE, .calorii = 300 },
+        { .nume = "lamai",         .gust = ACRU,  .calorii = 120 },
+    };
+    int n = 6;
+    afis(v, n);
+    qsort(v, n, sizeof(Aliment), cmp_aliment);
+    afis(v, n);
+    return 0;
+}
+```
+Observații:
+- nu este necesar să comparăm după toate câmpurile din structură: în exemplul de mai sus, am ignorat câmpul `calorii`
+- la afișare, dacă știm lungimea maximă a ceea ce vrem să afișăm, putem să o specificăm în specificatorul de conversie
+  - alternativ, putem să transmitem aceste lungimi ca parametri separați:
+  - `printf("%*s gust %*s %*d de calorii\n", -15, v[i].nume, -6, afis_gust(v[i]), 3, v[i].calorii);`
+  - putem calcula programatic aceste lungimi ca să nu fie nevoie să le hardcodăm
+- nu am folosit `else if` în funcția comparator deoarece nu este necesar `else` dacă înainte avem `return`
+- enumerarea din structură este anonimă, însă putem accesa din afara structurii câmpurile enumerării
+
+Pentru a ordona doar o parte dintr-un vector (de structuri), putem proceda astfel:
+```c
+qsort(v, n/3, sizeof(Aliment), cmp_aliment);
+qsort(v+n/2, n/2, sizeof(Aliment), alta_functie_comparator);
+```
+Observații:
+- în prima situație, ordonăm doar prima parte a unui vector, specificând un număr mai mic de elemente
+- în cea de-a doua situație, trebuie să avem grijă **să nu ieșim din vector**:
+  - vectorul (de fapt pointerul) transmis la `qsort` începe de la jumătatea vectorului inițial
+  - asta înseamnă că numărul de elemente nu poate fi mai mare de `n/2`
+- atenție la rotunjiri! în exemplul de mai sus, s-a nimerit ca împărțirile să fie exacte
+- nu am folosit `sizeof(v) / sizeof(v[0])`, deoarece dacă `v` este deja pointer, prin `sizeof(v)` am obține dimensiunea pointerului
+
+### Căutarea cu [`bsearch`](https://en.cppreference.com/w/c/algorithm/bsearch)
 [Înapoi la programe](#programe-discutate)
 
+Pentru completitudine, menționez și funcția `bsearch`, tot din `<stdlib.h>`.
 
+Vom completa primul program din secțiunea anterioară cu următoarele:
+```c
+void caut(int x, int *v, int n)
+{
+    int *rez = bsearch(&x, v, n, sizeof(int), cmp);
+    if(rez)
+        printf("Am gasit %d la adresa %p\n", x, (void*)rez);
+    else
+        printf("Nu am gasit %d!", x);
+}
+```
+Iar în funcția `main`, **după sortare**:
+```c
+caut(2, v, n);
+caut(6, v, n);
+```
+Observații:
+- vectorul transmis funcției `bsearch` trebuie să fie sortat; în caz contrar, 💥
+- funcția comparator trebuie să fie aceeași (sau echivalentă) cu cea cu care am sortat! nu este obligatoriu să sortăm cu `qsort`, însă criteriul de ordonare a elementelor trebuie să fie același; altfel, căutarea eficientă într-un vector sortat folosind un alt criteriu decât cel de la sortare nu are sens
+- funcția întoarce un pointer către elementul găsit din vector sau `NULL` dacă elementul căutat nu a fost găsit
+- la fel ca la `qsort`, cu toate că funcția se numește `bsearch`, nu este obligatoriu (conform standardului) ca implementarea să folosească un algoritm de căutare binară
 
 ### Despre pointerii la funcții
 [Înapoi la programe](#programe-discutate)
 
 
+
 ### Recapitulare pentru test
 [Înapoi la programe](#programe-discutate)
+
+
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
