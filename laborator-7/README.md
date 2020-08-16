@@ -308,7 +308,7 @@ Observații:
 
 **Exemplu schițat: preprocesări**
 
-Context: vrem să prelucrăm date din mai multe fișiere, însă acestea sunt salvate în formaturi diferite. Pentru a simplifica și mai mult exemplul, presupunem că au aceeași structură logică.
+Context: vrem să prelucrăm date din mai multe fișiere, însă acestea sunt salvate în formaturi diferite. Pentru a simplifica și mai mult exemplul, presupunem că au aceeași structură logică (un șir de numere întregi).
 
 După ce facem citirea, prelucrarea este identică. Putem folosi pointerii la funcții pentru a apela funcții diferite de citire pentru fiecare fișier în parte, pe baza extensiei. În aceste situații nu este necesar să ne complicăm cu numerele magice menționate mai demult.
 ```c
@@ -334,6 +334,8 @@ void procesare(char *nume)
 Observații:
 - am presupus că există funcțiile `citire_csv` și `citire_xlsx`
 - pointerii la funcții ne ajută să abstractizăm anumite aspecte ce țin de detalii de implementare sub o interfață comună
+- exemplul este cam forțat, însă pointerii la funcții chiar sunt utili
+- ... doar că este dificilă găsirea unui exemplu ușor de înțeles
 
 ### Recapitulare pentru test
 [Înapoi la programe](#programe-discutate)
