@@ -149,7 +149,7 @@ Tipurile de date înseamnă, foarte pe scurt, *sensul* pe care îl dăm unor dat
 
 Atunci când scriem mesaje, ne interesează ca `2` și `0` să fie entități distincte pentru a le modifica ușor în mod independent. Pe de altă parte, dacă vrem să facem calcule, ne dorim ca aceste calcule să fie efectuate cât mai eficient, ceea ce înseamnă că trebuie să ne exprimăm această intenție prin specificarea unui tip de date adecvat.
 
-Din punctul de vedere al calculatorului, tipurile de date sunt o proprietate a obiectelor, funcțiilor și expresiilor, care determină modul de reprezentare a valorii obiectului/funcției/expresiei respective.
+Din punctul de vedere al calculatorului, în limbajul C tipurile de date sunt o proprietate a obiectelor, funcțiilor și expresiilor, care determină modul de reprezentare a valorii obiectului/funcției/expresiei respective.
 
 Tipurile de date ajută compilatorul să realizeze diverse verificări asupra corectitudinii programului (de exemplu, poate nu vrei să aduni mere cu pere), iar ulterior să facă și unele optimizări.
 
@@ -167,7 +167,8 @@ Din punctul de vedere al persoanei care scrie/citește codul sursă, tipurile de
 - derivate:
   - tablouri (vectori) - pentru colecții de elemente de același tip: `int loto[] = {1, 2, 3};`
   - pointeri - rețin adrese de memorie: de exemplu, o variabilă de tip `int*` reține adresa unei variabile de tip `int`
-  - structuri - pentru grupări de elemente de tipuri (eventual) diferite: `struct persoana { int anul_nasterii; float inaltime; };`
+  - structuri - pentru grupări de elemente de tipuri (eventual) diferite:
+    - `struct persoana { int anul_nasterii; float inaltime; };`
   - uniuni - momentan doar să știți că există
 
 Am dat doar câteva exemple ca să vă faceți o idee, lista de mai sus nu este exhaustivă. Putem face și alte clasificări după alte criterii.
@@ -184,6 +185,7 @@ Așadar, din definiția funcției `main`, ce putem deduce?
 - avem o listă de parametri/argumente: aceasta este reprezentată prin `()`, iar în acest caz nu avem argumente
   - totuși, funcția `main` poate avea argumente, iar atunci în loc de `int main()` avem `int main(int argc, char **argv)`
   - prin urmare, argumentele reprezintă niște variabile (aceste argumente se numesc parametri formali)
+  - riguros, ar trebui să scriem `int main(void)` pentru a arăta în mod explicit că funcția nu are argumente
 - avem zero sau mai multe instrucțiuni între acolade
   - întrucât la început am specificat un tip de date de retur, trebuie să întoarcem o valoare (riguros ar fi expresie), folosind instrucțiunea `return`
   - pentru funcțiile care întorc `void`, nu întoarcem valori (avem cel mult `return;` fără altceva)
