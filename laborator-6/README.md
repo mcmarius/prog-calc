@@ -58,7 +58,7 @@ Categoriile de localizare:
 #include <locale.h>
 #include <time.h>
 
-void detalii_loc()
+void detalii_loc(void)
 {
     struct lconv *loc = localeconv();
 
@@ -75,7 +75,7 @@ void detalii_loc()
         puts("Eroare afisare data/timp");
 }
 
-int main()
+int main(void)
 {
     printf("Localizarea initiala este %s\n", setlocale(LC_ALL, NULL));
     detalii_loc();
@@ -103,6 +103,7 @@ Observații:
 - trebuie să avem instalate localizările respective pentru ca programul să afișeze ceva în mod diferit
 - am afișat ce întoarce `setlocale` pentru a verifica dacă argumentul al doilea este valid
 - funcția [`localeconv`](https://en.cppreference.com/w/c/locale/localeconv) ne întoarce o structură de tip [`lconv`](https://en.cppreference.com/w/c/locale/lconv), cu ajutorul căreia putem folosi diverse elemente specifice unei localizări
+- funcția [`strftime`](https://en.cppreference.com/w/c/chrono/strftime) transformă structura de tip `struct tm` întoarsă de [`localtime`](https://en.cppreference.com/w/c/chrono/localtime) într-un șir de caractere
 
 ### Caractere mici și mari
 [Înapoi la programe](#programe-discutate)
@@ -142,7 +143,7 @@ void lower_upper(unsigned char c)
     printf("conv_back(%c): %c\n", conv, conv2);
 }
 
-int main()
+int main(void)
 {
     unsigned char c = '\xc3';
     lower_upper(c);
@@ -193,7 +194,7 @@ Alte observații:
 #include <ctype.h>
 #include <locale.h>
 
-void afis_clasificare()
+void afis_clasificare(void)
 {
     for (int ndx=0; ndx<=255; ndx++)
     {
@@ -214,7 +215,7 @@ void afis_clasificare()
     }
 }
 
-int main()
+int main(void)
 {
     afis_clasificare();
     puts(setlocale(LC_ALL, "romanian_Romania.1250"));
@@ -254,7 +255,7 @@ Până acum, am făcut conversii de la numere la șiruri de caractere folosind f
 #include <stdio.h>
 #include <stdlib.h>
 
-int main()
+int main(void)
 {
     char buf[100];
     snprintf(buf, sizeof(buf), "%d %f ~$> |\n\n%c\t%.3f ?!", -10, 1.23, 'a', 543.21251);
@@ -271,7 +272,7 @@ int main()
 }
 ```
 Observații:
-- toți specificatorii de format sunt aceiașî ca în cazul funcțiilor `printf`/`fprintf`
+- toți specificatorii de format sunt aceiași ca în cazul funcțiilor `printf`/`fprintf`
 - există un truc pentru a afla dimensiunea buffer-ului, apelând întâi `snprintf` cu `NULL` și `0`
 - desigur, am putea să verificăm și celelalte valori de retur ale `snprintf`
 - funcția nestandard `itoa` avea și parametru pentru bază, însă putem să ne implementăm noi această funcționalitate sau să preluăm o implementare existentă dacă avem nevoie de conversii în baze arbitrare
@@ -302,7 +303,7 @@ Ca fapt divers, am putea folosi funcția `sscanf`, însă aceasta poate fi [mai 
 #include <inttypes.h>
 #include <math.h>
 
-int main()
+int main(void)
 {
     char sir[] = "123 456.76 0 eroare";
     long nr1; long long nr2; int nr3, nr4;
@@ -423,7 +424,7 @@ Am putea folosi o instrucțiune repetitivă, însă există funcții predefinite
 #include <stdio.h>
 #include <string.h>
 
-int main()
+int main(void)
 {
     char *nume = "Mega Byte", *nume2 = "Vitamina C", *nume3 = "main.c";
     char copie[20];
@@ -456,7 +457,7 @@ O altă operație destul de comună cu șirurile de caractere este concatenarea:
 #include <stdio.h>
 #include <string.h>
 
-int main()
+int main(void)
 {
     char *sufix = "t", *sufix2 = "-am";
     char destinatie[20] = "trecu";
@@ -485,7 +486,7 @@ Am menționat o primă funcție de examinare a șirurilor de caractere în secț
 #include <stdio.h>
 #include <string.h>
 
-int main()
+int main(void)
 {
     char sir1[] = "test";
     char *sir2 = "test";
@@ -514,7 +515,7 @@ void caut(char *sir, char ch)
         printf("Nu am gasit %c in %s!\n", ch, sir);
 }
 
-int main()
+int main(void)
 {
     char sir[] = "unde o fi acul in caru' cu fn?";
     char c1 = 'a', c2 = 'l', c3 = 'A';
