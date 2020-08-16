@@ -244,8 +244,96 @@ int main(void)
     return 0;
 }
 ```
+Observații:
+- nu era necesar ca funcția `afis_timp` să afișeze funcția `afis_simpla`, putea să facă afișarea și în alt mod
+- observați faptul că *apelarea în sine* s-a efectuat în mod identic: `func_afis(v, n);`, dar rezultatul obținut depinde de funcția către care arată `func_afis`
+- să înțelegem sintaxa pentru pointeri la funcții, are 3 părți:
+  - `void` este tipul de retur al funcției către care va fi pointerul
+  - `(*func_afis)`, unde `func_afis` este numele pointerului la funcție, iar parantezele și `*` sunt necesare pentru a putea declara un pointer la funcție
+    - fără paranteze, am obține o declarație de funcție!
+    - `void *func_afis(int*, int);` ar însemna că declarăm o funcție care întoarce `void*`
+  - `(int*, int)` reprezintă tipurile parametrilor funcției
 
-**Exemplu: preprocesări**
+**`typedef`**
+
+Poate fi util să simplificăm codul folosind [`typedef`](https://en.cppreference.com/w/c/language/typedef), mai ales atunci când transmitem pointeri la funcții ca argumente către alte funcții:
+```c
+typedef void (*afis_pf)(int*, int);
+typedef void afis_f(int*, int);
+
+void test0(void (*func)(int*, int))
+{
+    int x[] = {1, 2, 3};
+    func(x, 3);
+}
+
+void test1(afis_pf func)
+{
+    int x[] = {1, 2, 3};
+    func(x, 3);
+}
+
+void test2(afis_f *func)
+{
+    int x[] = {1, 2, 3};
+    func(x, 3);
+}
+
+int main(void)
+{
+    test0(afis_simpla);
+    test0(&afis_simpla);
+    test1(afis_simpla);
+    test1(&afis_simpla);
+    test2(afis_simpla);
+    test2(&afis_simpla);
+    test0(afis_timp);
+    test1(afis_timp);
+    test2(afis_timp);
+    return 0;
+}
+```
+Observații:
+- operatorul `&` este opțional în cazul funcțiilor: întotdeauna are loc o [conversie](https://en.cppreference.com/w/c/language/conversion#Function_to_pointer_conversion) automată de la funcție la pointer la funcție
+- `test0` nu se folosește deloc de `typedef`
+- putem apela în funcțiile `test` funcția transmisă ca parametru astfel, deși este redundant: `(*func)(x, 3);`
+- nu am reușit să aflu dacă `typedef`-ul de la `afis_f` este standard (sintaxă preluată de pe [Wikipedia](https://en.wikipedia.org/wiki/Function_pointer#Alternate_C_and_C++_Syntax))
+  - atunci când apare ca parametru la o funcție, aparent este opțional să fie declarat ca pointer: `void test2(afis_f func)` pare să funcționeze la fel de bine
+  - totuși, dacă declarăm o variabilă, este obligatoriu să fie pointer: `afis_f *af2 = afis_simpla;`
+- echivalent, putem avea `afis_pf af1 = afis_simpla;`
+- în schimb, `afis_pf *af11 = &afis_simpla;` este greșit, deoarece `&` nu face nimic asupra funcțiilor
+  - `af11` este un pointer la pointer la funcție 😁
+  - ce am putea face cu `af11` ar fi asta: `af11 = &af2;`, comportându-se ca un pointer "obișnuit"
+  - ca să apelăm funcția, ar trebui neapărat să facem așa: `(*af11)(v, n);`
+
+**Exemplu schițat: preprocesări**
+
+Context: vrem să prelucrăm date din mai multe fișiere, însă acestea sunt salvate în formaturi diferite. Pentru a simplifica și mai mult exemplul, presupunem că au aceeași structură logică.
+
+După ce facem citirea, prelucrarea este identică. Putem folosi pointerii la funcții pentru a apela funcții diferite de citire pentru fiecare fișier în parte, pe baza extensiei. În aceste situații nu este necesar să ne complicăm cu numerele magice menționate mai demult.
+```c
+void procesare(char *nume)
+{
+    char extensie[5];
+    strcpy(extensie, nume + strlen(nume) - 4);
+    int* (*citire)(char*, int*);
+    if(!strcmp(extensie, ".csv"))
+        citire = citire_csv;
+    else if(!strcmp(extensie, ".xlsx"))
+        citire = citire_xlsx;
+    else
+    {
+        printf("Fisierul %s are extensie invalida!", nume);
+        return;
+    }
+    int *date, n;
+    date = citire(nume, &n);
+    // prelucrare date
+}
+```
+Observații:
+- am presupus că există funcțiile `citire_csv` și `citire_xlsx`
+- pointerii la funcții ne ajută să abstractizăm anumite aspecte ce țin de detalii de implementare sub o interfață comună
 
 ### Recapitulare pentru test
 [Înapoi la programe](#programe-discutate)
