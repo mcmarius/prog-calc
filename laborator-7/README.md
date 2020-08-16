@@ -190,7 +190,62 @@ Observații:
 ### Despre pointerii la funcții
 [Înapoi la programe](#programe-discutate)
 
+[Pointerii la funcții](https://en.cppreference.com/w/c/language/pointer#Pointers_to_functions) reprezintă un concept destul de avansat pentru anul I și nu trebuie să vă faceți griji prea mari dacă nu îi înțelegeți (eu i-am înțeles mai bine prin anul 3 sau 4). Dacă îi înțelegeți, felicitări!
 
+**Numele unei funcții se convertește automat la un pointer la acea funcție.**
+
+După cum le spune și numele, pointerii la funcții sunt niște pointeri. Pointeri un pic mai speciali. Ei ne permit să tratăm funcțiile ca pe variabile și să le transmitem ca parametri altor funcții sau să le reținem în vectori. Ulterior, apelăm funcțiile prin intermediul acestor pointeri.
+
+**Cu ce ne ajută asta?**
+
+Dacă avem mai multe funcții care diferă printr-o singură operație, acea operație ar putea fi înlocuită cu un pointer la funcție. Vom avea o singură funcție "mare" căreia îi transmitem ca parametru suplimentar diverși pointeri la funcții.
+
+**De ce am vrea să facem asta?**
+
+În majoritatea cazurilor, dacă avem același cod copiat în mai multe locuri, în momentul în care descoperim un bug, trebuie să reparăm bug-ul în toate locurile unde am copiat codul respectiv. Este destul de probabil ca, din neatenție, să uităm să înlocuim în unul din multele locuri în care am copiat codul.
+
+**Exemplu: afișări**
+
+Un exemplu de situație când sunt utili pointerii la funcții este atunci când dorim să afișăm în mod diferit aceeași informație:
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void afis_simpla(int *v, int n)
+{
+    for(int i = 0; i < n; ++i)
+        printf("%d ", v[i]);
+    printf("\n");
+}
+
+void afis_timp(int *v, int n)
+{
+    printf("\n------------------------------------\n\n");
+    time_t t = time(NULL);
+    char buf[100];
+    if(strftime(buf, sizeof(buf), "[%H:%M:%S %p] ", localtime(&t)))
+        printf("%s", buf);
+    afis_simpla(v, n);
+    printf("\n------------------------------------\n");
+}
+
+int main(void)
+{
+    int v[] = {5, 3, 7, 3, 2, 8, 2, 0, 1, 9, -1, 4};
+    int n = sizeof(v) / sizeof(v[0]);
+
+    void (*func_afis)(int*, int);
+    func_afis = afis_simpla;
+    func_afis(v, n);
+
+    func_afis = afis_timp;
+    func_afis(v, n);
+    return 0;
+}
+```
+
+**Exemplu: preprocesări**
 
 ### Recapitulare pentru test
 [Înapoi la programe](#programe-discutate)
