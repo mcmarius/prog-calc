@@ -689,3 +689,4 @@ Exemplu:
 - [StackOverflow](https://stackoverflow.com/questions/tagged/c?tab=Votes)
 - [C FAQ](http://c-faq.com/questions.html)
 - [C99 standard](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf) (doar să îl răsfoiți un pic)
+- [Rezumat cu funcții pe care trebuie să le evitați (e.g. `gets`)](http://www.gidnetwork.com/b-56.html)
