@@ -471,7 +471,7 @@ int main(void)
 }
 ```
 Observații:
-- ambele funcții adaugă `'\0'` la final (e greșit în curs, citiți documentația)
+- ambele funcții adaugă `'\0'` la final <!-- (e greșit în curs, citiți documentația) -->
 - `strncat` scrie cel mult `nr + 1` caractere, deoarece adaugă `'\0'`! se oprește când dă de `'\0'` în șirul sursă
 - dacă nu avem alocat suficient spațiu în șirul destinație, 💥
 - și sursa, și destinația trebuie să aibă terminator de șir! altfel, 💥
