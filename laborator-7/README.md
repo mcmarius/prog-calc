@@ -336,6 +336,7 @@ Observații:
 - pointerii la funcții ne ajută să abstractizăm anumite aspecte ce țin de detalii de implementare sub o interfață comună
 - exemplul este cam forțat, însă pointerii la funcții chiar sunt utili
 - ... doar că este dificilă găsirea unui exemplu ușor de înțeles
+- ce greșeală cu extensia este în exemplul de mai sus?
 
 ### Recapitulare pentru test
 [Înapoi la programe](#programe-discutate)
