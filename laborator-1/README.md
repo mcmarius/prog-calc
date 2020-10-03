@@ -44,6 +44,10 @@ Desigur, puteți să folosiți ce aveți deja, nu sunt diferențe de interes pen
 
 🚧 De adăugat: Pas instalare compilator.
 
+Dacă aveți deja instalat Code::Blocks de mai demult, verificați doar că funcționează ce aveți. Dacă întâmpinați probleme, **întrebați!**
+
+Urmând pașii de mai sus, compilatorul ar trebui să vină cu Code::Blocks. Dacă este nevoie să instalați compilatorul separat, recomandarea este să folosiți [MinGW-w64](https://sourceforge.net/projects/mingw-w64/). Începând cu versiunea 20.03, Code::Blocks include MinGW-w64. Versiunile mai vechi includeau o variantă învechită de MinGW.
+
 ---
 
 După ce s-a terminat de instalat, va trebui să alegeți compilatorul: dați click pe `GNU GCC Compiler` și faceți click pe `Set as default`, apoi `OK`:
