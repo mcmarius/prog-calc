@@ -286,6 +286,7 @@ Observații:
 - `int v[5] = {};` este invalid, trebuie să scriem cel puțin `int v[5] = {0};` dacă vrem să inițializăm toate elementele cu 0
 - apropo, nu putem avea `int v[];`, dar putem avea `extern int v[];`, care reprezintă un tip incomplet și este o variabilă declarată în alt fișier sursă
 - accesarea unor elemente din afara vectorului reprezintă, ați ghicit, comportament nedefinit 💥
+  - "dar programul încă merge dacă ies un pic afară din vector": e ca și cum ai merge pe marginea prăpastiei; dacă ai noroc, nu pățești nimic, însă nu e bine să te bazezi pe asta
 - scrierea unor valori într-un element din afara vectorului reprezintă și ea (mai e nevoie să spun?) comportament nedefinit 💥
 
 [Vectorii pot fi convertiți la pointeri](https://en.cppreference.com/w/c/language/array#Array_to_pointer_conversion). Pointerul rezultat arată către primul element din vector. Spre deosebire de `sizeof` pe vector, `sizeof` pe pointer întoarce doar dimensiunea primului element. Un argument de tip vector este de fapt interpretat ca un pointer:
