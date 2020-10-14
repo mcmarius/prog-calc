@@ -286,6 +286,7 @@ Programele de mai sus nu au folosit deloc variabile:
 - `"Hello world!\n"` este un șir de caractere constant (altfel spus, un literal de tip șir de caractere)
 - `"Niste numere intregi: %d, %d si %d\n"` este un alt șir de caractere constant, nu e relevant în acest context faptul că are în componență specificatori de conversie
 - `0`, `1`, `2`, `3` sunt literali de tip întreg cu semn
+- useless fact: nu există literalul `0` în baza 10 în limbajul C; întrucât începe cu `0`, este considerat un literal în baza 8 ([sursa](https://stackoverflow.com/questions/26625311/is-0-an-octal-or-a-decimal-in-c))
 
 Constantele sunt... constante, imutabile, nu își pot schimba valoarea. Cele de mai sus se numesc literali; sunt tot un fel de constante, dar nu au nume.
 
