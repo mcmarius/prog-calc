@@ -1,6 +1,7 @@
 # Laboratorul 3
 
 ### ⚠ Puneți cât mai multe întrebări! Nu există întrebări greșite.
+### ⚠ Rezolvarea de la problema 3 este greșită! Când am soluția corectă o adaug și scot acest avertisment.
 #### Semnalați orice fel de greșeli găsiți!
 
 # Cuprins
@@ -632,7 +633,7 @@ int cautare_binara(int *v, int x, int st, int dr)
   - explicație: numerele mari le vom citi ca pe niște șiruri de caractere, apoi parcurgem în același timp vectorii de la dreapta la stânga, întrucât cifra cea mai nesemnificativă va fi în dreapta
   - trebuie propagat un `1` dacă suma depășește 10
   - numerele întregi pot avea același semn sau semne diferite
-  - 🚧 teste
+  - 🚧 **teste** (din cauză că nu aveam teste am trimis o soluție greșită ☹ )
 
 4. Se citesc de la tastatură `m` și `n` naturale nenule reprezentând dimensiunile unei matrice și apoi se citesc elementele matricei. Să se construiască și să se afișeze matricea transpusă.
 ```
