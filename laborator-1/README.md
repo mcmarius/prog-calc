@@ -496,7 +496,7 @@ int hungry() {
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
 
-Veți găsi toate rezolvările în folder-ul `solved`. Totuși, este bine să încercați să rezolvați exercițiile pe cont propriu.
+Veți găsi toate rezolvările în folder-ul `solutii`. Totuși, este bine să încercați să rezolvați exercițiile pe cont propriu.
 
 Exerciții bazate pe acest laborator:
 - modificări la programul al doilea de la `if/else`:
