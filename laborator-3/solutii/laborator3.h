@@ -3,7 +3,7 @@
 
 void problema1();
 void problema2();
-void problema3();
+char* problema3(char*, char*, int);
 void problema4();
 void problema5();
 void problema6();
@@ -14,5 +14,7 @@ int** matriceSpiralaComun(int n, int m);
 void demoMatriceSpirala();
 
 void ex();
+void testp3(char*, char*, int, char*);
+void xtestp3(char *nr1, char *nr2, int n, char *rez);
 
 #endif // LABORATOR3_H

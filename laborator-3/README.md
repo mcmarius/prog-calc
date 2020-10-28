@@ -1,7 +1,6 @@
 # Laboratorul 3
 
 ### ⚠ Puneți cât mai multe întrebări! Nu există întrebări greșite.
-### ⚠ Rezolvarea de la problema 3 este greșită! Când am soluția corectă o adaug și scot acest avertisment.
 #### Semnalați orice fel de greșeli găsiți!
 
 # Cuprins

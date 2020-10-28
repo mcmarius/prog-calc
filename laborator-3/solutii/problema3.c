@@ -17,74 +17,122 @@ int charToInt(char a)
     return 0;
 }
 
-void problema3()
+char* problema3(char *numar1, char *numar2, int n)
 {
-    char numar1[30];
-    char numar2[30];
-    int rezultat[30];
+    char *rez;
+    int *rezultat;
+    rez = malloc(sizeof(*rez) * (n+1));
+    rezultat = malloc(sizeof(*rezultat) * (n+1));
     int lungimeNumar1, lungimeNumar2;
-    int i, j, jStart, carry, semn1, semn2, lungimeMax, sum;
-    printf("Primul numar: ");
-    scanf("%29s", numar1);
-    printf("\nAl doilea numar: ");
-    scanf("%29s", numar2);
+    int i, j, k, imin, jmin, jStart, carry, semn1, semn2, sum;
+    int c1, c2;
+    printf("Primul numar: %s\n", numar1);
+    printf("Al doilea numar: %s\n", numar2);
 
     semn1 = semn2 = 1;
-    if(numar1[0] == '-')
-    {
-        semn1 = -1;
-    }
-    if(numar2[0] == '-')
-    {
-        semn2 = -1;
-    }
+    imin = jmin = 0;
 
     lungimeNumar1 = strlen(numar1);
     lungimeNumar2 = strlen(numar2);
-    strrev(numar1);
-    strrev(numar2);
-    lungimeMax = lungimeNumar1;
-    if(lungimeNumar1 < lungimeNumar2)
-    {
-        lungimeMax = lungimeNumar2;
+    if(numar1[0] == '-') {
+        imin = 1;
+        semn1 = -1;
+    }
+    if(numar2[0] == '-') {
+        jmin = 1;
+        semn2 = -1;
     }
 
-    carry = 0;
-    for(i = 0; i < lungimeMax; i++)
-    {
-        if(lungimeNumar1 == lungimeNumar2 || (i < lungimeNumar1 && i < lungimeNumar2))
-        {
-            sum = carry + charToInt(numar1[i]) * semn1 + charToInt(numar2[i]) * semn2;
+    //printf("s1=%d, s2=%d\n", semn1, semn2);
+    carry = k = 0;
+    int sgn;
+    if(semn1*semn2 == -1) {
+        sgn = lungimeNumar1-imin -lungimeNumar2+jmin;
+        if(sgn >= 1)
+            sgn = semn1;
+        else if(sgn <= -1)
+            sgn = -semn1;
+        else { //if(!sgn) // același nr de cifre
+            int q = imin, r = jmin;
+            // buclă pentru a determina numărul cel mai mare
+            while(q < lungimeNumar1 && r < lungimeNumar2 && numar1[q++] == numar2[r++]);
+            sgn = numar1[q-1] >= numar2[r-1] ? semn1 : -semn1;
         }
-        else if(i >= lungimeNumar1)
-        {
-            sum = carry + charToInt(numar2[i]) * semn2;
-        }
-        else if(i >= lungimeNumar2)
-        {
-            sum = carry + charToInt(numar1[i]) * semn1;
-        }
-        rezultat[i] = abs(sum % 10);
-        carry = sum / 10;
     }
-    if(carry > 0)
-    {
-        rezultat[i] = carry;
-        i++;
+    else
+        sgn = semn1;
+
+    for(i = lungimeNumar1-1, j = lungimeNumar2-1; i >= imin && j >= jmin; i--, j--) {
+        c1 = charToInt(numar1[i]);
+        c2 = charToInt(numar2[j]);
+
+        //printf("i: %d j: %d; n1[i]: %d, n2[j] %d, sgn: %d\n", i, j, c1, c2, sgn);
+        sum = c1*semn1*sgn + c2*semn2*sgn + carry;
+        if(semn1*semn2 == -1) {
+            if(sum < 0) {
+                carry = -1;
+                sum += 10;
+            }
+            else
+                carry = 0;
+        }
+        else {
+            sum = abs(sum);
+            if(sum > 9) {
+                carry = 1;
+                sum -= 10;
+            }
+            else
+                carry = 0;
+        }
+
+        //printf("sum: %d, carry: %d\n", sum, carry);
+        rezultat[k++] = sum;
     }
 
-    printf("\nRezultat: ");
+    while(i >= imin) {
+        sum = carry + charToInt(numar1[i--]); //printf("i: %d, sum: %d, carry: %d\n", i+1, sum, carry);
+        rezultat[k++] = sum % 10;
+        carry = sum > 9;
+    }
+    while(j >= jmin) {
+        sum = carry + charToInt(numar2[j--]); //printf("j: %d, sum: %d, carry: %d\n", j+1, sum, carry);
+        rezultat[k++] = sum % 10;
+        carry = sum > 9;
+    }
+    if(carry)
+        rezultat[k++] = carry;
+
+    //printf("Rezultat: ");
+
     jStart = 0;
-    if(rezultat[i - 1] == 0)
-    {
-        printf("-");
-        jStart = 1;
+    if(sgn == -1) {
+        //printf("-");
+        rez[0] = '-';
+        jStart++;
     }
 
-    for(j = jStart; j < i; j++)
-    {
-        printf("%d", rezultat[i - j - 1]);
+    int init = rezultat[k-1], any = 0;
+    for(j = k-1; j >= 0; j--) {
+        if(init == 0) {
+            init = rezultat[j];
+            if(init == 0) {
+                jStart--;
+                continue;  // sărim peste zerourile de început
+            }
+        }
+        any = 1;
+        //printf("r[%d]=%d\n", j, rezultat[j]);
+        //printf("%d\n", k-j-1+jStart);
+        rez[k-j-1+jStart] = rezultat[j]+'0';
     }
+    if(!any) {
+        jStart++;
+        rez[k-1+jStart] = '0';
+    }
+    rez[k+jStart] = '\0';
+    free(rezultat);
+    return rez;
 }
 
 /**
@@ -103,4 +151,8 @@ fi utilizat la urmatoarea iterație.
 
 Trebuie să mai punem încă o dată adunarea excesului după acest for, apoi doar afișăm vectorul
 rezultat, dar în mod invers pentru că am inversat la început, înainte să facem suma.
+
+
+Explicații (Marius M)
+De adăugat.
 */
