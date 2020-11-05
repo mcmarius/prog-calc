@@ -127,6 +127,8 @@ int main()
 ```
 Dacă primiți warning că `z` este operator de conversie necunoscut, înlocuiți `%zu` cu `%u` sau cu `%lu`, dar `%zu` este standard.
 
+Update octombrie 2020: în urma unui update de Windows, `msvcrt.dll` a fost actualizat, iar `%zu` nu mai generează warning! 🎉
+
 Fun fact: [standardul](https://stackoverflow.com/questions/81656/where-do-i-find-the-current-c-or-c-standard-documents) specifică doar că un byte are `CHAR_BIT` biți (biblioteca `<limits.h>`), care este *cel puțin* 8. Desigur, de obicei un byte este exact 8 biți și poate fi numit și octet. Altfel, dacă un byte nu are 8 biți, nu prea poate fi numit octet :smiley:
 
 #### Comparații cu `==` între numere reale în virgulă mobilă?
