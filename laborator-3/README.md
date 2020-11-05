@@ -252,6 +252,9 @@ int main()
     for (i = 0; i < 5; ++i)
         printf("%d ", v[i]);
     printf("\nVectorul v ocupă %zu bytes.\n", sizeof(v));
+    // Comentariul de mai jos este invechit! Intre timp (octombrie 2020), msvcrt.dll a fost actualizat
+    // in urma unui update de Windows, iar acest cod nu mai da warning nici pe Windows :D
+
     // pe Windows nu se poate printa portabil cu sizeof (care intoarce tipul size_t) si nu putem scapa de warnings
     // o varianta un pic mai portabila este urmatoarea (este necesar header-ul <inttypes.h>)
     // printf("\nVectorul v ocupă %" PRIu64 " bytes.\n", sizeof(v));
@@ -260,6 +263,7 @@ int main()
 ```
 
 Observații:
+- începând cu octombrie 2020, `%zu` este portabil și pe Windows (cel puțin pe Windows 10) 🤩
 - `PRIu64` este un macro portabil pentru a afișa `long long unsigned int` și devine `llu` pe sisteme de operare bazate pe Unix sau `I64u` pe Windows
 - sintaxa `"text1" "text2" "text3"` devine `"text1text2text3"` după etapa de preprocesare (mai exact, etapa 6 de [aici](https://en.cppreference.com/w/c/language/translation_phases))
 
