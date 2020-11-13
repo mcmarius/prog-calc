@@ -56,7 +56,11 @@ Din Code::Blocks, pașii sunt următorii:
 
 Atenție! Acest proces selectează doar fișierele header, nu și implementarea! Pentru fișierele obiect corespunzătoare, dacă bibliotecile nu sunt de tip header-only, va trebui să ajutăm compilatorul să facă legăturile necesare, de exemplu prin opțiunea `-Lnume_director`, pe care le putem vedea în variabila `LIBRARY_PATH`. În plus, este posibil să fie necesară specificarea legăturilor cu opțiunea `-lnume_biblioteca` (L mic). Opțiunea `-L` doar îi spune linker-ului în ce directoare să caute fișierul obiect specificat cu opțiunea `-l`.
 
-Pentru proiecte noi și complexe în C/C++ pentru care aveți nevoie de biblioteci externe, poate fi util [CMake](https://cmake.org/).
+Pentru a vedea ce directoare conține variabila `LIBRARY_PATH`, o putem afișa folosind comanda `gcc -v --version`.
+
+Pentru proiecte noi și complexe în C/C++ pentru care aveți nevoie de biblioteci externe, poate fi util [CMake](https://cmake.org/). Pentru situații și mai complicate, poate fi folosit un package manager.
+
+🔎 Bibliotecile sunt de două feluri: statice și dinamice. Cele statice sunt adăugate în executabilul final, pe când cele dinamice trebuie să existe în momentul în care rulăm programul nostru.
 
 #### `#define`
 [Înapoi la directive](#directive-de-preprocesare-1)
