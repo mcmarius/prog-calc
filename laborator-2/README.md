@@ -574,7 +574,7 @@ Observații:
 - dacă tipul de date al operandului din stânga (`nr`) este fără semn, deplasarea la stânga se realizează în modul descris mai sus
 - dacă tipul de date al operandului din stânga este cu semn, atunci:
   - dacă operandul din stânga este negativ, comportament nedefinit 💥
-  - dacă operandul din stânga este pozitiv, avem comportamend nedefinit atunci când un bit din număr s-ar duce "peste" bitul de semn (primul bit); pe exemplul de mai sus, asta s-ar întâmpla de exemplu la `19 << 3` (ar putea fi -104, 24, ??? sau un portal către o altă dimensiune)
+  - dacă operandul din stânga este pozitiv, avem comportament nedefinit atunci când un bit din număr s-ar duce "peste" bitul de semn (primul bit); pe exemplul de mai sus, asta s-ar întâmpla de exemplu la `19 << 3` (ar putea fi -104, 24, ??? sau un portal către o altă dimensiune)
 
 #### Operatorul `>>` (Deplasare la dreapta)
 [Înapoi la Operații pe biți](#operații-pe-biți-1)
