@@ -329,7 +329,7 @@ Observații:
   - este constant deoarece nu îl putem modifica: nu putem scrie `s4 = s3;` sau `s3 = s2;` - încercați!
   - în schimb, putem scrie `s2 = s3;`, deoarece `s2` este pointer!
 
-Standardul C99 introduce vectori de lungime variabilă (VLA - variable length arrays). Aceștia nu pot fi inițializați cu sintaxa cu acolade, dar îi putem folosi pentru a aloca pe stivă un număr de elemente stabilit la execuție:
+Standardul C99 introduce vectori de lungime variabilă (VLA - variable length arrays), iar standardul următor C11 aproape îi elimină. Aceștia nu pot fi inițializați cu sintaxa cu acolade, dar îi putem folosi pentru a aloca pe stivă un număr de elemente stabilit la execuție (citiți și observațiile!):
 ```c
 #include <stdio.h>
 
@@ -363,7 +363,11 @@ int main()
 Observații:
 - în interiorul blocului `for`, vectorul `v` are de fiecare dată altă dimensiune
 - la fel ca la vectorii normali, atunci când transmitem un VLA unei funcții, acesta este convertit într-un pointer către primul element din vector
-- `int n = 3; int v[n];` **nu** este un VLA deoarece dimensiunea vectorului este cunoscută la momentul compilării
+- VLA nu ar trebui folosiți în mod uzual ⚠, întrucât nu aduc multe avantaje:
+  - dacă alocăm puține elemente, putem stabili dimensiunea maximă la momentul compilării
+  - dacă avem nevoie de multe elemente, oricum nu putem folosi VLA, ci va fi nevoie de alocare dinamică
+  - VLA sunt alocați tot pe stivă
+
 
 ### Matrice
 [Înapoi la programe](#programe-discutate-1)
