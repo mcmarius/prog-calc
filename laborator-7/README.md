@@ -359,12 +359,11 @@ După cum îi spune și numele, `filter` filtrează elementele din vector care r
 ```c
 int* filter(int *v, int n, int *m, bool (*f)(int)) {
     int *w = malloc(n * sizeof(*v);
-    *m = 0;
+    int j = 0;
     for(int i = 0; i < n; i++)
-        if(f(v[i]) {
-            w[i] = f(v[i]);
-            (*m)++;
-        }
+        if(f(v[i])
+            w[j++] = f(v[i]);
+    *m = j;
     // eventual putem realoca la m elemente
     // sau cu realloc de fiecare data cu cate un element
     return w;
