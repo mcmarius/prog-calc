@@ -14,7 +14,6 @@
 ### [Sortarea cu `qsort`](#sortarea-cu-qsort-1)
 ### [Căutarea cu `bsearch`](#căutarea-cu-bsearch-1)
 ### [Despre pointerii la funcții](#despre-pointerii-la-funcții-1)
-### [Recapitulare pentru test](#recapitulare-pentru-test-1)
 
 ### Sortarea cu [`qsort`](https://en.cppreference.com/w/c/algorithm/qsort)
 
@@ -338,10 +337,39 @@ Observații:
 - ... doar că este dificilă găsirea unui exemplu ușor de înțeles
 - ce greșeală cu extensia este în exemplul de mai sus?
 
-### Recapitulare pentru test
-[Înapoi la programe](#programe-discutate)
+**Câteva exemple "clasice"**
 
+O funcție de ordin înalt (high-order function) este o funcție care primește ca parametru o altă funcție (sau care întoarce o funcție).
 
+Un exemplu simplu de **`map`**
+
+Aplicăm o funcție `f` asupra fiecărui element din vector. Atunci când definim `map`, nu este necesar să specificăm ce face funcția `f`, ci doar modul în care e transformat un element (parametrii de intrare și tipul de retur).
+```c
+int* map(int *v, int n, int (*f)(int)) {
+    int *w = malloc(n * sizeof(*v);
+    for(int i = 0; i < n; i++)
+        w[i] = f(v[i]);
+    return w;
+}
+```
+
+Un exemplu simplu de **`filter`**
+
+După cum îi spune și numele, `filter` filtrează elementele din vector care respectă o anumită condiție.
+```c
+int* filter(int *v, int n, int *m, bool (*f)(int)) {
+    int *w = malloc(n * sizeof(*v);
+    *m = 0;
+    for(int i = 0; i < n; i++)
+        if(f(v[i]) {
+            w[i] = f(v[i]);
+            (*m)++;
+        }
+    // eventual putem realoca la m elemente
+    // sau cu realloc de fiecare data cu cate un element
+    return w;
+}
+```
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
