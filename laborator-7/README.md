@@ -4,7 +4,7 @@
 #### Semnalați orice fel de greșeli găsiți!
 
 # Cuprins
-## [Pointeri la funcții](#programe-discutate)
+## [Programe discutate](#programe-discutate)
 ## [Exerciții](#exerciții-1)
 ## [Întrebări, erori și orice nu a fost acoperit deja](#întrebări-erori-diverse)
 ## [Resurse recomandate](#resurse-recomandate-1)
@@ -144,7 +144,7 @@ Observații:
   - `printf("%*s gust %*s %*d de calorii\n", -15, v[i].nume, -6, afis_gust(v[i]), 3, v[i].calorii);`
   - putem calcula programatic aceste lungimi ca să nu fie nevoie să le hardcodăm
 - nu am folosit `else if` în funcția comparator deoarece nu este necesar `else` dacă înainte avem `return`
-- enumerarea din structură este anonimă, însă putem accesa din afara structurii câmpurile enumerării
+- enumerarea din structură este anonimă, însă putem accesa din afara structurii câmpurile enumerării, deoarece structurile în C nu limitează scopul
 
 Pentru a ordona doar o parte dintr-un vector (de structuri), putem proceda astfel:
 ```c
@@ -372,7 +372,6 @@ int* filter(int *v, int n, int *m, bool (*f)(int)) {
 
 ## Exerciții
 [Înapoi la cuprins](#cuprins)
-
 
 
 ## Întrebări, erori, diverse
