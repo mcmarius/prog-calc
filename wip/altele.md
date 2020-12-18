@@ -21,6 +21,8 @@ Grafuri:
 
 Ansamble (heaps)
 
+Tabele de dispersie (aka hash, map, dictionary)
+
 Algoritmi de sortare
 - quicksort
 - merge sort
