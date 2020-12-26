@@ -1,5 +1,12 @@
 
-**Biblioteci externe**
+
+Scop: vom scrie o variantă de Pong.
+
+### [Biblioteci externe](#biblioteci-externe-1)
+### [Planificarea structurii codului](#planificarea-structurii-codului-1)
+### [Implementarea](#implementarea-1)
+
+### Biblioteci externe
 
 Pași:
 - găsirea unei biblioteci care să facă ce dorim
@@ -11,7 +18,6 @@ Pași:
 
 -----
 
-Scop: vom scrie o variantă de Pong.
 
 Pas opțional: update la o versiune [mai nouă](http://www.winlibs.com/#download-release) a compilatorului.
 
@@ -91,3 +97,22 @@ După acest pas, lucrurile par să meargă. Dacă totuși apar probleme, o prim�
 `[2020-12-25]` În episodul următor vom explora ce ne oferă SFML. Sărbători fericite!
 
 -----
+
+### Planificarea structurii codului
+
+Înainte să ne apucăm de implementare, trebuie să avem o idee mai clară despre ce vrem să obținem.
+
+Chiar dacă jocul Pong este relativ simplu, este bine să fie structurat pentru a putea adăuga ușor funcționalități suplimentare. Putem identifica următoarele elemente:
+- ecranul pe care se afișează toate elementele (totuși, am putea avea încă un ecran pentru meniu/scoruri)
+- cei doi jucători
+- mingea
+- fileul
+- pereții
+- scorul fiecărui jucător (eventual și numele)
+
+Funcționalități suplimentare care nu sunt atât de prioritare:
+- pauză
+- reținerea scorurilor
+- unghiul și viteza cu care e lovită mingea influențează noua traiectorie
+
+### Implementarea
