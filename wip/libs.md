@@ -80,6 +80,10 @@ Acum trebuie să rezolvăm eroarea cu `undefined` ceva. I-am spus compilatorului
 
 ![](img/add_static_libs.png)
 
+**Important! `libcsfml-system` trebuie să fie ultima în listă, iar `libcsfml-graphics` trebuie să apară înaintea `libcsfml-window`!**
+
+De ce? Pentru că GCC vrea ca bibliotecile care depind de alte biblioteci să apară *înaintea* bibliotecilor de care depind. În acest caz, toate cele 4 depind de `libcsfml-system`, iar `libcsfml-graphics` depinde de `libcsfml-window`.
+
 ⚠ Observație: în proiecte mai serioase vom adăuga numai strictul necesar!
 
 În acest punct, compilarea va reuși. Putem să ne uităm pe `Build log` să vedem că sunt adăugate fișierele `.a` (de la archive). Totuși, dacă executăm programul, vom primi următoarea eroare:
