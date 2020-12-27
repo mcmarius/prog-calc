@@ -360,6 +360,6 @@ while(fereastră deschisă) {
 eliberează resurse;
 ```
 
-Puteți vedea codul după reorganizarea de care am spus [aici](https://github.com/mcmarius/prog-calc/blob/v0.0.1-pong/wip/pong/main.c) (ping me dacă stric link-ul între timp).
+Puteți vedea codul după reorganizarea de care am spus [aici](https://github.com/mcmarius/prog-calc/blob/v0.0.2-pong/wip/pong/main.c) (ping me dacă stric link-ul între timp).
 
 Acum vom adăuga următoarea funcționalitate: jucătorul din stânga se poate muta sus/jos cu <kbd>W</kbd> și <kbd>S</kbd>, iar jucătorul din dreapta va putea face același lucru cu <kbd>I</kbd> și <kbd>K</kbd>.

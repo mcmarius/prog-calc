@@ -109,7 +109,8 @@ int main()
                 case sfKeyW:
                     break;
                 case sfKeyS:
-                    break;                case sfKeyI:
+                    break;
+                case sfKeyI:
                     break;
                 case sfKeyK:
                     break;
