@@ -17,6 +17,7 @@ int main()
     // https://epitech-2022-technical-documentation.readthedocs.io/en/latest/csfml.html
     sfVideoMode mode = {WIDTH, HEIGHT, 24};
     sfRenderWindow *window = sfRenderWindow_create(mode, "Pong", sfResize | sfClose, NULL);
+    sfRenderWindow_setFramerateLimit(window, 60);
 
     sfRectangleShape *player1 = sfRectangleShape_create();
     sfRectangleShape *player2 = sfRectangleShape_create();

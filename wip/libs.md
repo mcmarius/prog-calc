@@ -136,6 +136,7 @@ int main()
 {
     sfVideoMode mode = {WIDTH, HEIGHT, 24};
     sfRenderWindow *window = sfRenderWindow_create(mode, "Pong", sfResize | sfClose, NULL);
+    sfRenderWindow_setFramerateLimit(window, 60);
 
     while(sfRenderWindow_isOpen(window)) {
         sfEvent event;
@@ -172,6 +173,7 @@ int main()
 {
     sfVideoMode mode = {WIDTH, HEIGHT, 24};
     sfRenderWindow *window = sfRenderWindow_create(mode, "Pong", sfResize | sfClose, NULL);
+    sfRenderWindow_setFramerateLimit(window, 60);
 
     sfRectangleShape *player1 = sfRectangleShape_create();
 
@@ -235,6 +237,7 @@ int main()
 {
     sfVideoMode mode = {WIDTH, HEIGHT, 24};
     sfRenderWindow *window = sfRenderWindow_create(mode, "Pong", sfResize | sfClose, NULL);
+    sfRenderWindow_setFramerateLimit(window, 60);
 
     sfRectangleShape *player1 = sfRectangleShape_create();
     sfRectangleShape *player2 = sfRectangleShape_create();
