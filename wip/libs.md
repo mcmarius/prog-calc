@@ -151,7 +151,7 @@ int main()
 }
 ```
 
-Pentru comoditate, putem adăuga opțiunea de a închide fereastra dacă apăsăm tasta `escape` (<kbd>Esc<kbd>). În interiorul buclei exterioare, cea cu `isOpen`, adăugăm următoarele 2 instrucțiuni:
+Pentru comoditate, putem adăuga opțiunea de a închide fereastra dacă apăsăm tasta `escape` (<kbd>Esc</kbd>). În interiorul buclei exterioare, cea cu `isOpen`, adăugăm următoarele 2 instrucțiuni:
 ```c
 if(sfKeyboard_isKeyPressed(sfKeyEscape))
     sfRenderWindow_close(window);
