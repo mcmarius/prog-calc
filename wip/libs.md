@@ -122,8 +122,7 @@ Funcționalități suplimentare care nu sunt atât de prioritare:
 ### Implementarea
 
 #### [Elementele grafice](#elemente-grafice-1)
-#### [Animații](#animații-1)
-#### [Coliziuni](#coliziuni-1)
+#### [Animații și coliziuni](#animații-și-coliziuni-1)
 
 #### Elementele grafice
 
@@ -344,6 +343,23 @@ După toate acestea, rezultatul este următorul:
 
 ![](img/pong2.png)
 
-#### Animații
+#### Animații și coliziuni
 
-#### Coliziuni
+Înainte de a trece la animații, reorganizăm un pic codul pentru a putea fi mai ușor de înțeles și de extins ulterior. Cea mai importantă modificare este aceea că actualizăm poziția jucătorilor și scriem scorul **în bucla principală a jocului**, nu înaintea acesteia.
+
+Ideea generală este următoarea:
+```
+inițializează resurse;
+while(fereastră deschisă) {
+    if(taste apăsate)
+        actualizează poziții jucători; // sau ce mai vrem noi
+    actualizează poziție minge;  // indiferent dacă sunt apăsate taste sau nu
+    actualizează pozițiile formelor;
+    desenează forme;
+}
+eliberează resurse;
+```
+
+Puteți vedea codul după reorganizarea de care am spus [aici](https://github.com/mcmarius/prog-calc/blob/v0.0.1-pong/wip/pong/main.c) (ping me dacă stric link-ul între timp).
+
+Acum vom adăuga următoarea funcționalitate: jucătorul din stânga se poate muta sus/jos cu <kbd>W</kbd> și <kbd>S</kbd>, iar jucătorul din dreapta va putea face același lucru cu <kbd>I</kbd> și <kbd>K</kbd>.
