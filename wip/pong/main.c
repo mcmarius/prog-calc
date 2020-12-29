@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#include <stdbool.h>
 #include <SFML/Graphics.h>
+
+#define EPS_X 30
+#define EPS_Y 60
 
 const int WIDTH = 1280;
 const int HEIGHT = 720;
@@ -30,11 +35,19 @@ int main()
     sfRectangleShape_setSize(player1, size_player);
     sfRectangleShape_setSize(player2, size_player);
 
+    int player_speed = 30;
+
     sfCircleShape *ball = sfCircleShape_create();
     const int ball_radius = 25;
-    sfVector2f pos_ball = {WIDTH / 2 - ball_radius, HEIGHT / 2 - ball_radius};
+    sfVector2f pos_ball;
+    sfVector2f pos_ball_start = {WIDTH / 2 - ball_radius, HEIGHT / 2 - ball_radius};
+    pos_ball = pos_ball_start;
+    sfVector2f dir_ball;
+    sfVector2f dir_ball_start = {-10, 0};
+    dir_ball = dir_ball_start;
     sfCircleShape_setRadius(ball, ball_radius);
-    sfCircleShape_setFillColor(ball, sfBlue);
+    sfCircleShape_setFillColor(ball, sfYellow);
+
     ////////////////////////////////////////////////////////////////
     /// initializations for middle bar, walls, score and fonts
     /// fileu
@@ -90,6 +103,15 @@ int main()
     const int score_buf_size = 20;
     char player1_score_buf[score_buf_size];
     char player2_score_buf[score_buf_size];
+
+    bool game_end = false;
+    bool help = false;
+    unsigned int target_score = 5;
+    bool pause = false;
+    char main_text_buf[300];
+    sfText *main_text = sfText_create();
+    sfText_setFont(main_text, score_font);
+    sfText_setCharacterSize(main_text, score_size);
     /// end initializations for middle bar, walls, score and fonts
     ////////////////////////////////////////////////////////////////
 
@@ -107,12 +129,35 @@ int main()
                     sfRenderWindow_close(window);
                     break;
                 case sfKeyW:
+                    if(pos_player1.y > player_speed)  /// check bounds
+                        pos_player1.y -= player_speed;
                     break;
                 case sfKeyS:
+                    if(pos_player1.y < HEIGHT - size_player.y - player_speed)
+                        pos_player1.y += player_speed;
                     break;
                 case sfKeyI:
+                    if(pos_player2.y > player_speed)
+                        pos_player2.y -= player_speed;
                     break;
                 case sfKeyK:
+                    if(pos_player2.y < HEIGHT - size_player.y - player_speed)
+                        pos_player2.y += player_speed;
+                    break;
+                case sfKeyP:
+                    pause = !pause;
+                    break;
+                case sfKeyR:
+                    if(event.key.control) {
+                        game_end = help = pause = false;
+                        player1_score = player2_score = 0;
+                        pos_ball = pos_ball_start;
+                        dir_ball = dir_ball_start;
+                    }
+                    break;
+                case sfKeyH:
+                    pause = true;
+                    help = !help;
                     break;
                 default:
                     break;
@@ -120,6 +165,76 @@ int main()
                 /// end keyboard events
             }
         }
+
+        if(pause) {
+            strcpy(main_text_buf, "Game paused");
+            if(help)
+                strcat(main_text_buf,
+                       "\n\nW - Left player up"
+                       "\n\nS - Left player down"
+                       "\n\nI - Right player up"
+                       "\n\nK - Right player down"
+                       "\n\nP - Toggle pause"
+                       "\n\nCtrl+R - Reset game"
+                       "\n\nH - Toggle help and pause"
+                       "\n\nEsc - Quit"
+                      );
+        }
+        else if(player1_score >= target_score) {
+            strcpy(main_text_buf, "Left player won!");
+            game_end = true;
+        }
+        else if(player2_score >= target_score) {
+            strcpy(main_text_buf, "Right player won!");
+            game_end = true;
+        }
+        if(pause || game_end) {
+            sfRenderWindow_clear(window, sfColor_fromRGB(160, 160, 160));
+
+            int pos_text_width = (WIDTH - 30*strlen(main_text_buf)) / 2;
+            int pos_text_height = HEIGHT / 2 - 100;
+            if(help) {
+                pos_text_width = 100;
+                pos_text_height = 20;
+            }
+            sfVector2f pos_main_text = {pos_text_width, pos_text_height};
+            sfText_setPosition(main_text, pos_main_text);
+            sfText_setString(main_text, main_text_buf);
+            sfRenderWindow_drawText(window, main_text, NULL);
+            sfRenderWindow_display(window);
+            continue;
+        }
+
+        if(fabs(pos_ball.x - pos_player1.x) < EPS_X && fabs(pos_ball.y - pos_player1.y) < EPS_Y) {
+            dir_ball.x = -dir_ball.x;  /// left player hits the ball
+            if(pos_ball.x < pos_player1.x)
+                dir_ball.y--;  ///
+            else
+                dir_ball.y++;
+        }
+        else if(fabs(pos_ball.x - pos_player2.x) < EPS_X && fabs(pos_ball.y - pos_player2.y) < EPS_Y) {
+            dir_ball.x = -dir_ball.x;
+            if(pos_ball.x < pos_player2.x)
+                dir_ball.y--;
+            else
+                dir_ball.y++;
+        }
+
+        if(pos_ball.x > 0 && pos_ball.x < WIDTH - 50)
+            pos_ball.x += dir_ball.x;
+        else {
+            if(pos_ball.x < WIDTH / 2)
+                player2_score++;
+            else
+                player1_score++;
+
+            pos_ball = pos_ball_start;
+            dir_ball.y = 0;
+        }
+
+        pos_ball.y += dir_ball.y;
+        if(pos_ball.y < 20 || pos_ball.y > HEIGHT - 50)
+            dir_ball.y = -dir_ball.y;  /// collision with top and bottom
 
         /// update positions
         sfRectangleShape_setPosition(player1, pos_player1);
@@ -162,6 +277,7 @@ int main()
     sfRectangleShape_destroy(walls);
     sfText_destroy(score_text1);
     sfText_destroy(score_text2);
+    sfText_destroy(main_text);
     sfFont_destroy(score_font);
 
     sfRenderWindow_destroy(window);

@@ -363,3 +363,13 @@ eliberează resurse;
 Puteți vedea codul după reorganizarea de care am spus [aici](https://github.com/mcmarius/prog-calc/blob/v0.0.2-pong/wip/pong/main.c) (ping me dacă stric link-ul între timp).
 
 Acum vom adăuga următoarea funcționalitate: jucătorul din stânga se poate muta sus/jos cu <kbd>W</kbd> și <kbd>S</kbd>, iar jucătorul din dreapta va putea face același lucru cu <kbd>I</kbd> și <kbd>K</kbd>.
+
+Trebuie să verificăm dacă noua poziție rămâne în interiorul ecranului.
+
+Aceleași verificări le facem și pentru minge. Suplimentar, mingea va trebui să se întoarcă înapoi dacă se ciocnește de una dintre palete sau de pereții de sus și de jos.
+
+În acest moment, jocul arată în felul următor:
+
+![](img/pong_gif2.gif)
+
+Codul poate fi accesat [aici](https://github.com/mcmarius/prog-calc/blob/v0.0.3rc1-pong/wip/pong/main.c). Urmează să împart codul în mai multe funcții înainte de a mai face modificări. Totuși, în acest moment avem un joc Pong complet funcțional (dacă facem abstracție de bug-uri 😄).
