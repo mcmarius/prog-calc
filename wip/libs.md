@@ -373,3 +373,5 @@ Aceleași verificări le facem și pentru minge. Suplimentar, mingea va trebui s
 ![](img/pong_gif2.gif)
 
 Codul poate fi accesat [aici](https://github.com/mcmarius/prog-calc/blob/v0.0.3rc1-pong/wip/pong/main.c). Urmează să împart codul în mai multe funcții înainte de a mai face modificări. Totuși, în acest moment avem un joc Pong complet funcțional (dacă facem abstracție de bug-uri 😄).
+
+Pentru înregistrarea ecranului, am folosit [ScreenToGif](https://www.screentogif.com/). Pentru Linux, am găsit [peek](https://github.com/phw/peek).
