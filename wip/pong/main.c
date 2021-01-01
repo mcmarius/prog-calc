@@ -15,6 +15,26 @@ const int P2_X = WIDTH - 2*P1_X;
 const int P_Y = 100;
 const int PSIZE_X = 30;
 const int PSIZE_Y = 100;
+const int BALL_RADIUS = 25;
+
+unsigned int player1_score;
+unsigned int player2_score;
+bool game_end, help, pause;
+
+sfVector2f pos_player1, player1_pos_start = {P1_X, (HEIGHT - PSIZE_Y) / 2};
+sfVector2f pos_player2, player2_pos_start = {P2_X, (HEIGHT - PSIZE_Y) / 2};
+sfVector2f pos_ball, dir_ball;
+sfVector2f pos_ball_start = {WIDTH / 2 - BALL_RADIUS, HEIGHT / 2 - BALL_RADIUS};
+sfVector2f dir_ball_start = {-10, 0};
+
+void init() {
+    pos_player1 = player1_pos_start;
+    pos_player2 = player2_pos_start;
+    pos_ball = pos_ball_start;
+    dir_ball = dir_ball_start;
+    game_end = help = pause = false;
+    player1_score = player2_score = 0;
+}
 
 int main()
 {
@@ -28,9 +48,6 @@ int main()
     sfRectangleShape *player1 = sfRectangleShape_create();
     sfRectangleShape *player2 = sfRectangleShape_create();
 
-    sfVector2f pos_player1 = {P1_X, (HEIGHT - PSIZE_Y) / 2};
-    sfVector2f pos_player2 = {P2_X, (HEIGHT - PSIZE_Y) / 2};
-
     sfVector2f size_player = {PSIZE_X, PSIZE_Y};
     sfRectangleShape_setSize(player1, size_player);
     sfRectangleShape_setSize(player2, size_player);
@@ -38,14 +55,7 @@ int main()
     int player_speed = 30;
 
     sfCircleShape *ball = sfCircleShape_create();
-    const int ball_radius = 25;
-    sfVector2f pos_ball;
-    sfVector2f pos_ball_start = {WIDTH / 2 - ball_radius, HEIGHT / 2 - ball_radius};
-    pos_ball = pos_ball_start;
-    sfVector2f dir_ball;
-    sfVector2f dir_ball_start = {-10, 0};
-    dir_ball = dir_ball_start;
-    sfCircleShape_setRadius(ball, ball_radius);
+    sfCircleShape_setRadius(ball, BALL_RADIUS);
     sfCircleShape_setFillColor(ball, sfYellow);
 
     ////////////////////////////////////////////////////////////////
@@ -98,20 +108,17 @@ int main()
     sfText_setCharacterSize(score_text1, score_size);
     sfText_setCharacterSize(score_text2, score_size);
 
-    unsigned int player1_score = 0;
-    unsigned int player2_score = 0;
     const int score_buf_size = 20;
     char player1_score_buf[score_buf_size];
     char player2_score_buf[score_buf_size];
 
-    bool game_end = false;
-    bool help = false;
     unsigned int target_score = 5;
-    bool pause = false;
     char main_text_buf[300];
     sfText *main_text = sfText_create();
     sfText_setFont(main_text, score_font);
     sfText_setCharacterSize(main_text, score_size);
+
+    init();
     /// end initializations for middle bar, walls, score and fonts
     ////////////////////////////////////////////////////////////////
 
@@ -149,10 +156,7 @@ int main()
                     break;
                 case sfKeyR:
                     if(event.key.control) {
-                        game_end = help = pause = false;
-                        player1_score = player2_score = 0;
-                        pos_ball = pos_ball_start;
-                        dir_ball = dir_ball_start;
+                        init();
                     }
                     break;
                 case sfKeyH:
@@ -205,19 +209,16 @@ int main()
             continue;
         }
 
+        const int dir_multiplier = 2;
         if(fabs(pos_ball.x - pos_player1.x) < EPS_X && fabs(pos_ball.y - pos_player1.y) < EPS_Y) {
             dir_ball.x = -dir_ball.x;  /// left player hits the ball
-            if(pos_ball.x < pos_player1.x)
-                dir_ball.y--;  ///
-            else
-                dir_ball.y++;
+            /// ball reflects on the y axis proportionally with the collision point
+            /// of the ping pong paddle relative to the middle
+            dir_ball.y += dir_multiplier * (pos_ball.y - pos_player1.y) / PSIZE_Y;
         }
         else if(fabs(pos_ball.x - pos_player2.x) < EPS_X && fabs(pos_ball.y - pos_player2.y) < EPS_Y) {
             dir_ball.x = -dir_ball.x;
-            if(pos_ball.x < pos_player2.x)
-                dir_ball.y--;
-            else
-                dir_ball.y++;
+            dir_ball.y += dir_multiplier * (pos_ball.y - pos_player2.y) / PSIZE_Y;
         }
 
         if(pos_ball.x > 0 && pos_ball.x < WIDTH - 50)
