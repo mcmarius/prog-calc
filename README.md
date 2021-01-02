@@ -11,5 +11,9 @@
 * [ ] [Laborator 9](https://github.com/mcmarius/prog-calc/tree/master/laborator-9) (?)
 * [ ] [Laborator 10](https://github.com/mcmarius/prog-calc/tree/master/laborator-10) (?)
 
-* [Biblioteci externe](https://github.com/mcmarius/prog-calc/tree/master/libs)
-* Pong: [cod](https://github.com/mcmarius/prog-calc/tree/master/libs/pong) | [download](https://github.com/mcmarius/prog-calc/releases/tag/v0.0.3rc2-pong)
+-----
+
+### Extra
+
+[Biblioteci externe](https://github.com/mcmarius/prog-calc/tree/master/libs)
+- Pong: [cod](https://github.com/mcmarius/prog-calc/tree/master/libs/pong) | [download](https://github.com/mcmarius/prog-calc/releases/tag/v0.0.3rc2-pong)
