@@ -375,3 +375,9 @@ Aceleași verificări le facem și pentru minge. Suplimentar, mingea va trebui s
 Codul poate fi accesat [aici](https://github.com/mcmarius/prog-calc/blob/v0.0.3rc1-pong/wip/pong/main.c). Urmează să împart codul în mai multe funcții înainte de a mai face modificări. Totuși, în acest moment avem un joc Pong complet funcțional (dacă facem abstracție de bug-uri 😄).
 
 Pentru înregistrarea ecranului, am folosit [ScreenToGif](https://www.screentogif.com/). Pentru Linux, am găsit [peek](https://github.com/phw/peek).
+
+-----
+
+`[2021-01-02]` La mulți ani! Am mai reparat un bug și am modificat un pic logica la ciocnirea cu paletele. Momentan nu consider că ajută să împart codul și în alte funcții, deoarece mai mult s-ar complica lucrurile.
+
+-----
