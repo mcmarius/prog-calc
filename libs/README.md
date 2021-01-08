@@ -58,7 +58,11 @@ Programul "doarme" timp de o secundă, iar apoi afișează un mesaj. Dacă înce
 
 ![](img/missing_header.png)
 
-Trebuie să îi spunem compilatorului unde găsește aceste fișiere header: `Settings`->`Compiler...`->`Search directories`->`Add`:
+Trebuie să îi spunem compilatorului unde găsește aceste fișiere header: click dreapta pe proiect, `Build options`:
+
+![](img/project_settings.png)
+
+Apoi `Search directories`->`Compiler`->`Add`:
 
 ![](img/add_header_path1.png)
 
@@ -66,7 +70,9 @@ Calea va fi folderul `include` din folderul `CSFML-2.5` (care se află în `ext`
 
 ![](img/add_header_path2.png)
 
-După aceea, dăm pe butoanele de `ok`. Pentru a verifica dacă am pus calea corect, încercăm să compilăm. Vom primi un mesaj de eroare, însă este altă eroare 😄
+După aceea, dăm pe butoanele de `ok`. Dacă întreabă, putem să îi spunem să pună calea relativă. Pentru a verifica dacă am pus calea corect, încercăm să compilăm. Vom primi un mesaj de eroare, însă este altă eroare 😄
+
+![](img/relative_path.png)
 
 ![](img/undefined_sleep.png)
 
@@ -74,9 +80,11 @@ Totuși, ca să verificăm ce cale a fost setată, ne putem uita pe tab-ul `Buil
 
 ![](img/add_header_path3.png)
 
+Dacă ați selectat calea relativă, veți vedea `-Iext\CSFML-2.5\include`.
+
 Dacă după acest pas nu primiți sugestii în editor (cu <kbd>Ctrl</kbd>+<kbd>Space</kbd>), atunci click dreapta pe proiect și `Reparse this project`.
 
-Acum trebuie să rezolvăm eroarea cu `undefined` ceva. I-am spus compilatorului unde să găsească fișierele header, însă acelea conțin doar niște declarații. Trebuie să spunem și unde este implementarea: `Settings`->`Compiler...`->`Linker settings`->`Add`. Vom adăuga fișierele din folderul `lib` (subfolderul `gcc` deoarece folosim compilatorul GCC) din CSFML. Pentru programul demo de mai sus ar fi necesar doar `libcsfml-system`, însă pentru simplitate le vom adăuga pe toate:
+Acum trebuie să rezolvăm eroarea cu `undefined` ceva. I-am spus compilatorului unde să găsească fișierele header, însă acelea conțin doar niște declarații. Trebuie să spunem și unde este implementarea. La fel ca mai devreme, click dreapta pe proiect, `Build options`, apoi `Linker settings`->`Add`. Vom adăuga fișierele din folderul `lib` (subfolderul `gcc` deoarece folosim compilatorul GCC) din CSFML. Pentru programul demo de mai sus ar fi necesar doar `libcsfml-system`, însă pentru simplitate le vom adăuga pe toate:
 
 ![](img/add_static_libs.png)
 
@@ -94,7 +102,7 @@ Trebuie să copiem în folderul `bin\Debug` (creat de Code::Blocks) fișierele `
 
 După acest pas, lucrurile par să meargă. Dacă totuși apar probleme, o primă soluție este să compilăm noi și biblioteca externă. Dacă nici asta nu reușește, încercăm să folosim alt compilator și apoi reluăm pașii discutați. De obicei, versiunile mai noi de compilatoare au mai puține bug-uri.
 
-⚠ Observație: pe repository-ul de pe github nu am adăugat bibliotecile externe, deoarece pot ocupa destul de mult spațiu. Le voi adăuga pentru proiectul demo final, însă aș vrea să fac asta folosind git-lfs și nu am apucat să îl configurez.
+⚠ Observație: pe repository-ul de pe github nu am adăugat bibliotecile externe, deoarece pot ocupa destul de mult spațiu. ~Le voi adăuga pentru proiectul demo final, însă aș vrea să fac asta folosind git-lfs și nu am apucat să îl configurez.~ Voi furniza direct fișierele binare în [această secțiune](https://github.com/mcmarius/prog-calc/releases).
 
 -----
 
