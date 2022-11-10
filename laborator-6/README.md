@@ -580,13 +580,13 @@ int main(void)
             break;
 
         char word[50];
-        strncpy(wrd, str0, str - str0);
-        wrd[str - str0] = '\0';
+        strncpy(word, str0, str - str0);
+        word[str - str0] = '\0';
 
-        if(strlen(wrd))
-            printf("%s\n", wrd);
+        if(strlen(word))
+            printf("%s\n", word);
         else
-            --cnt;  // wrd is an empty word
+            --cnt;  // word is an empty word
 
         if(str) str += strspn(str, sep); // skip separator
         ++cnt; // increment word count
